@@ -53,6 +53,8 @@ jobs:
 
     - name: Copy libintl.h and langinfo.h  # 保留此步骤
       run: |
+        # 重新设置 ANDROID_NDK_HOME 环境变量
+        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
         # 复制 libintl.h 和 langinfo.h 到 NDK 适当的位置
         cp $GITHUB_WORKSPACE/ndk-26b/libintl.h $ANDROID_NDK_HOME/sysroot/usr/include/
         cp $GITHUB_WORKSPACE/ndk-26b/langinfo.h $ANDROID_NDK_HOME/sysroot/usr/include/        
