@@ -45,9 +45,9 @@ jobs:
 
         # 应用补丁，注意 -p 参数
         for patch in $GITHUB_WORKSPACE/ndk-26b/*.patch; do
-          if ! patch -N -p4 < $patch; then 
-            echo "Failed to apply patch with -p4, trying with -p5"
-            patch -N -p5 < $patch  
+          if ! patch -N -p5 < $patch; then 
+            echo "Failed to apply patch with -p5, trying with -p6"
+            patch -N -p6 < $patch  
           fi
         done
 
