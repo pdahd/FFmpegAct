@@ -30,6 +30,11 @@ jobs:
         export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
         export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
 
+    - name: Output NDK directory structure
+      run: |
+        # 输出NDK目录结构以确认文件路径
+        find $ANDROID_NDK_HOME
+
     - name: Apply NDK patches
       run: |
         # 进入NDK目录
@@ -41,12 +46,6 @@ jobs:
             patch -p0 < $patch
           fi
         done
-
-    - name: Debug directory structure
-      if: failure()
-      run: |
-        # 输出当前目录结构以帮助调试
-        find $ANDROID_NDK_HOME
 
     - name: Copy libintl.h and langinfo.h
       run: |
