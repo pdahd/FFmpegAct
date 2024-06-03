@@ -65,7 +65,18 @@ jobs:
       run: |
         # 进入 FFmpeg 目录
         cd $GITHUB_WORKSPACE/ffmpeg
-        # 应用补丁,  注意 -d 和 --strip 参数
+
+        # 验证目标文件是否存在
+        echo "Checking for configure file:"
+        ls -l configure  
+
+        echo "Checking for libavcodec/allcodecs.c file:"
+        ls -l libavcodec/allcodecs.c
+
+        echo "Checking for libavutil/file_open.c file:"
+        ls -l libavutil/file_open.c
+
+        # 应用补丁, 注意 -d 和 --strip 参数
         echo "Applying configure.patch"
         patch -d . --strip=1 < configure.patch || echo "Failed to apply configure.patch"
 
