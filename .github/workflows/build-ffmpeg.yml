@@ -43,14 +43,11 @@ jobs:
         cd $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr
         pwd  # 打印当前工作目录
 
-        # 测试文件路径
-        ls -l ./include/bits/struct_file.h
-
-        # 应用补丁，注意 -p 参数
+        # 应用补丁， 注意 --strip 参数
         for patch in $GITHUB_WORKSPACE/ndk-26b/*.patch; do
-          if ! patch -N -p5 < $patch; then 
-            echo "Failed to apply patch with -p5, trying with -p6"
-            patch -N -p6 < $patch  
+          if ! patch -N --strip=1 < $patch; then  
+            echo "Failed to apply patch with --strip=1, trying with --strip=2"
+            patch -N --strip=2 < $patch 
           fi
         done
 
