@@ -80,6 +80,11 @@ jobs:
         export NM=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
         export PKG_CONFIG=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-pkg-config
         export STRIP=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+
+        # 打印所有环境变量的值
+        echo "Printing all environment variables:"
+        env | sort
+
         # 运行配置脚本
         chmod +x $TERMUX_PKG_SRCDIR/build.sh
         $TERMUX_PKG_SRCDIR/build.sh  # 注意：这里只运行配置部分，不运行编译部分
