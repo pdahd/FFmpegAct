@@ -1,0 +1,25 @@
+# 忽略编译生成的文件
+*.o
+*.a
+*.so
+*.exe
+*.apk
+
+# 忽略临时文件
+*.log
+*.tmp
+*.swp
+
+# 忽略构建目录
+build/
+dist/
+output/
+obj/
+bin/
+
+# 忽略FFmpeg下载的源码目录
+FFmpeg-*/
+
+# 忽略其他不必要的文件
+.DS_Store
+Thumbs.db
