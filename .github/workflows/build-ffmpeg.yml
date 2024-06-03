@@ -34,9 +34,9 @@ jobs:
       run: |
         # 进入NDK目录
         cd $ANDROID_NDK_HOME
-        # 应用补丁
+        # 尝试使用不同的 -p 选项来应用补丁
         for patch in $GITHUB_WORKSPACE/ndk-26b/*.patch; do
-          patch -p1 < $patch
+          patch -p1 < $patch || patch -p0 < $patch
         done
 
     - name: Copy libintl.h and langinfo.h
