@@ -40,7 +40,7 @@ jobs:
         # 重新设置 ANDROID_NDK_HOME 环境变量
         export ANDROID_NDK_HOME=$PWD/android-ndk-r26d 
         # 进入NDK目录
-        cd $ANDROID_NDK_HOME
+        cd $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr
         pwd  # 打印当前工作目录
 
         # 尝试使用不同的 -p 选项来应用补丁, 并添加 -N 参数
