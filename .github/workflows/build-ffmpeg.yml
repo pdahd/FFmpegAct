@@ -61,6 +61,25 @@ jobs:
         cp $GITHUB_WORKSPACE/ndk-26b/libintl.h $ANDROID_NDK_HOME/sysroot/usr/include/
         cp $GITHUB_WORKSPACE/ndk-26b/langinfo.h $ANDROID_NDK_HOME/sysroot/usr/include/        
 
+    - name: Configure FFmpeg
+      run: |
+        # 进入FFmpeg目录
+        cd $GITHUB_WORKSPACE/ffmpeg
+        # 设置环境变量
+        export TERMUX_PKG_SRCDIR=$GITHUB_WORKSPACE/ffmpeg
+        export TERMUX_PKG_BUILDDIR=$GITHUB_WORKSPACE/ffmpeg/build
+        export TERMUX_PREFIX=$GITHUB_WORKSPACE/ffmpeg/prefix
+        export TERMUX_HOST_PLATFORM=arm-linux-androideabi
+        export AS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-as
+        export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang
+        export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++
+        export NM=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
+        export PKG_CONFIG=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-pkg-config
+        export STRIP=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+        # 运行配置脚本
+        chmod +x $TERMUX_PKG_SRCDIR/build.sh
+        $TERMUX_PKG_SRCDIR/build.sh  # 注意：这里只运行配置部分，不运行编译部分
+    
     - name: Apply FFmpeg patches
       run: |
         # 进入 FFmpeg 目录
