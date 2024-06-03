@@ -63,19 +63,17 @@ jobs:
 
     - name: Apply FFmpeg patches
       run: |
-        # 进入FFmpeg目录
+        # 进入 FFmpeg 目录
         cd $GITHUB_WORKSPACE/ffmpeg
-        # 应用 configure.patch
+        # 应用补丁,  注意 -d 参数
         echo "Applying configure.patch"
-        patch -p1 < configure.patch || echo "Failed to apply configure.patch"
+        patch -d . -p1 < configure.patch || echo "Failed to apply configure.patch"
 
-        # 应用 libavcodec-allcodecs.c.patch
         echo "Applying libavcodec-allcodecs.c.patch"
-        patch -p1 < libavcodec-allcodecs.c.patch || echo "Failed to apply libavcodec-allcodecs.c.patch"
+        patch -d . -p1 < libavcodec-allcodecs.c.patch || echo "Failed to apply libavcodec-allcodecs.c.patch"
 
-        # 应用 libavutil-file_open.c.patch (可以跳过)
         echo "Applying libavutil-file_open.c.patch"
-        patch -p1 < libavutil-file_open.c.patch || echo "Failed to apply libavutil-file_open.c.patch"
+        patch -d . -p1 < libavutil-file_open.c.patch || echo "Failed to apply libavutil-file_open.c.patch"
 
     - name: Build FFmpeg
       run: |
