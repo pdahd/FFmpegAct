@@ -36,8 +36,17 @@ jobs:
         cd $ANDROID_NDK_HOME
         # 尝试使用不同的 -p 选项来应用补丁
         for patch in $GITHUB_WORKSPACE/ndk-26b/*.patch; do
-          patch -p1 < $patch || patch -p0 < $patch
+          if ! patch -p1 < $patch; then
+            echo "Failed to apply patch with -p1, trying with -p0"
+            patch -p0 < $patch
+          fi
         done
+
+    - name: Debug directory structure
+      if: failure()
+      run: |
+        # 输出当前目录结构以帮助调试
+        find $ANDROID_NDK_HOME
 
     - name: Copy libintl.h and langinfo.h
       run: |
