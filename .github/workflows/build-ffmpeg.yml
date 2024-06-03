@@ -35,23 +35,25 @@ jobs:
         # 输出NDK目录结构以确认文件路径
         find $ANDROID_NDK_HOME
 
-    - name: Apply NDK patches
+    - name: Apply NDK patches  # 保留此步骤，但修改其内容
       run: |
         # 进入NDK目录
         cd $ANDROID_NDK_HOME
-        # 尝试使用不同的 -p 选项来应用补丁
+        pwd  # 打印当前工作目录
+
+        # 尝试使用不同的 -p 选项来应用补丁, 并添加 -N 参数
         for patch in $GITHUB_WORKSPACE/ndk-26b/*.patch; do
-          if ! patch -p1 < $patch; then
+          if ! patch -N -p1 < $patch; then 
             echo "Failed to apply patch with -p1, trying with -p0"
-            patch -p0 < $patch
+            patch -N -p0 < $patch 
           fi
         done
 
-    - name: Copy libintl.h and langinfo.h
+    - name: Copy libintl.h and langinfo.h  # 保留此步骤
       run: |
         # 复制 libintl.h 和 langinfo.h 到 NDK 适当的位置
         cp $GITHUB_WORKSPACE/ndk-26b/libintl.h $ANDROID_NDK_HOME/sysroot/usr/include/
-        cp $GITHUB_WORKSPACE/ndk-26b/langinfo.h $ANDROID_NDK_HOME/sysroot/usr/include/
+        cp $GITHUB_WORKSPACE/ndk-26b/langinfo.h $ANDROID_NDK_HOME/sysroot/usr/include/        
 
     - name: Apply FFmpeg patches
       run: |
@@ -82,7 +84,7 @@ jobs:
 
         # 运行构建脚本
         chmod +x $TERMUX_PKG_SRCDIR/build.sh
-        $TERMUX_PKG_SRCDIR/build.sh
+        $TERMUX_PKG_SRCDIR/build.sh | tee build.log  # 将构建日志保存到 build.log
 
     - name: Upload FFmpeg binary
       uses: actions/upload-artifact@v4
