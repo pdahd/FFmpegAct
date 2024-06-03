@@ -65,15 +65,15 @@ jobs:
       run: |
         # 进入 FFmpeg 目录
         cd $GITHUB_WORKSPACE/ffmpeg
-        # 应用补丁,  注意 -d 参数
+        # 应用补丁,  注意 -d 和 --strip 参数
         echo "Applying configure.patch"
-        patch -d . < configure.patch || echo "Failed to apply configure.patch" # 去掉 -p1
+        patch -d . --strip=1 < configure.patch || echo "Failed to apply configure.patch"
 
         echo "Applying libavcodec-allcodecs.c.patch"
-        patch -d . < libavcodec-allcodecs.c.patch || echo "Failed to apply libavcodec-allcodecs.c.patch" # 去掉 -p1 
+        patch -d . --strip=1 < libavcodec-allcodecs.c.patch || echo "Failed to apply libavcodec-allcodecs.c.patch"
 
         echo "Applying libavutil-file_open.c.patch"
-        patch -d . < libavutil-file_open.c.patch || echo "Failed to apply libavutil-file_open.c.patch"  # 去掉 -p1
+        patch -d . --strip=1 < libavutil-file_open.c.patch || echo "Failed to apply libavutil-file_open.c.patch"
 
     - name: Build FFmpeg
       run: |
