@@ -12,158 +12,70 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_NDK_VERSION: r21e
+      ANDROID_API_LEVEL: 21
+      TERMUX_PREFIX: /data/data/com.termux/files/usr
+
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.1.5
+      uses: actions/checkout@v2
 
-    - name: Set up environment
-      run: |
-        # 安装必要的依赖
-        sudo apt-get update
-        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo wget yasm fontconfig libfreetype6-dev libfribidi-dev libaom-dev libass-dev libbluray-dev libbz2-dev libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libzimg-dev ocl-icd-dev zlib1g-dev opencl-headers
-
-    - name: Download and set up NDK
-      run: |
-        # 下载并解压NDK
-        wget https://dl.google.com/android/repository/android-ndk-r26d-linux.zip
-        unzip android-ndk-r26d-linux.zip
-        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
-        export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-
-    - name: Output NDK directory structure
-      run: |
-        # 输出NDK目录结构以确认文件路径
-        find $ANDROID_NDK_HOME
-
-    - name: Apply NDK patches
-      run: |
-        # 重新设置 ANDROID_NDK_HOME 环境变量
-        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d 
-        # 进入 NDK 目录
-        cd $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr
-        pwd  # 打印当前工作目录
-
-        # 应用补丁， 注意 --strip 参数
-        for patch in $GITHUB_WORKSPACE/ndk-26b/*.patch; do
-          if ! patch -N --strip=1 < $patch; then  
-            echo "Failed to apply patch with --strip=1, trying with --strip=2"
-            patch -N --strip=2 < $patch 
-          fi
-        done
-
-    - name: Copy libintl.h and langinfo.h  # 保留此步骤
-      run: |
-        # 重新设置 ANDROID_NDK_HOME 环境变量
-        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
-        # 创建目标目录
-        mkdir -p $ANDROID_NDK_HOME/sysroot/usr/include/
-        # 复制 libintl.h 和 langinfo.h 到 NDK 适当的位置
-        cp $GITHUB_WORKSPACE/ndk-26b/libintl.h $ANDROID_NDK_HOME/sysroot/usr/include/
-        cp $GITHUB_WORKSPACE/ndk-26b/langinfo.h $ANDROID_NDK_HOME/sysroot/usr/include/        
-
-    - name: Install autotools
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y autoconf automake
-    
-    - name: Configure FFmpeg
-      run: |
-        # 重新设置 ANDROID_NDK_HOME 环境变量
-        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
-
-        # 进入 FFmpeg 目录
-        cd $GITHUB_WORKSPACE/ffmpeg
-
-        
-        # 设置环境变量
-        export PREFIX=$PWD/prefix
-        export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot
-        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang
-        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++
-        export AR=$TOOLCHAIN/bin/arm-linux-androideabi-ar
-        export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
-        export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
-        export STRIP=$TOOLCHAIN/bin/arm-linux-androideabi-strip
-        export RANLIB=$TOOLCHAIN/bin/arm-linux-androideabi-ranlib
-
-        
-        # 配置 FFmpeg
-        ./configure \
-            --prefix=$PREFIX \
-            --enable-shared \
-            --disable-static \
-            --disable-doc \
-            --disable-programs \
-            --disable-ffmpeg \
-            --disable-ffplay \
-            --disable-ffprobe \
-            --target-os=android \
-            --arch=arm \
-            --cc=$CC \
-            --cxx=$CXX \
-            --ar=$AR \
-            --as=$AS \
-            --ld=$LD \
-            --strip=$STRIP \
-            --ranlib=$RANLIB \
-            --sysroot=$SYSROOT \
-            --extra-cflags="-Os -fpic $CFLAGS" \
-            --extra-ldflags="-Wl,-rpath,$PREFIX/lib $LDFLAGS"
-    
-    - name: Apply FFmpeg patches
-      run: |
-        # 重新设置 ANDROID_NDK_HOME 环境变量
-        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
-        # 进入 FFmpeg 目录
-        cd $GITHUB_WORKSPACE/ffmpeg
-
-        # 验证目标文件是否存在
-        echo "Checking for configure file:"
-        ls -l configure  
-
-        echo "Checking for libavcodec/allcodecs.c file:"
-        ls -l libavcodec/allcodecs.c
-
-        echo "Checking for libavutil/file_open.c file:"
-        ls -l libavutil/file_open.c
-
-        # 应用补丁, 注意 -d 和 --strip 参数
-        echo "Applying configure.patch"
-        patch -d . --strip=1 < configure.patch || echo "Failed to apply configure.patch"
-
-        echo "Applying libavcodec-allcodecs.c.patch"
-        patch -d . --strip=1 < libavcodec-allcodecs.c.patch || echo "Failed to apply libavcodec-allcodecs.c.patch"
-
-        echo "Applying libavutil-file_open.c.patch"
-        patch -d . --strip=1 < libavutil-file_open.c.patch || echo "Failed to apply libavutil-file_open.c.patch"
-
-    - name: Build FFmpeg
-      run: |
-        # 重新设置 ANDROID_NDK_HOME 环境变量
-        export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
-        # 设置环境变量
-        export TERMUX_PKG_SRCDIR=$GITHUB_WORKSPACE/ffmpeg
-        export TERMUX_PKG_BUILDDIR=$GITHUB_WORKSPACE/ffmpeg/build
-        export TERMUX_PREFIX=$GITHUB_WORKSPACE/ffmpeg/prefix
-        export TERMUX_HOST_PLATFORM=arm-linux-androideabi
-        export AS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-as
-        export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang
-        export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++
-        export NM=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
-        export PKG_CONFIG=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-pkg-config
-        export STRIP=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
-
-        # 创建构建目录
-        mkdir -p $TERMUX_PKG_BUILDDIR
-        cd $TERMUX_PKG_BUILDDIR
-
-        # 运行构建脚本
-        chmod +x $TERMUX_PKG_SRCDIR/build.sh
-        $TERMUX_PKG_SRCDIR/build.sh | tee build.log  # 将构建日志保存到 build.log
-
-    - name: Upload FFmpeg binary
-      uses: actions/upload-artifact@v4
+    - name: Set up JDK 8
+      uses: actions/setup-java@v1
       with:
-        name: ffmpeg-binary
-        path: $TERMUX_PREFIX/bin/ffmpeg
+        java-version: 8
+
+    - name: Download and set up Android NDK
+      run: |
+        wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
+        unzip android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
+        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${ANDROID_NDK_VERSION}
+        echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+        echo "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          autoconf \
+          automake \
+          build-essential \
+          cmake \
+          git \
+          libtool \
+          pkg-config \
+          texinfo \
+          wget \
+          yasm \
+          zlib1g-dev
+
+    - name: Configure and build FFmpeg
+      run: |
+        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        cd ffmpeg
+        ./configure \
+          --prefix=$TERMUX_PREFIX \
+          --target-os=android \
+          --arch=arm64 \
+          --cross-prefix=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android- \
+          --sysroot=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot \
+          --enable-cross-compile \
+          --disable-static \
+          --enable-shared \
+          --disable-everything \
+          --enable-small \
+          --enable-protocols \
+          --enable-demuxers \
+          --enable-muxers \
+          --enable-parsers \
+          --enable-decoders \
+          --enable-encoders
+        make -j$(nproc)
+        make install
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ffmpeg-android
+        path: ffmpeg
