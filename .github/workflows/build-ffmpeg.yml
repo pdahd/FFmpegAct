@@ -61,6 +61,11 @@ jobs:
         cp $GITHUB_WORKSPACE/ndk-26b/libintl.h $ANDROID_NDK_HOME/sysroot/usr/include/
         cp $GITHUB_WORKSPACE/ndk-26b/langinfo.h $ANDROID_NDK_HOME/sysroot/usr/include/        
 
+    - name: Install autotools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake
+    
     - name: Configure FFmpeg
       run: |
         # 重新设置 ANDROID_NDK_HOME 环境变量
