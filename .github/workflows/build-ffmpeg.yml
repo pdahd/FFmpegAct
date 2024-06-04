@@ -65,31 +65,44 @@ jobs:
       run: |
         # 重新设置 ANDROID_NDK_HOME 环境变量
         export ANDROID_NDK_HOME=$PWD/android-ndk-r26d
-        # 进入FFmpeg目录
+
+        # 进入 FFmpeg 目录
         cd $GITHUB_WORKSPACE/ffmpeg
-        # 打印当前目录
-        pwd
-        # 打印 build.sh 文件的内容
-        cat build.sh
+
         # 设置环境变量
-        export TERMUX_PKG_SRCDIR=$GITHUB_WORKSPACE/ffmpeg
-        export TERMUX_PKG_BUILDDIR=$GITHUB_WORKSPACE/ffmpeg/build
-        export TERMUX_PREFIX=$GITHUB_WORKSPACE/ffmpeg/prefix
-        export TERMUX_HOST_PLATFORM=arm-linux-androideabi
-        export AS=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-as
-        export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang
-        export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++
-        export NM=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
-        export PKG_CONFIG=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-pkg-config
-        export STRIP=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+        export PREFIX=$PWD/prefix
+        export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot
+        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang
+        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++
+        export AR=$TOOLCHAIN/bin/arm-linux-androideabi-ar
+        export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
+        export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
+        export STRIP=$TOOLCHAIN/bin/arm-linux-androideabi-strip
+        export RANLIB=$TOOLCHAIN/bin/arm-linux-androideabi-ranlib
 
-        # 打印所有环境变量的值
-        echo "Printing all environment variables:"
-        env | sort
-
-        # 运行配置脚本
-        chmod +x $TERMUX_PKG_SRCDIR/build.sh
-        $TERMUX_PKG_SRCDIR/build.sh  # 注意：这里只运行配置部分，不运行编译部分
+        # 配置 FFmpeg
+        ./configure \
+            --prefix=$PREFIX \
+            --enable-shared \
+            --disable-static \
+            --disable-doc \
+            --disable-programs \
+            --disable-ffmpeg \
+            --disable-ffplay \
+            --disable-ffprobe \
+            --target-os=android \
+            --arch=arm \
+            --cc=$CC \
+            --cxx=$CXX \
+            --ar=$AR \
+            --as=$AS \
+            --ld=$LD \
+            --strip=$STRIP \
+            --ranlib=$RANLIB \
+            --sysroot=$SYSROOT \
+            --extra-cflags="-Os -fpic $CFLAGS" \
+            --extra-ldflags="-Wl,-rpath,$PREFIX/lib $LDFLAGS"
     
     - name: Apply FFmpeg patches
       run: |
