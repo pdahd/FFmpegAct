@@ -69,6 +69,7 @@ jobs:
         # 进入 FFmpeg 目录
         cd $GITHUB_WORKSPACE/ffmpeg
 
+        
         # 设置环境变量
         export PREFIX=$PWD/prefix
         export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
@@ -81,6 +82,8 @@ jobs:
         export STRIP=$TOOLCHAIN/bin/arm-linux-androideabi-strip
         export RANLIB=$TOOLCHAIN/bin/arm-linux-androideabi-ranlib
 
+        # 生成 configure 脚本
+        ./autogen.sh || echo "Failed to run autogen.sh"
         # 配置 FFmpeg
         ./configure \
             --prefix=$PREFIX \
