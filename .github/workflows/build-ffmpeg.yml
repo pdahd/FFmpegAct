@@ -74,17 +74,17 @@ jobs:
           --enable-decoder=h264 \
           --enable-decoder=mpeg4 \
           --enable-encoder=aac \
-          --enable-encoder=h264 \
+          --enable-encoder=libx264 \
           --enable-encoder=mpeg4 \
           --enable-parser=aac \
           --enable-parser=h264 \
-          --enable-parser=mpeg4 \
           --enable-protocol=file \
           --enable-protocol=http \
           --enable-protocol=https \
           --enable-protocol=rtp \
           --enable-protocol=tcp \
           --enable-protocol=udp \
+          --enable-tls \
           --enable-small
         make -j$(nproc)
         make install
