@@ -57,6 +57,7 @@ jobs:
         export CC=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
         export CXX=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
         export LD=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/ld
+        export LDFLAGS="-L${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/lib64 -L${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib"
         ./configure \
           --prefix=${{ env.TERMUX_PREFIX }} \
           --target-os=android \
@@ -73,9 +74,7 @@ jobs:
           --enable-muxers \
           --enable-parsers \
           --enable-decoders \
-          --enable-encoders \
-          -L${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/lib64 \
-          -L${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib
+          --enable-encoders
         make -j$(nproc)
         make install
       continue-on-error: true
