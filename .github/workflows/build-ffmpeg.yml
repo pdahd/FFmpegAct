@@ -54,31 +54,18 @@ jobs:
       run: |
         git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
         cd ffmpeg
-        export TOOLCHAIN=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64
-        export TARGET=aarch64-linux-android
-        export API=${{ env.ANDROID_API_LEVEL }}
-        export CC=$TOOLCHAIN/bin/$TARGET$API-clang
-        export CXX=$TOOLCHAIN/bin/$TARGET$API-clang++
-        export LD=$TOOLCHAIN/bin/$TARGET-ld
-        export CFLAGS="-isysroot $TOOLCHAIN/sysroot -I$TOOLCHAIN/sysroot/usr/include -D__ANDROID_API__=$API -fPIC"
-        export LDFLAGS="-L$TOOLCHAIN/lib64 -L$TOOLCHAIN/sysroot/usr/lib -lc -lm -ldl -llog"
+        export _ARCH=arm64
+        export _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         ./configure \
-          --prefix=${{ env.TERMUX_PREFIX }} \
-          --target-os=android \
-          --arch=arm64 \
-          --cross-prefix=$TOOLCHAIN/bin/$TARGET$API- \
-          --sysroot=$TOOLCHAIN/sysroot \
-          --enable-cross-compile \
+          --arch=$_ARCH \
+          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
           --disable-static \
+          --disable-symver \
+          --enable-cross-compile \
           --enable-shared \
-          --disable-everything \
-          --enable-small \
-          --enable-protocols \
-          --enable-demuxers \
-          --enable-muxers \
-          --enable-parsers \
-          --enable-decoders \
-          --enable-encoders
+          --prefix="$TERMUX_PREFIX" \
+          --target-os=android \
+          $_EXTRA_CONFIGURE_FLAGS
         make -j$(nproc)
         make install
       continue-on-error: true
