@@ -58,7 +58,7 @@ jobs:
         export _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         ./configure \
           --arch=$_ARCH \
-          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+          --cross-prefix=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21- \
           --disable-static \
           --disable-symver \
           --enable-cross-compile \
