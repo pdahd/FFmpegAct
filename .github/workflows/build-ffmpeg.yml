@@ -14,55 +14,55 @@ jobs:
 
     env:
       ANDROID_NDK_VERSION: r21e
-      ANDROID_API_LEVEL: 21
-      TERMUX_PREFIX: /data/data/com.termux/files/usr
+      ANDROID_HOME: ${{ runner.temp }}/android-sdk
+      NDK_HOME: ${{ runner.temp }}/android-ndk-$ANDROID_NDK_VERSION
+      SDK_URL: https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+      NDK_URL: https://dl.google.com/android/repository/android-ndk-$ANDROID_NDK_VERSION-linux-x86_64.zip
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.1.5
+      uses: actions/checkout@v2
 
-    - name: Set up JDK 8
-      uses: actions/setup-java@v1
+    - name: Set up JDK
+      uses: actions/setup-java@v2
       with:
-        java-version: 8
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: Download and set up Android SDK
+      run: |
+        mkdir -p $ANDROID_HOME
+        wget $SDK_URL -O sdk-tools.zip
+        unzip -q sdk-tools.zip -d $ANDROID_HOME
+        yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+        $ANDROID_HOME/tools/bin/sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
 
     - name: Download and set up Android NDK
       run: |
-        wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
-        unzip android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
-        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${ANDROID_NDK_VERSION}
-        echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-        echo "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+        wget $NDK_URL -O ndk.zip
+        unzip -q ndk.zip -d ${{ runner.temp }}
+        mv ${{ runner.temp }}/android-ndk-$ANDROID_NDK_VERSION $NDK_HOME
 
-    - name: Install dependencies
+    - name: Set up environment variables
       run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          autoconf \
-          automake \
-          build-essential \
-          cmake \
-          git \
-          libtool \
-          pkg-config \
-          texinfo \
-          wget \
-          yasm \
-          zlib1g-dev
+        echo "ANDROID_NDK_ROOT=$NDK_HOME" >> $GITHUB_ENV
+        echo "ANDROID_NDK_HOME=$NDK_HOME" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "PATH=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
 
-    - name: Configure and build FFmpeg
+    - name: Clone FFmpeg repository
+      run: git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+
+    - name: Build FFmpeg for Android
       run: |
-        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
         cd ffmpeg
-        export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-        export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang
-        export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++
         ./configure \
-          --prefix=$TERMUX_PREFIX \
+          --prefix=$ANDROID_HOME \
           --target-os=android \
           --arch=arm64 \
-          --cross-prefix=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android- \
-          --sysroot=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot \
+          --cross-prefix=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android- \
+          --sysroot=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot \
           --enable-cross-compile \
           --disable-static \
           --enable-shared \
@@ -76,18 +76,3 @@ jobs:
           --enable-encoders
         make -j$(nproc)
         make install
-      continue-on-error: true
-
-    - name: Upload config.log if configure fails
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: config-log
-        path: ffmpeg/ffbuild/config.log
-
-    - name: Archive build artifacts
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: ffmpeg-android
-        path: ffmpeg
