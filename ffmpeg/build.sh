@@ -32,87 +32,100 @@ termux_step_pre_configure() {
 }
 
 termux_step_configure() {
-	cd $TERMUX_PKG_BUILDDIR
+    cd $TERMUX_PKG_BUILDDIR
 
-	local _EXTRA_CONFIGURE_FLAGS=""
-	if [ $TERMUX_ARCH = "arm" ]; then
-		_ARCH="armeabi-v7a"
-		_EXTRA_CONFIGURE_FLAGS="--enable-neon"
-	elif [ $TERMUX_ARCH = "i686" ]; then
-		_ARCH="x86"
-		# Specify --disable-asm to prevent text relocations on i686,
-		# see https://trac.ffmpeg.org/ticket/4928
-		_EXTRA_CONFIGURE_FLAGS="--disable-asm"
-	elif [ $TERMUX_ARCH = "x86_64" ]; then
-		_ARCH="x86_64"
-	elif [ $TERMUX_ARCH = "aarch64" ]; then
-		_ARCH=$TERMUX_ARCH
-		_EXTRA_CONFIGURE_FLAGS="--enable-neon"
-	else
-		termux_error_exit "Unsupported arch: $TERMUX_ARCH"
-	fi
+    local _EXTRA_CONFIGURE_FLAGS=""
+    if [ $TERMUX_ARCH = "arm" ]; then
+        _ARCH="armeabi-v7a"
+        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+    elif [ $TERMUX_ARCH = "i686" ]; then
+        _ARCH="x86"
+        # Specify --disable-asm to prevent text relocations on i686,
+        # see https://trac.ffmpeg.org/ticket/4928
+        _EXTRA_CONFIGURE_FLAGS="--disable-asm"
+    elif [ $TERMUX_ARCH = "x86_64" ]; then
+        _ARCH="x86_64"
+    elif [ $TERMUX_ARCH = "aarch64" ]; then
+        _ARCH=$TERMUX_ARCH
+        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+    else
+        termux_error_exit "Unsupported arch: $TERMUX_ARCH"
+    fi
 
-	$TERMUX_PKG_SRCDIR/configure \
-		--arch="${_ARCH}" \
-		--as="$AS" \
-		--cc="$CC" \
-		--cxx="$CXX" \
-		--nm="$NM" \
-		--pkg-config="$PKG_CONFIG" \
-		--strip="$STRIP" \
-		--cross-prefix="${TERMUX_HOST_PLATFORM}-" \
-		--disable-indevs \
-		--disable-outdevs \
-		--enable-indev=lavfi \
-		--disable-static \
-		--disable-symver \
-		--enable-cross-compile \
-		--enable-gnutls \
-		--enable-gpl \
-		--enable-version3 \
-		--enable-jni \
-		--enable-lcms2 \
-		--enable-libaom \
-		--enable-libass \
-		--enable-libbluray \
-		--enable-libdav1d \
-		--enable-libfontconfig \
-		--enable-libfreetype \
-		--enable-libfribidi \
-		--enable-libgme \
-		--enable-libharfbuzz \
-		--enable-libmp3lame \
-		--enable-libopencore-amrnb \
-		--enable-libopencore-amrwb \
-		--enable-libopenmpt \
-		--enable-libopus \
-		--enable-librav1e \
-		--enable-libsoxr \
-		--enable-libsrt \
-		--enable-libssh \
-		--enable-libsvtav1 \
-		--enable-libtheora \
-		--enable-libv4l2 \
-		--enable-libvidstab \
-		--enable-libvo-amrwbenc \
-		--enable-libvorbis \
-		--enable-libvpx \
-		--enable-libwebp \
-		--enable-libx264 \
-		--enable-libx265 \
-		--enable-libxml2 \
-		--enable-libxvid \
-		--enable-libzimg \
-		--enable-mediacodec \
-		--enable-opencl \
-		--enable-shared \
-		--prefix="$TERMUX_PREFIX" \
-		--target-os=android \
-		--extra-libs="-landroid-glob" \
-		--disable-vulkan \
-		$_EXTRA_CONFIGURE_FLAGS \
-		--disable-libfdk-aac
-	# GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
+    # 使用 make-standalone-toolchain.sh 脚本来配置 FFmpeg
+    $ANDROID_NDK_HOME/build/tools/make-standalone-toolchain.sh \
+        --arch="${_ARCH}" \
+        --platform=android-21 \
+        --install-dir=$TERMUX_PREFIX \
+        --toolchain=arm-linux-androideabi-4.9 \
+        --system=linux-x86_64 \
+        --stl=libc++ \
+        > /dev/null 2>&1
+
+    # 进入配置后的目录
+    cd $TERMUX_PREFIX
+
+    # 调用 configure 脚本
+    ./configure \
+        --as="$AS" \
+        --cc="$CC" \
+        --cxx="$CXX" \
+        --nm="$NM" \
+        --pkg-config="$PKG_CONFIG" \
+        --strip="$STRIP" \
+        --cross-prefix="arm-linux-androideabi-" \
+        --disable-indevs \
+        --disable-outdevs \
+        --enable-indev=lavfi \
+        --disable-static \
+        --disable-symver \
+        --enable-cross-compile \
+        --enable-gnutls \
+        --enable-gpl \
+        --enable-version3 \
+        --enable-jni \
+        --enable-lcms2 \
+        --enable-libaom \
+        --enable-libass \
+        --enable-libbluray \
+        --enable-libdav1d \
+        --enable-libfontconfig \
+        --enable-libfreetype \
+        --enable-libfribidi \
+        --enable-libgme \
+        --enable-libharfbuzz \
+        --enable-libmp3lame \
+        --enable-libopencore-amrnb \
+        --enable-libopencore-amrwb \
+        --enable-libopenmpt \
+        --enable-libopus \
+        --enable-librav1e \
+        --enable-libsoxr \
+        --enable-libsrt \
+        --enable-libssh \
+        --enable-libsvtav1 \
+        --enable-libtheora \
+        --enable-libv4l2 \
+        --enable-libvidstab \
+        --enable-libvo-amrwbenc \
+        --enable-libvorbis \
+        --enable-libvpx \
+        --enable-libwebp \
+        --enable-libx264 \
+        --enable-libx265 \
+        --enable-libxml2 \
+        --enable-libxvid \
+        --enable-libzimg \
+        --enable-mediacodec \
+        --enable-opencl \
+        --enable-shared \
+        --prefix="$TERMUX_PREFIX" \
+        --target-os=android \
+        --extra-libs="-landroid-glob" \
+        --disable-vulkan \
+        $_EXTRA_CONFIGURE_FLAGS \
+        --disable-libfdk-aac
+    # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
 }
 
 termux_step_post_massage() {
