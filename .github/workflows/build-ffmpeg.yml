@@ -28,9 +28,9 @@ jobs:
 
     - name: Download and set up Android NDK
       run: |
-        wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
-        unzip android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
-        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${ANDROID_NDK_VERSION}
+        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux-x86_64.zip
+        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux-x86_64.zip
+        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
         echo "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
 
@@ -54,16 +54,14 @@ jobs:
       run: |
         git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
         cd ffmpeg
-        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${ANDROID_NDK_VERSION} <--- 添加此行
-        export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-        export CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang
-        export CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++
+        export CC=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
+        export CXX=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
         ./configure \
-          --prefix=$TERMUX_PREFIX \
+          --prefix=${{ env.TERMUX_PREFIX }} \
           --target-os=android \
           --arch=arm64 \
-          --cross-prefix=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android- \
-          --sysroot=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot \
+          --cross-prefix=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/ \
+          --sysroot=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot \
           --enable-cross-compile \
           --disable-static \
           --enable-shared \
@@ -79,16 +77,8 @@ jobs:
         make install
       continue-on-error: true
 
-    - name: Upload config.log if configure fails
-      if: failure()
+    - name: Upload config.log
       uses: actions/upload-artifact@v2
       with:
         name: config-log
         path: ffmpeg/ffbuild/config.log
-
-    - name: Archive build artifacts
-      if: success()
-      uses: actions/upload-artifact@v2
-      with:
-        name: ffmpeg-android
-        path: ffmpeg
