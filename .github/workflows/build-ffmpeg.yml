@@ -54,16 +54,20 @@ jobs:
       run: |
         git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
         cd ffmpeg
-        export CC=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
-        export CXX=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
-        export LD=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/ld
-        export LDFLAGS="-L${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/lib64 -L${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib"
+        export TOOLCHAIN=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64
+        export TARGET=aarch64-linux-android
+        export API=${{ env.ANDROID_API_LEVEL }}
+        export CC=$TOOLCHAIN/bin/$TARGET$API-clang
+        export CXX=$TOOLCHAIN/bin/$TARGET$API-clang++
+        export LD=$TOOLCHAIN/bin/$TARGET-ld
+        export CFLAGS="-isysroot $TOOLCHAIN/sysroot -I$TOOLCHAIN/sysroot/usr/include -D__ANDROID_API__=$API -fPIC"
+        export LDFLAGS="-L$TOOLCHAIN/lib64 -L$TOOLCHAIN/sysroot/usr/lib -lc -lm -ldl -llog"
         ./configure \
           --prefix=${{ env.TERMUX_PREFIX }} \
           --target-os=android \
           --arch=arm64 \
-          --cross-prefix=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/ \
-          --sysroot=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot \
+          --cross-prefix=$TOOLCHAIN/bin/$TARGET$API- \
+          --sysroot=$TOOLCHAIN/sysroot \
           --enable-cross-compile \
           --disable-static \
           --enable-shared \
