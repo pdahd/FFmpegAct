@@ -115,7 +115,7 @@ jobs:
       run: |
         cd ffmpeg-6.1.1
         ./configure \
-          --arch="$ARCH" \
+          --arch="armeabi-v7a" \
           --as="$AS" \
           --cc="$CC" \
           --cxx="$CXX" \
