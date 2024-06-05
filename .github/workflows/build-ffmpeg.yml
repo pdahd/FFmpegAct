@@ -60,6 +60,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export CROSS_PREFIX=$TOOLCHAIN/bin/arm-linux-androideabi-
         export PATH="/usr/local/bin:$PATH"
+        export GASPP="/usr/local/bin/gas-preprocessor.pl"
         echo "TOOLCHAIN=$TOOLCHAIN" >> $GITHUB_ENV
         echo "TARGET=$TARGET" >> $GITHUB_ENV
         echo "API=$API" >> $GITHUB_ENV
@@ -72,6 +73,7 @@ jobs:
         echo "NM=$NM" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
         echo "PATH=/usr/local/bin:$PATH" >> $GITHUB_ENV
+        echo "GASPP=/usr/local/bin/gas-preprocessor.pl" >> $GITHUB_ENV
 
     - name: Verify gas-preprocessor
       run: |
