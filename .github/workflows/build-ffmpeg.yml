@@ -57,14 +57,14 @@ jobs:
         export API=${{ env.ANDROID_API_LEVEL }}
         export AR=$TOOLCHAIN/bin/arm-linux-androideabi-ar
         export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
-        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi24-clang
-        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi24-clang++
+        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang
+        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
         export CROSS_PREFIX=$TOOLCHAIN/bin/arm-linux-androideabi-
         export PKG_CONFIG=$ANDROID_NDK_HOME/prebuilt/linux-x86_64/bin/pkg-config
-        export PATH="/usr/local/bin:$PATH"
+        export PATH="$TOOLCHAIN/bin:$PATH"
         export GASPP="/usr/local/bin/gas-preprocessor.pl"
         echo "TOOLCHAIN=$TOOLCHAIN" >> $GITHUB_ENV
         echo "TARGET=$TARGET" >> $GITHUB_ENV
@@ -78,7 +78,7 @@ jobs:
         echo "NM=$NM" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
         echo "PKG_CONFIG=$PKG_CONFIG" >> $GITHUB_ENV
-        echo "PATH=/usr/local/bin:$PATH" >> $GITHUB_ENV
+        echo "PATH=$TOOLCHAIN/bin:$PATH" >> $GITHUB_ENV
         echo "GASPP=/usr/local/bin/gas-preprocessor.pl" >> $GITHUB_ENV
 
     - name: Verify gas-preprocessor
@@ -115,14 +115,14 @@ jobs:
       run: |
         cd ffmpeg-6.1.1
         ./configure \
-          --arch="armeabi-v7a" \
-          --as="$AS" \
-          --cc="$CC" \
-          --cxx="$CXX" \
-          --nm=$NM \
-          --pkg-config=$PKG_CONFIG \
-          --strip=$STRIP \
-          --cross-prefix=$CROSS_PREFIX \
+          --arch=${{ env.ARCH }} \
+          --as=${{ env.AS }} \
+          --cc=${{ env.CC }} \
+          --cxx=${{ env.CXX }} \
+          --nm=${{ env.NM }} \
+          --pkg-config=${{ env.PKG_CONFIG }} \
+          --strip=${{ env.STRIP }} \
+          --cross-prefix=${{ env.CROSS_PREFIX }} \
           --disable-indevs \
           --disable-outdevs \
           --enable-indev=lavfi \
