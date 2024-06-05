@@ -38,6 +38,7 @@ jobs:
     - name: Verify arm-linux-androideabi-clang path
       run: |
         find $ANDROID_NDK_HOME -name arm-linux-androideabi-clang
+        file $ANDROID_NDK_HOME/build/core/toolchains/arm-linux-androideabi-clang
 
     - name: Install dependencies
       run: |
