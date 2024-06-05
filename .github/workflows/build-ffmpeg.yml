@@ -35,11 +35,9 @@ jobs:
         export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
-    - name: Verify arm-linux-androideabi-clang path
+    - name: Verify all clang executables
       run: |
-        find $ANDROID_NDK_HOME -name arm-linux-androideabi-clang
-        file $ANDROID_NDK_HOME/build/core/toolchains/arm-linux-androideabi-clang
-        ls -l $ANDROID_NDK_HOME/build/core/toolchains/arm-linux-androideabi-clang
+        find $ANDROID_NDK_HOME -name '*clang*' -type f
 
     - name: Install dependencies
       run: |
