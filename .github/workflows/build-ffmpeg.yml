@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: r21e
-      ANDROID_API_LEVEL: 21
+      ANDROID_NDK_VERSION: r26b
+      ANDROID_API_LEVEL: 24
       ARCH: armeabi-v7a
       PREFIX: /data/data/com.termux/files/usr
 
@@ -56,9 +56,10 @@ jobs:
         export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang
         export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
-        export STRIP=$TOOLCHAIN/bin/arm-linux-androideabi-strip
+        export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
         export CROSS_PREFIX=$TOOLCHAIN/bin/arm-linux-androideabi-
+        export PKG_CONFIG=$ANDROID_NDK_HOME/prebuilt/linux-x86_64/bin/pkg-config
         export PATH="/usr/local/bin:$PATH"
         export GASPP="/usr/local/bin/gas-preprocessor.pl"
         echo "TOOLCHAIN=$TOOLCHAIN" >> $GITHUB_ENV
@@ -72,6 +73,7 @@ jobs:
         echo "STRIP=$STRIP" >> $GITHUB_ENV
         echo "NM=$NM" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
+        echo "PKG_CONFIG=$PKG_CONFIG" >> $GITHUB_ENV
         echo "PATH=/usr/local/bin:$PATH" >> $GITHUB_ENV
         echo "GASPP=/usr/local/bin/gas-preprocessor.pl" >> $GITHUB_ENV
 
@@ -101,55 +103,62 @@ jobs:
       run: |
         cd ffmpeg-6.1.1
         ./configure \
-          --prefix=${{ env.PREFIX }} \
-          --target-os=android \
-          --arch=${{ env.ARCH }} \
-          --cc=$CC \
-          --cxx=$CXX \
-          --ld=$LD \
-          --ar=$AR \
-          --as=$AS \
-          --nm=$NM \
-          --strip=$STRIP \
-          --cross-prefix=$CROSS_PREFIX \
-          --disable-static \
-          --enable-shared \
+          --arch=armeabi-v7a \
+          --as=arm-linux-androideabi-clang \
+          --cc=arm-linux-androideabi-clang \
+          --cxx=arm-linux-androideabi-clang++ \
+          --nm=llvm-nm \
+          --pkg-config=$PKG_CONFIG \
+          --strip=llvm-strip \
+          --cross-prefix=arm-linux-androideabi- \
           --disable-indevs \
           --disable-outdevs \
-          --disable-everything \
-          --enable-small \
+          --enable-indev=lavfi \
+          --disable-static \
+          --disable-symver \
           --enable-cross-compile \
+          --enable-gnutls \
           --enable-gpl \
           --enable-version3 \
-          --enable-libmp3lame \
-          --enable-libx264 \
-          --enable-libx265 \
-          --enable-libvpx \
-          --enable-libopus \
-          --enable-libvorbis \
-          --enable-libfreetype \
+          --enable-jni \
+          --enable-lcms2 \
+          --enable-libaom \
           --enable-libass \
-          --enable-libdav1d \
-          --enable-libwebp \
-          --enable-libtheora \
-          --enable-libsoxr \
-          --enable-libvidstab \
-          --enable-libzimg \
-          --enable-libxml2 \
           --enable-libbluray \
-          --enable-libopenmpt \
+          --enable-libdav1d \
+          --enable-libfreetype \
           --enable-libgme \
+          --enable-libmp3lame \
           --enable-libopencore-amrnb \
           --enable-libopencore-amrwb \
+          --enable-libopenmpt \
+          --enable-libopus \
           --enable-librav1e \
+          --enable-libsoxr \
           --enable-libsrt \
           --enable-libssh \
           --enable-libsvtav1 \
-          --enable-libvo-amrwbenc \
+          --enable-libtheora \
           --enable-libv4l2 \
+          --enable-libvidstab \
+          --enable-libvo-amrwbenc \
+          --enable-libvorbis \
+          --enable-libvpx \
+          --enable-libwebp \
+          --enable-libx264 \
+          --enable-libx265 \
+          --enable-libxml2 \
           --enable-libxvid \
           --enable-libzimg \
-          --enable-neon
+          --enable-mediacodec \
+          --enable-opencl \
+          --enable-shared \
+          --prefix=${{ env.PREFIX }} \
+          --target-os=android \
+          --extra-libs=-landroid-glob \
+          --disable-vulkan \
+          --enable-neon \
+          --disable-libfdk-aac
 
     - name: Build FFmpeg
       run: |
