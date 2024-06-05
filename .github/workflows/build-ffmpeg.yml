@@ -144,3 +144,9 @@ jobs:
       with:
         name: ffmpeg-binary
         path: ${{ env.PREFIX }}/bin/ffmpeg
+
+    - name: Upload config.log
+      uses: actions/upload-artifact@v2
+      with:
+        name: config-log
+        path: ffmpeg-${{ env.TERMUX_PKG_VERSION }}/config.log # 上传 config.log 文件
