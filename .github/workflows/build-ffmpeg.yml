@@ -1,97 +1,90 @@
-name: Build FFmpeg for Android
+name: Build FFmpeg for Termux
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - main # 触发构建的分支
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      ANDROID_NDK_VERSION: r25c
-      ANDROID_API_LEVEL: 21
-      TERMUX_PREFIX: /data/data/com.termux/files/usr
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up JDK 8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 8
+      - name: Set up environment
+        env:
+          ANDROID_NDK_VERSION: r26b # 根据你的需求修改NDK版本
+          TERMUX_ARCH: arm
+          TERMUX_HOST_PLATFORM: arm-linux-androideabi
+        run: |
+          # 下载并解压Android NDK
+          wget -q https://dl.google.com/android/repository/android-ndk-$ANDROID_NDK_VERSION-linux.zip
+          unzip -q android-ndk-$ANDROID_NDK_VERSION-linux.zip
+          export ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-$ANDROID_NDK_VERSION
 
-    - name: Download and set up Android NDK
-      run: |
-        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
-        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
-        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-        echo "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+          # 设置工具链路径
+          export PATH=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          export AS=arm-linux-androideabi-clang
+          export CC=arm-linux-androideabi-clang
+          export CXX=arm-linux-androideabi-clang++
+          export NM=llvm-nm
+          export PKG_CONFIG=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/pkg-config
+          export STRIP=llvm-strip
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          autoconf \
-          automake \
-          build-essential \
-          cmake \
-          git \
-          libtool \
-          pkg-config \
-          texinfo \
-          wget \
-          yasm \
-          zlib1g-dev
+      - name: Download FFmpeg source code
+        run: wget -q https://www.ffmpeg.org/releases/ffmpeg-${{ env.TERMUX_PKG_VERSION }}.tar.xz
 
-    - name: Configure and build FFmpeg
-      run: |
-        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-        cd ffmpeg
-        export _ARCH=arm64
-        export _EXTRA_CONFIGURE_FLAGS="--enable-neon"
-        ./configure \
-          --arch=$_ARCH \
-          --cross-prefix=${{ env.ANDROID_NDK_HOME }}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}- \
-          --disable-static \
-          --disable-symver \
-          --enable-cross-compile \
-          --enable-shared \
-          --prefix=${{ env.TERMUX_PREFIX }} \
-          --target-os=android \
-          --disable-indevs \
-          --disable-outdevs \
-          --enable-indev=lavfi \
-          $_EXTRA_CONFIGURE_FLAGS \
-          --disable-everything \
-          --enable-decoder=aac \
-          --enable-decoder=h264 \
-          --enable-decoder=mpeg4 \
-          --enable-encoder=aac \
-          --enable-encoder=libx264 \
-          --enable-encoder=mpeg4 \
-          --enable-parser=aac \
-          --enable-parser=h264 \
-          --enable-protocol=file \
-          --enable-protocol=http \
-          --enable-protocol=https \
-          --enable-protocol=rtp \
-          --enable-protocol=tcp \
-          --enable-protocol=udp \
-          --enable-tls \
-          --enable-small
-        make -j$(nproc)
-        make install
-      continue-on-error: true
+      - name: Extract FFmpeg source code
+        run: tar -xf ffmpeg-${{ env.TERMUX_PKG_VERSION }}.tar.xz
 
-    - name: Upload config.log
-      uses: actions/upload-artifact@v2
-      with:
-        name: config-log
-        path: ffmpeg/ffbuild/config.log
+      - name: Configure FFmpeg
+        working-directory: ffmpeg-${{ env.TERMUX_PKG_VERSION }}
+        run: |
+          ./configure \
+            --arch=armeabi-v7a \
+            --as="$AS" \
+            --cc="$CC" \
+            --cxx="$CXX" \
+            --nm="$NM" \
+            --pkg-config="$PKG_CONFIG" \
+            --strip="$STRIP" \
+            --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+            --disable-indevs \
+            --disable-outdevs \
+            --enable-indev=lavfi \
+            --disable-static \
+            --disable-symver \
+            --enable-cross-compile \
+            --enable-gpl \
+            --enable-version3 \
+            --enable-jni \
+            --enable-shared \
+            --prefix="$GITHUB_WORKSPACE/ffmpeg-build" \
+            --target-os=android \
+            --extra-libs="-landroid-glob" \
+            --disable-vulkan \
+            --enable-neon \
+            #  --disable-libfdk-aac \
+            #  精简配置，根据需要选择开启或关闭以下功能
+            --disable-doc \
+            --disable-programs \
+            --disable-avdevice \
+            --disable-postproc \
+            --disable-debug \
+            --disable-optimizations \
+            --enable-small
+
+      - name: Build FFmpeg
+        working-directory: ffmpeg-${{ env.TERMUX_PKG_VERSION }}
+        run: make -j$(nproc)
+
+      - name: Install FFmpeg
+        working-directory: ffmpeg-${{ env.TERMUX_PKG_VERSION }}
+        run: make install
+
+      - name: Upload FFmpeg executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffmpeg-armeabi-v7a
+          path: ffmpeg-build/bin/ffmpeg
