@@ -57,8 +57,8 @@ jobs:
         export API=${{ env.ANDROID_API_LEVEL }}
         export AR=$TOOLCHAIN/bin/arm-linux-androideabi-ar
         export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
-        export CC=$ANDROID_NDK_HOME/build/core/toolchains/arm-linux-androideabi-clang
-        export CXX=$ANDROID_NDK_HOME/build/core/toolchains/arm-linux-androideabi-clang++
+        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi24-clang
+        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi24-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
@@ -99,11 +99,11 @@ jobs:
 
     - name: Verify arm-linux-androideabi-clang
       run: |
-        if command -v $CC > /dev/null; then
-          echo "arm-linux-androideabi-clang found at: $(command -v $CC)"
-        else
-          echo "arm-linux-androideabi-clang not found"
-        fi
+       if command -v $CC > /dev/null; then
+         echo "arm-linux-androideabi-clang found at: $(command -v $CC)"
+       else
+         echo "arm-linux-androideabi-clang not found"
+       fi
 
     - name: Download FFmpeg source code
       run: |
