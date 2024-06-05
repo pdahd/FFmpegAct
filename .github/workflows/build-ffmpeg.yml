@@ -73,6 +73,22 @@ jobs:
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
         echo "PATH=/usr/local/bin:$PATH" >> $GITHUB_ENV
 
+    - name: Verify gas-preprocessor
+      run: |
+        if command -v gas-preprocessor.pl > /dev/null; then
+          echo "gas-preprocessor found at: $(command -v gas-preprocessor.pl)"
+        else
+          echo "gas-preprocessor not found"
+        fi
+
+    - name: Verify GNU assembler
+      run: |
+        if command -v as > /dev/null; then
+          echo "GNU assembler found at: $(command -v as)"
+        else
+          echo "GNU assembler not found"
+        fi
+
     - name: Download FFmpeg source code
       run: |
         wget https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
