@@ -38,7 +38,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev
+        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm
 
     - name: Install gas-preprocessor
       run: |
@@ -59,6 +59,7 @@ jobs:
         export STRIP=$TOOLCHAIN/bin/arm-linux-androideabi-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
         export CROSS_PREFIX=$TOOLCHAIN/bin/arm-linux-androideabi-
+        export PATH="/usr/local/bin:$PATH"
         echo "TOOLCHAIN=$TOOLCHAIN" >> $GITHUB_ENV
         echo "TARGET=$TARGET" >> $GITHUB_ENV
         echo "API=$API" >> $GITHUB_ENV
@@ -70,6 +71,7 @@ jobs:
         echo "STRIP=$STRIP" >> $GITHUB_ENV
         echo "NM=$NM" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
+        echo "PATH=/usr/local/bin:$PATH" >> $GITHUB_ENV
 
     - name: Download FFmpeg source code
       run: |
