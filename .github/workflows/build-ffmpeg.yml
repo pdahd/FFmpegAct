@@ -17,6 +17,7 @@ jobs:
           ANDROID_NDK_VERSION: r26b # 根据你的需求修改NDK版本
           TERMUX_ARCH: arm
           TERMUX_HOST_PLATFORM: arm-linux-androideabi
+          TERMUX_PKG_VERSION: 6.1.1 # 添加版本号定义
         run: |
           # 下载并解压Android NDK
           wget -q https://dl.google.com/android/repository/android-ndk-$ANDROID_NDK_VERSION-linux.zip
