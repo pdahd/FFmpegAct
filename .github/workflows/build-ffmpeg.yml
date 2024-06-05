@@ -25,7 +25,7 @@ jobs:
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
-        distribution: 'zulu' # 这里指定 Java 发行版
+        distribution: 'zulu'
         java-version: '11'
 
     - name: Download and extract Android NDK
@@ -34,6 +34,17 @@ jobs:
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux-x86_64.zip
         export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev
+
+    - name: Install gas-preprocessor
+      run: |
+        git clone https://github.com/FFmpeg/gas-preprocessor
+        sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
+        sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
     - name: Set up environment variables
       run: |
@@ -46,6 +57,7 @@ jobs:
         export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/arm-linux-androideabi-strip
+        export NM=$TOOLCHAIN/bin/llvm-nm
         export CROSS_PREFIX=$TOOLCHAIN/bin/arm-linux-androideabi-
         echo "TOOLCHAIN=$TOOLCHAIN" >> $GITHUB_ENV
         echo "TARGET=$TARGET" >> $GITHUB_ENV
@@ -56,6 +68,7 @@ jobs:
         echo "CXX=$CXX" >> $GITHUB_ENV
         echo "LD=$LD" >> $GITHUB_ENV
         echo "STRIP=$STRIP" >> $GITHUB_ENV
+        echo "NM=$NM" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
 
     - name: Download FFmpeg source code
@@ -76,7 +89,7 @@ jobs:
           --ld=$LD \
           --ar=$AR \
           --as=$AS \
-          --nm=$CROSS_PREFIX-nm \
+          --nm=$NM \
           --strip=$STRIP \
           --cross-prefix=$CROSS_PREFIX \
           --disable-static \
