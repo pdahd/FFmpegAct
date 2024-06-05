@@ -115,10 +115,10 @@ jobs:
       run: |
         cd ffmpeg-6.1.1
         ./configure \
-          --arch=armeabi-v7a \
-          --as=$CC \
-          --cc=$CC \
-          --cxx=$CXX \
+          --arch="$ARCH" \
+          --as="$AS" \
+          --cc="$CC" \
+          --cxx="$CXX" \
           --nm=$NM \
           --pkg-config=$PKG_CONFIG \
           --strip=$STRIP \
