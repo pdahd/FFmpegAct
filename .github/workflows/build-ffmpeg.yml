@@ -35,10 +35,10 @@ jobs:
         export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
-    - name: List NDK directory
+    - name: Verify arm-linux-androideabi-clang path
       run: |
-        ls -R $ANDROID_NDK_HOME
-    
+        find $ANDROID_NDK_HOME -name arm-linux-androideabi-clang
+
     - name: Install dependencies
       run: |
         sudo apt-get update
