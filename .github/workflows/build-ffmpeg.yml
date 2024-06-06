@@ -54,12 +54,9 @@ jobs:
     - name: Set up environment variables
       run: |
         export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
-        export TARGET=armv7a-linux-androideabi
-        export API=${{ env.ANDROID_API_LEVEL }}
-        export AR=$TOOLCHAIN/bin/arm-linux-androideabi-ar
         export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
-        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang
-        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi$API-clang++
+        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang
+        export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
@@ -67,10 +64,8 @@ jobs:
         export PKG_CONFIG=$ANDROID_NDK_HOME/prebuilt/linux-x86_64/bin/pkg-config
         export PATH="$TOOLCHAIN/bin:$PATH"
         export GASPP="/usr/local/bin/gas-preprocessor.pl"
+        export TERMUX_PREFIX=${{ env.PREFIX }}
         echo "TOOLCHAIN=$TOOLCHAIN" >> $GITHUB_ENV
-        echo "TARGET=$TARGET" >> $GITHUB_ENV
-        echo "API=$API" >> $GITHUB_ENV
-        echo "AR=$AR" >> $GITHUB_ENV
         echo "AS=$AS" >> $GITHUB_ENV
         echo "CC=$CC" >> $GITHUB_ENV
         echo "CXX=$CXX" >> $GITHUB_ENV
@@ -80,107 +75,33 @@ jobs:
         echo "CROSS_PREFIX=$CROSS_PREFIX" >> $GITHUB_ENV
         echo "PKG_CONFIG=$PKG_CONFIG" >> $GITHUB_ENV
         echo "PATH=$TOOLCHAIN/bin:$PATH" >> $GITHUB_ENV
-        echo "GASPP=/usr/local/bin/gas-preprocessor.pl" >> $GITHUB_ENV
+        echo "GASPP=$GASPP" >> $GITHUB_ENV
+        echo "TERMUX_PREFIX=$TERMUX_PREFIX" >> $GITHUB_ENV
 
-    - name: Verify gas-preprocessor
+    - name: Run build script
       run: |
-        if command -v gas-preprocessor.pl > /dev/null; then
-          echo "gas-preprocessor found at: $(command -v gas-preprocessor.pl)"
-        else
-          echo "gas-preprocessor not found"
-        fi
+        chmod +x build.sh
+        ./build.sh
 
-    - name: Verify GNU assembler
+    - name: Create symlinks for shared libraries
       run: |
-        if command -v as > /dev/null; then
-          echo "GNU assembler found at: $(command -v as)"
-        else
-          echo "GNU assembler not found"
-        fi
+        cd $PREFIX/lib || exit 1
+        for f in util codec format; do
+            s=$(eval echo \$_FFMPEG_SOVER_av${f})
+            if [ ! "${s}" ]; then
+                echo "Empty SOVERSION for libav${f}."
+                exit 1
+            fi
+            if [ ! -e "./libav${f}.so.${s}" ]; then
+                ln -sf libav${f}.so libav${f}.so.${s}
+            fi
+        done
 
-    - name: Verify arm-linux-androideabi-clang
-      run: |
-       if command -v $CC > /dev/null; then
-         echo "arm-linux-androideabi-clang found at: $(command -v $CC)"
-       else
-         echo "arm-linux-androideabi-clang not found"
-       fi
-
-    - name: Download FFmpeg source code
-      run: |
-        wget https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
-        tar -xvf ffmpeg-6.1.1.tar.xz
-        cd ffmpeg-6.1.1
-
-    - name: Configure FFmpeg
-      run: |
-        cd ffmpeg-6.1.1
-        ./configure \
-          --arch=${{ env.ARCH }} \
-          --as=${{ env.AS }} \
-          --cc=${{ env.CC }} \
-          --cxx=${{ env.CXX }} \
-          --nm=${{ env.NM }} \
-          --pkg-config=${{ env.PKG_CONFIG }} \
-          --strip=${{ env.STRIP }} \
-          --cross-prefix=${{ env.CROSS_PREFIX }} \
-          --disable-indevs \
-          --disable-outdevs \
-          --enable-indev=lavfi \
-          --disable-static \
-          --disable-symver \
-          --enable-cross-compile \
-          --enable-gnutls \
-          --enable-gpl \
-          --enable-version3 \
-          --enable-jni \
-          --enable-lcms2 \
-          --enable-libaom \
-          --enable-libass \
-          --enable-libbluray \
-          --enable-libdav1d \
-          --enable-libfreetype \
-          --enable-libgme \
-          --enable-libmp3lame \
-          --enable-libopencore-amrnb \
-          --enable-libopencore-amrwb \
-          --enable-libopenmpt \
-          --enable-libopus \
-          --enable-librav1e \
-          --enable-libsoxr \
-          --enable-libsrt \
-          --enable-libssh \
-          --enable-libsvtav1 \
-          --enable-libtheora \
-          --enable-libv4l2 \
-          --enable-libvidstab \
-          --enable-libvo-amrwbenc \
-          --enable-libvorbis \
-          --enable-libvpx \
-          --enable-libwebp \
-          --enable-libx264 \
-          --enable-libx265 \
-          --enable-libxml2 \
-          --enable-libxvid \
-          --enable-libzimg \
-          --enable-mediacodec \
-          --enable-opencl \
-          --enable-shared \
-          --prefix=${{ env.PREFIX }} \
-          --target-os=android \
-          --extra-libs=-landroid-glob \
-          --disable-vulkan \
-          --enable-neon \
-          --disable-libfdk-aac
-
-    - name: Build FFmpeg
-      run: |
-        cd ffmpeg-6.1.1
-        make -j$(nproc)
-        make install
-
-    - name: Upload FFmpeg binary
+    - name: Upload FFmpeg shared libraries
       uses: actions/upload-artifact@v2
       with:
-        name: ffmpeg-binary
-        path: ${{ env.PREFIX }}/bin/ffmpeg
+        name: ffmpeg-shared-libraries
+        path: |
+          $PREFIX/lib/libavutil.so*
+          $PREFIX/lib/libavcodec.so*
+          $PREFIX/lib/libavformat.so*
