@@ -117,3 +117,9 @@ termux_step_configure() {
         --disable-libfdk-aac
     # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
 }
+
+termux_step_build() {
+    cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+    make -j$(nproc)
+    make install
+}
