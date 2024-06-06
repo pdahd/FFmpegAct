@@ -110,7 +110,7 @@ termux_step_configure() {
         --enable-mediacodec \
         --enable-opencl \
         --enable-shared \
-        --prefix="$GITHUB_WORKSPACE/termux/usr" \
+        --prefix="$GITHUB_WORKSPACE/termux/usr/lib" \
         --target-os=android \
         --extra-libs="-landroid-glob" \
         --disable-vulkan \
