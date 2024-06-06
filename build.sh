@@ -54,7 +54,6 @@ termux_step_configure() {
         termux_error_exit "Unsupported arch: $ARCH"
     fi
 
-    mkdir -p $GITHUB_WORKSPACE/termux/usr/lib
     
     $GITHUB_WORKSPACE/ffmpeg-6.1.1/configure \
         --arch="${_ARCH}" \
@@ -110,7 +109,7 @@ termux_step_configure() {
         --enable-mediacodec \
         --enable-opencl \
         --enable-shared \
-        --prefix="$GITHUB_WORKSPACE/termux/usr/lib" \
+        --prefix="$GITHUB_WORKSPACE/termux/usr" \
         --target-os=android \
         --extra-libs="-landroid-glob" \
         --disable-vulkan \
