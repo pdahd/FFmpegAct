@@ -77,6 +77,9 @@ jobs:
         echo "PATH=$TOOLCHAIN/bin:$PATH" >> $GITHUB_ENV
         echo "GASPP=$GASPP" >> $GITHUB_ENV
         echo "TERMUX_PREFIX=$TERMUX_PREFIX" >> $GITHUB_ENV
+        echo "_FFMPEG_SOVER_avutil=58" >> $GITHUB_ENV
+        echo "_FFMPEG_SOVER_avcodec=60" >> $GITHUB_ENV
+        echo "_FFMPEG_SOVER_avformat=60" >> $GITHUB_ENV
 
     - name: Run build script
       run: |
