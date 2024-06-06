@@ -114,9 +114,6 @@ termux_step_configure() {
         --disable-vulkan \
         $_EXTRA_CONFIGURE_FLAGS \
         --disable-libfdk-aac
-    make -j$(nproc)
-    make install
-    make clean
     # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
 }
 
