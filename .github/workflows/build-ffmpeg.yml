@@ -101,6 +101,10 @@ jobs:
             fi
         done
 
+    
+    - name: Debug List files in lib directory
+      run: ls -l ${PREFIX}/lib
+    
     - name: Upload FFmpeg shared libraries
       uses: actions/upload-artifact@v2
       with:
