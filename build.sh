@@ -109,7 +109,7 @@ termux_step_configure() {
         --enable-mediacodec \
         --enable-opencl \
         --enable-shared \
-        --prefix="$PREFIX/lib" \
+        --prefix="$PREFIX" \
         --target-os=android \
         --extra-libs="-landroid-glob" \
         --disable-vulkan \
