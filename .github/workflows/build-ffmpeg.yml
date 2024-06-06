@@ -110,6 +110,9 @@ jobs:
       with:
         name: ffmpeg-shared-libraries
         path: |
-          $PREFIX/lib/libavutil.so
-          $PREFIX/lib/libavcodec.so
-          $PREFIX/lib/libavformat.so
+          ${PREFIX}/lib/libavutil.so*
+          ${PREFIX}/lib/libavcodec.so*
+          ${PREFIX}/lib/libavformat.so*
+          ${PREFIX}/lib/libavutil.so.*  # 添加此行，匹配符号链接
+          ${PREFIX}/lib/libavcodec.so.*  # 添加此行，匹配符号链接
+          ${PREFIX}/lib/libavformat.so.*  # 添加此行，匹配符号链接
