@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ffmpeg-shared-libraries
-        path: |
-          $PREFIX/lib/libavutil.so
-          $PREFIX/lib/libavcodec.so
-          $PREFIX/lib/libavformat.so
+        path: $PREFIX/lib/libavformat.so
+                         
+          
+        
