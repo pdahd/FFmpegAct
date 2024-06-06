@@ -53,8 +53,6 @@ termux_step_configure() {
     else
         termux_error_exit "Unsupported arch: $ARCH"
     fi
-
-    mkdir -p $GITHUB_WORKSPACE/termux/usr/lib
     
     $GITHUB_WORKSPACE/ffmpeg-6.1.1/configure \
         --arch="${_ARCH}" \
@@ -116,11 +114,10 @@ termux_step_configure() {
         --disable-vulkan \
         $_EXTRA_CONFIGURE_FLAGS \
         --disable-libfdk-aac
+    make -j$(nproc)
+    make install
+    make clean
     # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
 }
 
-termux_step_build() {
-         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-         make -j$(nproc)
-         make install
-     }
+
