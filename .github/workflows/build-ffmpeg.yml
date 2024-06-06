@@ -16,7 +16,7 @@ jobs:
       ANDROID_NDK_VERSION: r26d
       ANDROID_API_LEVEL: 24
       ARCH: armeabi-v7a
-      PREFIX: ${{ github.workspace }}/termux/usr/lib
+      PREFIX: ${{ github.workspace }}/termux/usr
 
     steps:
     - name: Checkout repository
