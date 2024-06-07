@@ -34,6 +34,7 @@ termux_step_pre_configure() {
 }
 
 termux_step_configure() {
+    echo "Running termux_step_configure"
     cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
     # 创建调试信息文件
