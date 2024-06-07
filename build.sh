@@ -119,7 +119,7 @@ termux_step_configure() {
         --extra-libs="-landroid-glob" \
         --disable-vulkan \
         $_EXTRA_CONFIGURE_FLAGS \
-        --disable-libfdk-aac | tee configure.log
+        --disable-libfdk-aac 
     # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
     # 检查 configure 命令返回值
     if [ $? -ne 0 ]; then
