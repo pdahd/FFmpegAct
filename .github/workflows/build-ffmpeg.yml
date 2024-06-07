@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: r26d
+      ANDROID_NDK_VERSION: r26b
       ANDROID_API_LEVEL: 24
       TERMUX_ARCH: arm
       PREFIX: ${{ github.workspace }}/termux/usr
