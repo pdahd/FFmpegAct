@@ -64,6 +64,7 @@ termux_step_configure() {
         --strip="$STRIP" \
         --cross-prefix="${CROSS_PREFIX}" \
         --disable-indevs \
+        --disable-tests \
         --disable-outdevs \
         --enable-indev=lavfi \
         --disable-static \
