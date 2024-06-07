@@ -85,11 +85,6 @@ jobs:
         echo "_FFMPEG_SOVER_avutil=58" >> $GITHUB_ENV
         echo "_FFMPEG_SOVER_avcodec=60" >> $GITHUB_ENV
         echo "_FFMPEG_SOVER_avformat=60" >> $GITHUB_ENV
-
-    - name: Test compiler
-      run: |
-        echo 'int main() { return 0; }' > test.c
-        $TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang test.c -o test
         
 
     - name: Configure FFmpeg
@@ -176,12 +171,14 @@ jobs:
             --extra-libs="-landroid-glob" \
             --disable-vulkan \
             $_EXTRA_CONFIGURE_FLAGS \
-            --disable-libfdk-aac
+            --disable-libfdk-aac > configure.log 2>&1
 
         if [ $? -ne 0 ]; then
             echo "Error: configure failed!"
             exit 1
         fi
+        
+        cat configure.log
 
     - name: Build FFmpeg
       run: |
