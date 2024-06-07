@@ -103,7 +103,7 @@ jobs:
         pwd  # 打印当前工作目录
         ls -la tests  # 列出 tests 目录内容
         export MAKEFLAGS=-I$GITHUB_WORKSPACE/ffmpeg-6.1.1/tests
-        make -C tests -k -j$(nproc)
+        make -j$(nproc)
         make install
     
     - name: Create symlinks for shared libraries
