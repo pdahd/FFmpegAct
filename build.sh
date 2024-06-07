@@ -36,6 +36,9 @@ termux_step_pre_configure() {
 termux_step_configure() {
     cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
+    # 清除 configure 缓存
+    rm -rf $GITHUB_WORKSPACE/ffmpeg-6.1.1/config.cache
+
     local _EXTRA_CONFIGURE_FLAGS=""
     if [ $ARCH = "arm" ]; then
         _ARCH="armeabi-v7a"
@@ -116,6 +119,11 @@ termux_step_configure() {
         $_EXTRA_CONFIGURE_FLAGS \
         --disable-libfdk-aac
     # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
+    # 检查 configure 命令返回值
+    if [ $? -ne 0 ]; then
+        echo "Error: configure failed!"
+        exit 1
+    fi
 }
 
 
