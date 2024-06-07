@@ -92,26 +92,25 @@ jobs:
 
         export TERMUX_PKG_BUILDDIR=$GITHUB_WORKSPACE/ffmpeg-6.1.1
         export TERMUX_PKG_SRCDIR=$GITHUB_WORKSPACE/ffmpeg-6.1.1
+        
+        _EXTRA_CONFIGURE_FLAGS=""  # 定义为全局变量
 
-        local _EXTRA_CONFIGURE_FLAGS=""
         if [ $TERMUX_ARCH = "arm" ]; then
-            _ARCH="armeabi-v7a"
-            _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        _ARCH="armeabi-v7a"
+        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         elif [ $TERMUX_ARCH = "i686" ]; then
-            _ARCH="x86"
-            # Specify --disable-asm to prevent text relocations on i686,
-            # see https://trac.ffmpeg.org/ticket/4928
-            _EXTRA_CONFIGURE_FLAGS="--disable-asm"
+        _ARCH="x86"
+        _EXTRA_CONFIGURE_FLAGS="--disable-asm"
         elif [ $TERMUX_ARCH = "x86_64" ]; then
-            _ARCH="x86_64"
+        _ARCH="x86_64"
         elif [ $TERMUX_ARCH = "aarch64" ]; then
-            _ARCH=$TERMUX_ARCH
-            _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        _ARCH=$TERMUX_ARCH
+        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         else
-            echo "Unsupported arch: $TERMUX_ARCH"
-            exit 1
+        echo "Unsupported arch: $TERMUX_ARCH"
+        exit 1
         fi
-
+        
         $TERMUX_PKG_SRCDIR/configure \
             --arch="${_ARCH}" \
             --as="$AS" \
