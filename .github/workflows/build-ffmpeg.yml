@@ -86,8 +86,11 @@ jobs:
         echo "_FFMPEG_SOVER_avcodec=60" >> $GITHUB_ENV
         echo "_FFMPEG_SOVER_avformat=60" >> $GITHUB_ENV
 
-    - name: Check compiler existence
-      run: ls -l $TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang
+    - name: Test compiler
+      run: |
+        echo 'int main() { return 0; }' > test.c
+        $TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang test.c -o test
+        ./test
 
     - name: Configure FFmpeg
       run: |
