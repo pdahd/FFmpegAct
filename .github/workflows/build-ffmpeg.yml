@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: 25.2.9519653
+      ANDROID_NDK_VERSION: r26d
       ANDROID_API_LEVEL: 24
       ARCH: armeabi-v7a
       PREFIX: ${{ github.workspace }}/termux/usr
@@ -38,18 +38,10 @@ jobs:
 
     - name: Download and extract Android NDK
       run: |
-        wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
-        mv android-ndk-r25c-linux.zip 25.2.9519653-linux.zip  # 重命名压缩包
-        unzip 25.2.9519653-linux.zip -d /usr/local/lib/android/sdk/ndk/
-        export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/25.2.9519653  # 设置 NDK_HOME 变量
+        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
+        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
+        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-
-    - name: Verify NDK directory structure
-      run: |
-        echo "Downloaded NDK directory structure:"
-        ls -la $ANDROID_NDK_HOME
-        echo "/usr/local/lib/android/sdk/ndk directory structure:"
-        ls -la /usr/local/lib/android/sdk/ndk
 
     - name: Install dependencies
       run: |
