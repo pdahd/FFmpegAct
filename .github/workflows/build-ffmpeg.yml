@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: r25c
+      ANDROID_NDK_VERSION: 25.2.9519653
       ANDROID_API_LEVEL: 24
       ARCH: armeabi-v7a
       PREFIX: ${{ github.workspace }}/termux/usr
