@@ -90,7 +90,7 @@ jobs:
       run: |
         echo 'int main() { return 0; }' > test.c
         $TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang test.c -o test
-        ./test
+        
 
     - name: Configure FFmpeg
       run: |
