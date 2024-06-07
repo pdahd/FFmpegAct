@@ -38,9 +38,9 @@ jobs:
 
     - name: Download and extract Android NDK
       run: |
-        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
-        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
-        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
+        wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip  # 使用 GitHub 页面提供的链接
+        unzip android-ndk-r25c-linux.zip
+        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-r25c  # 设置 NDK_HOME 变量
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
     - name: Install dependencies
