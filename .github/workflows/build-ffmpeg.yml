@@ -90,8 +90,10 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
+        _ARCH="armeabi-v7a"
+        
         if [ $ARCH = "arm" ]; then
-            _ARCH="armeabi-v7a"
+            
             local _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         elif [ $ARCH = "i686" ]; then
             _ARCH="x86"
