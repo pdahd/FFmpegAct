@@ -184,6 +184,12 @@ jobs:
         cat configure.log
         cat configure.strace
 
+    - name: Upload config.log
+      uses: actions/upload-artifact@v3
+      with:
+        name: config-log
+        path: $GITHUB_WORKSPACE/ffmpeg-6.1.1/config.log   
+    
     - name: Build FFmpeg
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
