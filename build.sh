@@ -36,14 +36,16 @@ termux_step_pre_configure() {
 termux_step_configure() {
     cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
+    # 创建调试信息文件
+    debug_file="configure_debug.txt"
+    echo "" > "$debug_file"
+
     local _EXTRA_CONFIGURE_FLAGS=""
     if [ $ARCH = "arm" ]; then
         _ARCH="armeabi-v7a"
         _EXTRA_CONFIGURE_FLAGS="--enable-neon"
     elif [ $ARCH = "i686" ]; then
         _ARCH="x86"
-        # Specify --disable-asm to prevent text relocations on i686,
-        # see https://trac.ffmpeg.org/ticket/4928
         _EXTRA_CONFIGURE_FLAGS="--disable-asm"
     elif [ $ARCH = "x86_64" ]; then
         _ARCH="x86_64"
@@ -53,7 +55,29 @@ termux_step_configure() {
     else
         termux_error_exit "Unsupported arch: $ARCH"
     fi
-    
+
+    # 将 configure 命令写入文件
+    echo "Executing configure command:" >> "$debug_file"
+    echo "$GITHUB_WORKSPACE/ffmpeg-6.1.1/configure \\" >> "$debug_file"
+    echo "    --arch=\"${_ARCH}\" \\" >> "$debug_file"
+    echo "    --as=\"$AS\" \\" >> "$debug_file"
+    echo "    --cc=\"$CC\" \\" >> "$debug_file"
+    echo "    --cxx=\"$CXX\" \\" >> "$debug_file"
+    echo "    --nm=\"$NM\" \\" >> "$debug_file"
+    echo "    --pkg-config=\"$PKG_CONFIG\" \\" >> "$debug_file"
+    echo "    --strip=\"$STRIP\" \\" >> "$debug_file"
+    echo "    --cross-prefix=\"${CROSS_PREFIX}\" \\" >> "$debug_file"
+    echo "    --disable-static \\" >> "$debug_file"
+    echo "    --disable-symver \\" >> "$debug_file"
+    echo "    --enable-shared \\" >> "$debug_file"
+    echo "    --enable-cross-compile \\" >> "$debug_file"
+    echo "    --enable-libx264 \\" >> "$debug_file"
+    echo "    --enable-libx265 \\" >> "$debug_file"
+    echo "    --prefix=\"${PREFIX}\" \\" >> "$debug_file"
+    echo "    --target-os=android \\" >> "$debug_file"
+    echo "    $_EXTRA_CONFIGURE_FLAGS" >> "$debug_file"
+
+    # 执行 configure 命令，并将输出重定向到文件
     $GITHUB_WORKSPACE/ffmpeg-6.1.1/configure \
         --arch="${_ARCH}" \
         --as="$AS" \
@@ -63,64 +87,24 @@ termux_step_configure() {
         --pkg-config="$PKG_CONFIG" \
         --strip="$STRIP" \
         --cross-prefix="${CROSS_PREFIX}" \
-        --disable-indevs \
-        --disable-tests \
-        --disable-outdevs \
-        --enable-indev=lavfi \
         --disable-static \
         --disable-symver \
+        --enable-shared \
         --enable-cross-compile \
-        --enable-gnutls \
-        --enable-gpl \
-        --enable-version3 \
-        --enable-jni \
-        --enable-lcms2 \
-        --enable-libaom \
-        --enable-libass \
-        --enable-libbluray \
-        --enable-libdav1d \
-        --enable-libfontconfig \
-        --enable-libfreetype \
-        --enable-libfribidi \
-        --enable-libgme \
-        --enable-libharfbuzz \
-        --enable-libmp3lame \
-        --enable-libopencore-amrnb \
-        --enable-libopencore-amrwb \
-        --enable-libopenmpt \
-        --enable-libopus \
-        --enable-librav1e \
-        --enable-libsoxr \
-        --enable-libsrt \
-        --enable-libssh \
-        --enable-libsvtav1 \
-        --enable-libtheora \
-        --enable-libv4l2 \
-        --enable-libvidstab \
-        --enable-libvo-amrwbenc \
-        --enable-libvorbis \
-        --enable-libvpx \
-        --enable-libwebp \
         --enable-libx264 \
         --enable-libx265 \
-        --enable-libxml2 \
-        --enable-libxvid \
-        --enable-libzimg \
-        --enable-mediacodec \
-        --enable-opencl \
-        --enable-shared \
         --prefix="${PREFIX}" \
         --target-os=android \
-        --extra-libs="-landroid-glob" \
-        --disable-vulkan \
-        $_EXTRA_CONFIGURE_FLAGS \
-        --disable-libfdk-aac 
-    # GPLed FFmpeg binaries linked against fdk-aac are not redistributable.
+        $_EXTRA_CONFIGURE_FLAGS >> "$debug_file" 2>&1
+
     # 检查 configure 命令返回值
     if [ $? -ne 0 ]; then
-        echo "Error: configure failed!"
+        echo "Error: configure failed!" >> "$debug_file"
         exit 1
     fi
+
+    # 删除 configure.log 文件
+    rm -f configure.log
 }
 
 
