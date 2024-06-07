@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: 25.2.9519653
+      ANDROID_NDK_VERSION: r25c
       ANDROID_API_LEVEL: 24
       ARCH: armeabi-v7a
       PREFIX: ${{ github.workspace }}/termux/usr
@@ -38,9 +38,9 @@ jobs:
 
     - name: Download and extract Android NDK
       run: |
-        wget https://dl.google.com/android/repository/android-ndk-25.2.9519653-linux.zip
-        unzip android-ndk-25.2.9519653-linux.zip
-        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-25.2.9519653
+        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
+        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
+        export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
     - name: Install dependencies
