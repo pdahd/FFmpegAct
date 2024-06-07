@@ -89,6 +89,9 @@ jobs:
 
     - name: Configure FFmpeg
       run: |
+        set -x  # 启用调试模式
+        set -e  # 启用错误退出模式
+        
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
         export TERMUX_PKG_BUILDDIR=$GITHUB_WORKSPACE/ffmpeg-6.1.1
