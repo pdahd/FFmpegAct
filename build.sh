@@ -57,7 +57,7 @@ termux_step_configure() {
         termux_error_exit "Unsupported arch: $ARCH"
     fi
 
-    set -x
+    env ANDROID_NDK=$ANDROID_NDK_HOME ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
     
     $GITHUB_WORKSPACE/ffmpeg-6.1.1/configure \
         --arch="${_ARCH}" \
@@ -126,8 +126,6 @@ termux_step_configure() {
         echo "Error: configure failed!"
         exit 1
     fi
-
-    set +x
 }
 
 
