@@ -94,6 +94,12 @@ jobs:
         chmod +x build.sh
         ./build.sh
 
+    - name: Print environment information
+      run: |
+        echo "Current working directory: $(pwd)"
+        echo "Environment variables:"
+        env | sort
+
     - name: Set permissions for FFmpeg source
       run: chmod -R 777 $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
