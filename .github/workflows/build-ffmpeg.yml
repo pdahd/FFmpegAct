@@ -182,6 +182,7 @@ jobs:
         fi
         
         cat configure.log
+        cat configure.strace
 
     - name: Build FFmpeg
       run: |
