@@ -15,7 +15,7 @@ jobs:
     env:
       ANDROID_NDK_VERSION: r26d
       ANDROID_API_LEVEL: 24
-      ARCH: armeabi-v7a
+      TERMUX_ARCH: armeabi-v7a
       PREFIX: ${{ github.workspace }}/termux/usr
 
     steps:
@@ -90,22 +90,20 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
-        _ARCH="armeabi-v7a"
-        
-        if [ $ARCH = "arm" ]; then
-            
+        if [ $TERMUX_ARCH = "arm" ]; then  
+            _ARCH="armeabi-v7a"
             local _EXTRA_CONFIGURE_FLAGS="--enable-neon"
-        elif [ $ARCH = "i686" ]; then
+        elif [ $TERMUX_ARCH = "i686" ]; then  
             _ARCH="x86"
             local _EXTRA_CONFIGURE_FLAGS="--disable-asm"
-        elif [ $ARCH = "x86_64" ]; then
+        elif [ $TERMUX_ARCH = "x86_64" ]; then  
             _ARCH="x86_64"
-            local _EXTRA_CONFIGURE_FLAGS=""  
-        elif [ $ARCH = "aarch64" ]; then
-            _ARCH=$ARCH
+            local _EXTRA_CONFIGURE_FLAGS=""
+        elif [ $TERMUX_ARCH = "aarch64" ]; then  
+            _ARCH=$TERMUX_ARCH
             local _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         else
-            echo "Unsupported arch: $ARCH"
+            echo "Unsupported arch: $TERMUX_ARCH"  
             exit 1
         fi
 
