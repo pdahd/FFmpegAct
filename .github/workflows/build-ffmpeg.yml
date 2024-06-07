@@ -68,8 +68,6 @@ jobs:
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
-        export ANDROID_NDK=$ANDROID_NDK_HOME
-        export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
         export CROSS_PREFIX=$TOOLCHAIN/bin/arm-linux-androideabi-
         export PKG_CONFIG=$ANDROID_NDK_HOME/prebuilt/linux-x86_64/bin/pkg-config
         export PATH="$TOOLCHAIN/bin:$PATH"
@@ -101,6 +99,8 @@ jobs:
         echo "Current working directory: $(pwd)"
         echo "Environment variables:"
         env | sort
+        echo "Configure debug information:"
+        cat $GITHUB_WORKSPACE/ffmpeg-6.1.1/configure_debug.txt  # 打印调试信息
 
     - name: Set permissions for FFmpeg source
       run: chmod -R 777 $GITHUB_WORKSPACE/ffmpeg-6.1.1
