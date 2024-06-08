@@ -129,7 +129,7 @@ jobs:
         fi
 
         $TERMUX_PKG_SRCDIR/configure \
-        --arch="${_ARCH}" \
+        --arch="$TERMUX_ARCH" \
         --as="$AS" \
         --cc="$CC" \
         --cxx="$CXX" \
