@@ -15,7 +15,7 @@ jobs:
     env:
       ANDROID_NDK_VERSION: r26d
       ANDROID_API_LEVEL: 24
-      TERMUX_ARCH: aarch64
+      TERMUX_ARCH: arm
       PREFIX: ${{ github.workspace }}/termux/usr
       TERMUX_HOST_PLATFORM: linux-x86_64
 
@@ -60,8 +60,8 @@ jobs:
       run: |
         export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
         export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
-        export CC=$TOOLCHAIN/bin/aarch64-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang
-        export CXX=$TOOLCHAIN/bin/aarch64-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
+        export CC=$TOOLCHAIN/bin/arm-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang
+        export CXX=$TOOLCHAIN/bin/arm-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
@@ -121,7 +121,7 @@ jobs:
             --nm="$NM" \
             --pkg-config="$PKG_CONFIG" \
             --strip="$STRIP" \
-            --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+            --cross-prefix="arm-linux-androideabi-" \
             --disable-indevs \
             --disable-outdevs \
             --enable-indev=lavfi \
