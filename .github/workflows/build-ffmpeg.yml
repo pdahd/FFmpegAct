@@ -42,6 +42,8 @@ jobs:
 
     - name: Verify NDK directory structure and list clang/clang++ paths
       run: |
+        echo "NDK Directory Structure:"
+        ls -R $ANDROID_NDK_HOME
         echo "Clang and Clang++ Compiler Paths:"
         find $ANDROID_NDK_HOME -type f \( -name "clang" -o -name "clang++" \) -exec ls -l {} \;
     
