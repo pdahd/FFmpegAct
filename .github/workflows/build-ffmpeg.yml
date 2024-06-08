@@ -40,6 +40,13 @@ jobs:
         export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
+    - name: Verify NDK directory structure and list clang paths
+      run: |
+        echo "NDK Directory Structure:"
+        ls -R $ANDROID_NDK_HOME
+        echo "Clang Compiler Paths:"
+        find $ANDROID_NDK_HOME -type f -name "clang" -exec ls -l {} \;
+    
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -55,15 +62,6 @@ jobs:
         git clone https://github.com/FFmpeg/gas-preprocessor
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
-
-    - name: Check for arm-linux-androideabi-clang compiler
-      run: |
-        if [ ! -f "$TOOLCHAIN/bin/arm-linux-androideabi-clang" ]; then
-          echo "arm-linux-androideabi-clang compiler not found!"
-          echo "Listing all clang compilers in $TOOLCHAIN/bin:"
-          ls -l $TOOLCHAIN/bin/*clang*  # 修改为 $TOOLCHAIN/bin
-          exit 1
-        fi
     
     - name: Set up environment variables
       run: |
