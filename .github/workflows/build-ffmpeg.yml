@@ -61,7 +61,7 @@ jobs:
         export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
         export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
         export CC=$TOOLCHAIN/bin/aarch64-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang
-        export CXX=$TOOLCHAIN/bin/aarch64-v7a-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
+        export CXX=$TOOLCHAIN/bin/aarch64-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
