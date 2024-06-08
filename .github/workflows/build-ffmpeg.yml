@@ -89,8 +89,6 @@ jobs:
 
     - name: Configure FFmpeg
       run: |
-        set -x  # 启用调试模式
-        set -e  # 启用错误退出模式
         
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
@@ -174,21 +172,12 @@ jobs:
             --extra-libs="-landroid-glob" \
             --disable-vulkan \
             $_EXTRA_CONFIGURE_FLAGS \
-            --disable-libfdk-aac > configure.log 2>&1
+            --disable-libfdk-aac 
 
         if [ $? -ne 0 ]; then
             echo "Error: configure failed!"
             exit 1
-        fi
-        
-        cat configure.log
-        cat configure.strace
-
-    - name: Upload config.log
-      uses: actions/upload-artifact@v3
-      with:
-        name: config-log
-        path: $GITHUB_WORKSPACE/ffmpeg-6.1.1/config.log   
+        fi  
     
     - name: Build FFmpeg
       run: |
