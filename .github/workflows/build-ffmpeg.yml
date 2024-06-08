@@ -61,7 +61,7 @@ jobs:
         if [ ! -f "$TOOLCHAIN/bin/arm-linux-androideabi-clang" ]; then
           echo "arm-linux-androideabi-clang compiler not found!"
           echo "Listing all clang compilers in $TOOLCHAIN/bin:"
-          ls -l $TOOLCHAIN/bin/*clang*
+          ls -l $TOOLCHAIN/bin/*clang*  # 修改为 $TOOLCHAIN/bin
           exit 1
         fi
     
