@@ -43,7 +43,7 @@ jobs:
     - name: Verify NDK directory structure and list clang/clang++ paths
       run: |
         echo "Clang and Clang++ Compiler Paths in toolchains directory:"
-        find $ANDROID_NDK_HOME/toolchains -type f \( -name "clang" -o -name "clang++" \) -exec ls -l {} \;
+        find $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin -type f \( -name "clang" -o -name "clang++" \) -exec ls -l {} \;
     
     - name: Install dependencies
       run: |
