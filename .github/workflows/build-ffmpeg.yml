@@ -46,6 +46,11 @@ jobs:
         ls -R $ANDROID_NDK_HOME
         echo "Clang Compiler Paths:"
         find $ANDROID_NDK_HOME -type f -name "clang" -exec ls -l {} \;
+
+    - name: Verify NDK directory structure and list clang/clang++ paths
+      run: |
+        echo "Clang and Clang++ Compiler Paths:"
+        find $ANDROID_NDK_HOME -type f \( -name "clang" -o -name "clang++" \) -exec ls -l {} \;
     
     - name: Install dependencies
       run: |
