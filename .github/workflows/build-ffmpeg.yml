@@ -40,10 +40,12 @@ jobs:
         export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
 
-    - name: Verify NDK directory structure and list clang/clang++ paths
+    - name: Verify NDK directory structure and list clang paths
       run: |
-        echo "Clang and Clang++ Compiler Paths in toolchains directory:"
-        find $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin -type f \( -name "clang" -o -name "clang++" \) -exec ls -l {} \;
+        echo "NDK Directory Structure:"
+        ls -R $ANDROID_NDK_HOME
+        echo "Clang Compiler Paths:"
+        find $ANDROID_NDK_HOME -type f -name "clang" -exec ls -l {} \;
     
     - name: Install dependencies
       run: |
