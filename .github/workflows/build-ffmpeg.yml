@@ -129,7 +129,7 @@ jobs:
         --nm="$NM" \
         --pkg-config="$PKG_CONFIG" \
         --strip="$STRIP" \
-        --cross-prefix="arm-linux-androideabi-" \
+        --cross-prefix="${CROSS_PREFIX}" \
         --disable-indevs \
         --disable-outdevs \
         --enable-indev=lavfi \
