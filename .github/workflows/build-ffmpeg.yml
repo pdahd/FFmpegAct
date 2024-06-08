@@ -89,95 +89,101 @@ jobs:
 
     - name: Configure FFmpeg
       run: |
-        
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
 
         export TERMUX_PKG_BUILDDIR=$GITHUB_WORKSPACE/ffmpeg-6.1.1
         export TERMUX_PKG_SRCDIR=$GITHUB_WORKSPACE/ffmpeg-6.1.1
-        
-        _EXTRA_CONFIGURE_FLAGS=""  # 定义为全局变量
 
         if [ $TERMUX_ARCH = "arm" ]; then
         _ARCH="armeabi-v7a"
-        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        local _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        export CC=$TOOLCHAIN/bin/arm-linux-androideabi-clang
+        export CXX=$TOOLCHAIN/bin/arm-linux-androideabi-clang++
         elif [ $TERMUX_ARCH = "i686" ]; then
         _ARCH="x86"
-        _EXTRA_CONFIGURE_FLAGS="--disable-asm"
+        local _EXTRA_CONFIGURE_FLAGS="--disable-asm"
+        export CC=$TOOLCHAIN/bin/i686-linux-android${{ env.ANDROID_API_LEVEL }}-clang
+        export CXX=$TOOLCHAIN/bin/i686-linux-android${{ env.ANDROID_API_LEVEL }}-clang++
         elif [ $TERMUX_ARCH = "x86_64" ]; then
         _ARCH="x86_64"
+        local _EXTRA_CONFIGURE_FLAGS=""
+        export CC=$TOOLCHAIN/bin/x86_64-linux-android${{ env.ANDROID_API_LEVEL }}-clang
+        export CXX=$TOOLCHAIN/bin/x86_64-linux-android${{ env.ANDROID_API_LEVEL }}-clang++
         elif [ $TERMUX_ARCH = "aarch64" ]; then
         _ARCH=$TERMUX_ARCH
-        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        local _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        export CC=$TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang
+        export CXX=$TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang++
         else
         echo "Unsupported arch: $TERMUX_ARCH"
         exit 1
         fi
-        
+
         $TERMUX_PKG_SRCDIR/configure \
-            --arch="${_ARCH}" \
-            --as="$AS" \
-            --cc="$CC" \
-            --cxx="$CXX" \
-            --nm="$NM" \
-            --pkg-config="$PKG_CONFIG" \
-            --strip="$STRIP" \
-            --cross-prefix="arm-linux-androideabi-" \
-            --disable-indevs \
-            --disable-outdevs \
-            --enable-indev=lavfi \
-            --disable-static \
-            --disable-symver \
-            --enable-cross-compile \
-            --enable-gnutls \
-            --enable-gpl \
-            --enable-version3 \
-            --enable-jni \
-            --enable-lcms2 \
-            --enable-libaom \
-            --enable-libass \
-            --enable-libbluray \
-            --enable-libdav1d \
-            --enable-libfontconfig \
-            --enable-libfreetype \
-            --enable-libfribidi \
-            --enable-libgme \
-            --enable-libharfbuzz \
-            --enable-libmp3lame \
-            --enable-libopencore-amrnb \
-            --enable-libopencore-amrwb \
-            --enable-libopenmpt \
-            --enable-libopus \
-            --enable-librav1e \
-            --enable-libsoxr \
-            --enable-libsrt \
-            --enable-libssh \
-            --enable-libsvtav1 \
-            --enable-libtheora \
-            --enable-libv4l2 \
-            --enable-libvidstab \
-            --enable-libvo-amrwbenc \
-            --enable-libvorbis \
-            --enable-libvpx \
-            --enable-libwebp \
-            --enable-libx264 \
-            --enable-libx265 \
-            --enable-libxml2 \
-            --enable-libxvid \
-            --enable-libzimg \
-            --enable-mediacodec \
-            --enable-opencl \
-            --enable-shared \
-            --prefix="$TERMUX_PREFIX" \
-            --target-os=android \
-            --extra-libs="-landroid-glob" \
-            --disable-vulkan \
-            $_EXTRA_CONFIGURE_FLAGS \
-            --disable-libfdk-aac 
+        --arch="${_ARCH}" \
+        --as="$AS" \
+        --cc="$CC" \
+        --cxx="$CXX" \
+        --nm="$NM" \
+        --pkg-config="$PKG_CONFIG" \
+        --strip="$STRIP" \
+        --cross-prefix="arm-linux-androideabi-" \
+        --disable-indevs \
+        --disable-outdevs \
+        --enable-indev=lavfi \
+        --disable-static \
+        --disable-symver \
+        --enable-cross-compile \
+        --enable-gnutls \
+        --enable-gpl \
+        --enable-version3 \
+        --enable-jni \
+        --enable-lcms2 \
+        --enable-libaom \
+        --enable-libass \
+        --enable-libbluray \
+        --enable-libdav1d \
+        --enable-libfontconfig \
+        --enable-libfreetype \
+        --enable-libfribidi \
+        --enable-libgme \
+        --enable-libharfbuzz \
+        --enable-libmp3lame \
+        --enable-libopencore-amrnb \
+        --enable-libopencore-amrwb \
+        --enable-libopenmpt \
+        --enable-libopus \
+        --enable-librav1e \
+        --enable-libsoxr \
+        --enable-libsrt \
+        --enable-libssh \
+        --enable-libsvtav1 \
+        --enable-libtheora \
+        --enable-libv4l2 \
+        --enable-libvidstab \
+        --enable-libvo-amrwbenc \
+        --enable-libvorbis \
+        --enable-libvpx \
+        --enable-libwebp \
+        --enable-libx264 \
+        --enable-libx265 \
+        --enable-libxml2 \
+        --enable-libxvid \
+        --enable-libzimg \
+        --enable-mediacodec \
+        --enable-opencl \
+        --enable-shared \
+        --prefix="$TERMUX_PREFIX" \
+        --target-os=android \
+        --extra-libs="-landroid-glob" \
+        --disable-vulkan \
+        $_EXTRA_CONFIGURE_FLAGS \
+        --disable-libfdk-aac
 
         if [ $? -ne 0 ]; then
-            echo "Error: configure failed!"
-            exit 1
-        fi  
+        echo "Error: configure failed!"
+        exit 1
+        fi
     
     - name: Build FFmpeg
       run: |
