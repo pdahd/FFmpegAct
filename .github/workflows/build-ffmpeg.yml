@@ -15,7 +15,7 @@ jobs:
     env:
       ANDROID_NDK_VERSION: r26d
       ANDROID_API_LEVEL: 24
-      TERMUX_ARCH: armeabi-v7a
+      TERMUX_ARCH: aarch64
       PREFIX: ${{ github.workspace }}/termux/usr
       TERMUX_HOST_PLATFORM: linux-x86_64
 
@@ -60,8 +60,8 @@ jobs:
       run: |
         export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
         export AS=$TOOLCHAIN/bin/arm-linux-androideabi-as
-        export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang
-        export CXX=$TOOLCHAIN/bin/armv7a-v7a-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
+        export CC=$TOOLCHAIN/bin/aarch64-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang
+        export CXX=$TOOLCHAIN/bin/aarch64-v7a-linux-androideabi${{ env.ANDROID_API_LEVEL }}-clang++
         export LD=$TOOLCHAIN/bin/arm-linux-androideabi-ld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export NM=$TOOLCHAIN/bin/llvm-nm
@@ -87,12 +87,12 @@ jobs:
         echo "_FFMPEG_SOVER_avformat=60" >> $GITHUB_ENV
         
     - name: Check compiler existence
-      run: ls -l $TOOLCHAIN/bin/armv7a-linux-android${{ env.ANDROID_API_LEVEL }}-clang
+      run: ls -l $TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang
     
     - name: Test compiler
       run: |
         echo 'int main() { return 0; }' > test.c
-        $TOOLCHAIN/bin/armv7a-linux-android${{ env.ANDROID_API_LEVEL }}-clang test.c -o test
+        $TOOLCHAIN/bin/aarch64-linux-android${{ env.ANDROID_API_LEVEL }}-clang test.c -o test
     
     - name: Configure FFmpeg
       run: |
