@@ -24,7 +24,6 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
     - name: Set up JDK 11
-      if: false
       uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
@@ -37,7 +36,6 @@ jobs:
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
 
     - name: Install dependencies
-      if: false
       run: |
         sudo apt-get update
         sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm llvm \
@@ -48,7 +46,6 @@ jobs:
           liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev
 
     - name: Install gas-preprocessor
-      if: false
       run: |
         git clone https://github.com/FFmpeg/gas-preprocessor
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
@@ -63,8 +60,6 @@ jobs:
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
-        sudo apt-get update
-        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm llvm
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
         ARCH1=aarch64
@@ -87,53 +82,66 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         ./configure \
-          --target-os=android \
-          --prefix=$OUTPUT \
           --arch=$ARCH1 \
-          --cpu=$CPU \
-          --sysroot=$TOOLCHAIN/sysroot \
-          --enable-cross-compile \
-          --enable-neon \
-          --enable-hwaccels \
-          $ASM_SWITCH \
-          --enable-small \
-          --enable-avcodec \
-          --enable-avformat \
-          --enable-avutil \
-          --enable-swresample \
-          --enable-swscale \
-          --enable-avfilter \
-          --enable-postproc \
-          --enable-network \
-          --enable-bsfs \
-          --enable-postproc \
-          --enable-filters \
-          --enable-encoders \
-          --enable-gpl \
-          --enable-muxers \
-          --enable-parsers \
-          --enable-protocols \
-          --enable-nonfree \
-          --enable-jni \
-          --enable-mediacodec \
-          --enable-static \
-          --disable-shared \
-          --disable-doc \
-          --disable-avdevice \
-          --disable-ffmpeg \
-          --disable-ffplay \
-          --disable-ffprobe \
-          --disable-debug \
-          --disable-symver \
+          --as=$AS \
+          --cc=$CC \
+          --cxx=$CXX \
+          --nm=$NM \
+          --pkg-config=pkg-config \
+          --strip=$STRIP \
+          --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID- \
           --disable-indevs \
           --disable-outdevs \
-          --enable-decoders \
-          --enable-demuxers \
+          --enable-indev=lavfi \
+          --disable-static \
+          --disable-symver \
+          --enable-cross-compile \
+          --enable-gnutls \
+          --enable-gpl \
+          --enable-version3 \
+          --enable-jni \
+          --enable-lcms2 \
+          --enable-libaom \
+          --enable-libass \
+          --enable-libbluray \
+          --enable-libdav1d \
+          --enable-libfontconfig \
+          --enable-libfreetype \
+          --enable-libfribidi \
+          --enable-libgme \
+          --enable-libharfbuzz \
+          --enable-libmp3lame \
+          --enable-libopencore-amrnb \
+          --enable-libopencore-amrwb \
+          --enable-libopenmpt \
+          --enable-libopus \
+          --enable-librav1e \
+          --enable-libsoxr \
+          --enable-libsrt \
+          --enable-libssh \
+          --enable-libsvtav1 \
+          --enable-libtheora \
+          --enable-libv4l2 \
+          --enable-libvidstab \
+          --enable-libvo-amrwbenc \
+          --enable-libvorbis \
+          --enable-libvpx \
+          --enable-libwebp \
+          --enable-libx264 \
+          --enable-libx265 \
+          --enable-libxml2 \
+          --enable-libxvid \
+          --enable-libzimg \
+          --enable-mediacodec \
+          --enable-opencl \
+          --enable-shared \
+          --prefix=$OUTPUT \
+          --target-os=android \
+          --extra-libs="-landroid-glob" \
+          --disable-vulkan \
+          $ASM_SWITCH \
           --extra-cflags="$EXTRA_CFLAGS" \
-          --extra-ldflags="$EXTRA_LDFLAGS" \
-          --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
-          --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
-          --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
+          --extra-ldflags="$EXTRA_LDFLAGS"
 
     - name: Build FFmpeg for arm64-v8a
       run: |
