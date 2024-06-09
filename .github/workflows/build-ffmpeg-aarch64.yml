@@ -112,7 +112,6 @@ jobs:
           --disable-shared \
           --disable-doc \
           --disable-avdevice \
-          --disable-avresample \
           --disable-ffmpeg \
           --disable-ffplay \
           --disable-ffprobe \
