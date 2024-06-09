@@ -1,0 +1,146 @@
+name: Build FFmpeg for Termux
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'build-ffmpeg-aarch64.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'build-ffmpeg-aarch64.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      ANDROID_NDK_VERSION: r26d
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download FFmpeg source
+      run: |
+        wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
+    
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: Download and extract Android NDK
+      run: |
+        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
+        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
+        echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm llvm \
+          fontconfig libfreetype6-dev libfribidi-dev libgme-dev libharfbuzz-dev libaom-dev libass-dev libbluray-dev libbz2-dev \
+          libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev \
+          libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev \
+          libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libxvidcore-dev libzimg-dev \
+          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev
+
+    - name: Install gas-preprocessor
+      run: |
+        git clone https://github.com/FFmpeg/gas-preprocessor
+        sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
+        sudo chmod +x /usr/local/bin/gas-preprocessor.pl
+
+    - name: Set environment variables
+      run: |
+        echo "API=21" >> $GITHUB_ENV
+        echo "OS_TYPE=linux" >> $GITHUB_ENV
+        echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+        echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
+
+    - name: Configure FFmpeg for arm64-v8a
+      run: |
+        ABI=arm64-v8a
+        ARCH1=aarch64
+        ARCH2=aarch64
+        ANDROID=android
+        CPU=armv8-a
+        PRE_CFLAGS="-march=$CPU"
+        GCC_L=$NDK/toolchains/$ARCH1-linux-$ANDROID-4.9/prebuilt/$OS_TYPE-x86_64/lib/gcc/$ARCH1-linux-$ANDROID/4.9.x
+        ASM_SWITCH='--enable-asm'
+        OUTPUT=$GITHUB_WORKSPACE/android/$ABI
+        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
+        EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
+        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -lgcc -L$OUTPUT/lib"
+        ./configure \
+          --target-os=android \
+          --prefix=$OUTPUT \
+          --arch=$ARCH1 \
+          --cpu=$CPU \
+          --sysroot=$TOOLCHAIN/sysroot \
+          --enable-cross-compile \
+          --enable-neon \
+          --enable-hwaccels \
+          $ASM_SWITCH \
+          --enable-small \
+          --enable-avcodec \
+          --enable-avformat \
+          --enable-avutil \
+          --enable-swresample \
+          --enable-swscale \
+          --enable-avfilter \
+          --enable-postproc \
+          --enable-network \
+          --enable-bsfs \
+          --enable-postproc \
+          --enable-filters \
+          --enable-encoders \
+          --enable-gpl \
+          --enable-muxers \
+          --enable-parsers \
+          --enable-protocols \
+          --enable-nonfree \
+          --enable-jni \
+          --enable-mediacodec \
+          --enable-static \
+          --disable-shared \
+          --disable-doc \
+          --disable-avdevice \
+          --disable-avresample \
+          --disable-ffmpeg \
+          --disable-ffplay \
+          --disable-ffprobe \
+          --disable-debug \
+          --disable-symver \
+          --disable-indevs \
+          --disable-outdevs \
+          --enable-decoders \
+          --enable-demuxers \
+          --extra-cflags="$EXTRA_CFLAGS" \
+          --extra-ldflags="$EXTRA_LDFLAGS" \
+          --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
+          --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
+          --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
+
+    - name: Build FFmpeg for arm64-v8a
+      run: |
+        make clean all
+        make -j$(nproc)
+        make install
+
+    - name: Package FFmpeg library for arm64-v8a
+      run: |
+        OUTPUT=$GITHUB_WORKSPACE/android/arm64-v8a
+        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
+        GCC_L=$NDK/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x
+        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android
+        $TOOLCHAIN/bin/aarch64-linux-android-ld -L$OUTPUT/lib -L$GCC_L \
+          -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
+          -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $OUTPUT/libffmpeg.so \
+          -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale -lgcc \
+          -lc -ldl -lm -lz -llog \
+          --dynamic-linker=/system/bin/linker
