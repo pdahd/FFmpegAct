@@ -61,24 +61,10 @@ jobs:
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
     
-    - name: Check compiler paths and permissions
-      run: |
-        ARCH2=aarch64
-        ANDROID=android
-        echo "Checking compiler paths and permissions..."
-        ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
-        ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
-        chmod +x $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
-        chmod +x $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
-        echo "Checking compiler version..."
-        $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang --version
-        echo "Running a simple compilation test..."
-        echo 'int main() { return 0; }' > test.c
-        $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang test.c -o test
-        file test
-    
     - name: Configure FFmpeg for arm64-v8a
       run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm llvm
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
         ARCH1=aarch64
@@ -92,6 +78,14 @@ jobs:
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
         EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -lgcc -L$OUTPUT/lib"
+        export PATH=$TOOLCHAIN/bin:$PATH
+        export CC=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
+        export CXX=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
+        export AR=$TOOLCHAIN/bin/llvm-ar
+        export AS=$TOOLCHAIN/bin/llvm-as
+        export LD=$TOOLCHAIN/bin/ld.lld
+        export NM=$TOOLCHAIN/bin/llvm-nm
+        export STRIP=$TOOLCHAIN/bin/llvm-strip
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
