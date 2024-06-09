@@ -70,10 +70,12 @@ jobs:
         ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
         chmod +x $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
         chmod +x $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
+        echo "Checking compiler version..."
+        $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang --version
         echo "Running a simple compilation test..."
         echo 'int main() { return 0; }' > test.c
         $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang test.c -o test
-        ./test
+        file test
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
