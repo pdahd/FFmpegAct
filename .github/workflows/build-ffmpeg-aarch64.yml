@@ -61,13 +61,19 @@ jobs:
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
     
-    - name: Check compiler paths
+    - name: Check compiler paths and permissions
       run: |
         ARCH2=aarch64
         ANDROID=android
-        echo "Checking compiler paths..."
+        echo "Checking compiler paths and permissions..."
         ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
         ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
+        chmod +x $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
+        chmod +x $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
+        echo "Running a simple compilation test..."
+        echo 'int main() { return 0; }' > test.c
+        $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang test.c -o test
+        ./test
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
