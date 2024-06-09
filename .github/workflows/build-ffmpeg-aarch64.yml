@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'build-ffmpeg-aarch64.yml'
   pull_request:
     branches:
       - main
-    paths:
-      - 'build-ffmpeg-aarch64.yml'
 
 jobs:
   build:
