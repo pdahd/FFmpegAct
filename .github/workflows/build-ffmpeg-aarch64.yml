@@ -1,4 +1,4 @@
-name: Build FFmpeg 64 for Termux
+name: Build FFmpeg for Termux
 
 on:
   push:
@@ -60,6 +60,7 @@ jobs:
 
     - name: Configure FFmpeg for arm64-v8a
       run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
         ARCH1=aarch64
         ARCH2=aarch64
@@ -124,6 +125,7 @@ jobs:
 
     - name: Build FFmpeg for arm64-v8a
       run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         make clean all
         make -j$(nproc)
         make install
