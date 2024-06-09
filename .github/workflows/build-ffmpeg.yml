@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'build-ffmpeg.yml'
   pull_request:
     branches:
       - main
+    paths:
+      - 'build-ffmpeg.yml'
 
 jobs:
   build:
