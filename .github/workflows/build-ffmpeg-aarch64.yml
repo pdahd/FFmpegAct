@@ -53,10 +53,18 @@ jobs:
 
     - name: Set environment variables
       run: |
-        export API=21
-        export OS_TYPE=linux
-        export NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        export TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
+        echo "API=24" >> $GITHUB_ENV
+        echo "OS_TYPE=linux" >> $GITHUB_ENV
+        echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+        echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
+    
+    - name: Check compiler paths
+      run: |
+        ARCH2=aarch64
+        ANDROID=android
+        echo "Checking compiler paths..."
+        ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang
+        ls -l $TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
