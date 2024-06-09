@@ -1,4 +1,4 @@
-name: Build FFmpeg for Termux
+name: Build FFmpeg aarch64 for Termux
 
 on:
   push:
