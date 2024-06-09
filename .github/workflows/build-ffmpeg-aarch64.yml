@@ -24,6 +24,7 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
     - name: Set up JDK 11
+      if: false
       uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
@@ -36,6 +37,7 @@ jobs:
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
 
     - name: Install dependencies
+      if: false
       run: |
         sudo apt-get update
         sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm llvm \
@@ -46,6 +48,7 @@ jobs:
           liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev
 
     - name: Install gas-preprocessor
+      if: false
       run: |
         git clone https://github.com/FFmpeg/gas-preprocessor
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
