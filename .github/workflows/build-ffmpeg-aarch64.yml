@@ -23,6 +23,9 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
+    - name: Rename libswscale.v to libswscale.version
+      run: mv $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.v $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.version
+    
     - name: Check for libswscale.version
       run: ls -l $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale || echo "libswscale not found"
     
