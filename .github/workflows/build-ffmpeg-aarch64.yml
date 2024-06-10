@@ -156,7 +156,12 @@ jobs:
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
-      
+
+    - name: Check for pkgconfig_generate.sh
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        ls -l ./pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
+    
     - name: Build FFmpeg for arm64-v8a
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
