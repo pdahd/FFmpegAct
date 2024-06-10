@@ -127,13 +127,8 @@ jobs:
       run: |
         echo "Listing NDK directory structure..."
         ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64
-
-    - name: Check for libgcc and related libraries
-      run: |
-        echo "NDK path: $NDK"
-        find $NDK -name "libgcc.a"
-        find $NDK -name "libgcc_real.a"
-        find $NDK -name "libgcc_s.so"
+        echo "Checking for libgcc..."
+        find $NDK/toolchains/llvm/prebuilt/linux-x86_64 -name "libgcc*" -print
 
     - name: Upload config.log
       if: always()
