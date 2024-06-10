@@ -35,10 +35,10 @@ jobs:
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
 
-    - name: Verify NDK directory structure and list clang paths
+    - name: Check for pkg-config and llvm-nm
       run: |
-        echo "NDK Directory Structure:"
-        ls -R $ANDROID_NDK_HOME
+        find $ANDROID_NDK -name pkg-config -print -quit || echo "pkg-config not found"
+        find $ANDROID_NDK -name llvm-nm -print -quit || echo "llvm-nm not found"
     
     - name: Install dependencies
       run: |
