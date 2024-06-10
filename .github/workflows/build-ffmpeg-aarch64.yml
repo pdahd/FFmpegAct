@@ -127,8 +127,10 @@ jobs:
       run: |
         echo "Listing NDK directory structure..."
         ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64
+
         echo "Checking for libgcc..."
-        find $NDK/toolchains/llvm/prebuilt/linux-x86_64 -name "libgcc*" -print
+        # 只查找目录，不查找文件，并限制搜索深度为3层
+        find $NDK/toolchains/llvm/prebuilt/linux-x86_64 -maxdepth 3 -type d -name "*libgcc*" -print
 
     - name: Upload config.log
       if: always()
