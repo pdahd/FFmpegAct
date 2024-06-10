@@ -35,6 +35,11 @@ jobs:
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
 
+    - name: Verify NDK directory structure and list clang paths
+      run: |
+        echo "NDK Directory Structure:"
+        ls -R $ANDROID_NDK_HOME
+    
     - name: Install dependencies
       run: |
         sudo apt-get update
