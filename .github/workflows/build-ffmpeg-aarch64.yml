@@ -160,7 +160,7 @@ jobs:
     - name: Check for pkgconfig_generate.sh
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        ls -l $pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
+        ls -l $ffbuild/pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
     
     - name: Build FFmpeg for arm64-v8a
       run: |
