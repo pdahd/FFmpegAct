@@ -46,15 +46,15 @@ jobs:
           liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev
 
         echo "Printing paths of installed tools and dependencies..."
-        which autoconf
-        which automake
-        which cmake
-        which git
-        which libtool
-        which pkg-config
-        which texinfo
-        which yasm
-        which llvm
+        which autoconf || true
+        which automake || true
+        which cmake || true
+        which git || true
+        which libtool || true
+        which pkg-config || true
+        which texinfo || true
+        which yasm || true
+        which llvm || true
         echo "Dependency installation and path printing completed."
 
     - name: Install gas-preprocessor
