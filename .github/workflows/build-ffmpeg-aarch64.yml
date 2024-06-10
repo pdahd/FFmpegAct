@@ -69,11 +69,11 @@ jobs:
         if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-pkg-config" ]; then
           ln -s /usr/bin/pkg-config $TOOLCHAIN/bin/aarch64-linux-android-pkg-config
         fi
-    
-    - name: Check for pkg-config and llvm-nm
-      run: |
-          find $NDK -name llvm-ar -print -quit || echo "llvm-ar not found"
-          find $NDK -name llvm-nm -print -quit || echo "llvm-nm not found"
+
+        # 确保 llvm-ar 工具存在，并创建符号链接 aarch64-linux-android-ar
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ar" ]; then
+          ln -s $TOOLCHAIN/bin/llvm-ar $TOOLCHAIN/bin/aarch64-linux-android-ar
+        fi
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
