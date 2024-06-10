@@ -118,6 +118,7 @@ jobs:
           --enable-avfilter \
           --enable-postproc \
           --enable-network \
+          --enable-version3 \
           --enable-bsfs \
           --enable-postproc \
           --enable-filters \
