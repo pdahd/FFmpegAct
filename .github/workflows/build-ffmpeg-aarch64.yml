@@ -23,28 +23,8 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
-    - name: Rename libswscale.v to libswscale.version
-      run: mv $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.v $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.version
-    
     - name: Check for libswscale.version
       run: ls -l $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale || echo "libswscale not found"
-    
-    - name: Print ffbuild/library.mak file content
-      run: cat $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild/library.mak
-    
-    - name: Print libswscale.version file content
-      run: cat $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.version
-    
-    - name: Display contents of pkgconfig_generate.sh
-      run: cat $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild/pkgconfig_generate.sh
-    
-    - name: Check for pkgconfig_generate.sh
-      run: |
-        if [ -f "$GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild/pkgconfig_generate.sh" ]; then
-          echo "pkgconfig_generate.sh exists."
-        else
-         echo "pkgconfig_generate.sh does not exist."
-        fi
     
     - name: Set up JDK 11
       uses: actions/setup-java@v2
