@@ -29,6 +29,9 @@ jobs:
     - name: Check for libswscale.version
       run: ls -l $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale || echo "libswscale not found"
     
+    - name: Print libswscale.version file content
+      run: cat $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.version
+    
     - name: Display contents of pkgconfig_generate.sh
       run: cat $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild/pkgconfig_generate.sh
     
