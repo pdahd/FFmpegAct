@@ -24,8 +24,8 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     - name: Check for pkgconfig_generate.sh
-      working-directory: $GITHUB_WORKSPACE/ffmpeg-6.1.1
-      run: ls -l ./ffbuild/pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
+  
+      run: ls -l $GITHUB_WORKSPACE/ffmpeg-6.1.1/pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
     
     - name: Check for libswscale.version
       run: ls -l $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale || echo "libswscale not found"
