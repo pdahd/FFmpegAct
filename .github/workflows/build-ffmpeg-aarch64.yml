@@ -22,11 +22,6 @@ jobs:
     - name: Download FFmpeg source
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
-
-    - name: Create libswscale.version
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        cp libswscale/libswscale.v libswscale/libswscale.version
     
     - name: Check for libswscale.version
       run: ls -l $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale || echo "libswscale not found"
@@ -156,12 +151,6 @@ jobs:
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
-
-    - name: Check for pkgconfig_generate.sh
-      working-directory: $GITHUB_WORKSPACE/ffmpeg-6.1.1 
-      run: |
-        cd ffbuild  # 使用 cd 命令进入 ffbuild 目录
-        ls -l ./pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
     
     - name: Build FFmpeg for arm64-v8a
       run: |
