@@ -123,10 +123,9 @@ jobs:
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
       continue-on-error: true 
 
-    - name: List ffbuild directory contents
+    - name: Check libgcc path
       run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild
-        ls -l
+        find $NDK -name "libgcc.a"
 
     - name: Upload config.log
       if: always()
