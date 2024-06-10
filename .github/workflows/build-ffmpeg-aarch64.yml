@@ -125,7 +125,7 @@ jobs:
 
     - name: Check libgcc path
       run: |
-        find $NDK -name "libgcc.a"
+        ls -l $NDK/*libgcc.a*
 
     - name: Upload config.log
       if: always()
