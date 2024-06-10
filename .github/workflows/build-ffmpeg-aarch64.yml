@@ -123,9 +123,10 @@ jobs:
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
       continue-on-error: true 
 
-    - name: Check libgcc path
+    - name: Verify NDK directory structure and list clang paths
       run: |
-        ls -l $NDK/*libgcc.a*
+        echo "NDK Directory Structure:"
+        ls -R $ANDROID_NDK_HOME
 
     - name: Upload config.log
       if: always()
