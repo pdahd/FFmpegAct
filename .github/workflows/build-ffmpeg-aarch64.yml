@@ -121,7 +121,7 @@ jobs:
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
-      continue-on-error: true
+      
 
     - name: Upload config.log
       if: always()
