@@ -123,10 +123,17 @@ jobs:
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
       continue-on-error: true 
 
-    - name: Check libgcc path
+    - name: Check NDK directory structure
+      run: |
+        echo "Listing NDK directory structure..."
+        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc
+
+    - name: Check for libgcc and related libraries
       run: |
         echo "NDK path: $NDK"
         find $NDK -name "libgcc.a"
+        find $NDK -name "libgcc_real.a"
+        find $NDK -name "libgcc_s.so"
 
     - name: Upload config.log
       if: always()
