@@ -67,7 +67,7 @@ jobs:
         ANDROID=android
         CPU=armv8-a
         PRE_CFLAGS="-march=$CPU"
-        GCC_L=$NDK/toolchains/$ARCH1-linux-$ANDROID-4.9/prebuilt/$OS_TYPE-x86_64/lib/gcc/$ARCH1-linux-$ANDROID/4.9.x
+        
         ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
@@ -123,14 +123,7 @@ jobs:
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
       continue-on-error: true 
 
-    - name: Check NDK directory structure
-      run: |
-        echo "Listing NDK directory structure..."
-        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64
-
-        echo "Checking for libgcc..."
-        # 只查找目录，不查找文件，并限制搜索深度为3层
-        find $NDK/toolchains/llvm/prebuilt/linux-x86_64 -maxdepth 3 -type d -name "*libgcc*" -print
+  
 
     - name: Upload config.log
       if: always()
