@@ -87,6 +87,11 @@ jobs:
         if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ranlib" ]; then
           ln -s $TOOLCHAIN/bin/llvm-ranlib $TOOLCHAIN/bin/aarch64-linux-android-ranlib
         fi
+
+        # 创建 libswscale.version 的符号链接
+        if [ ! -f "$GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.version" ]; then
+          ln -s $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.v $GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale/libswscale.version
+        fi
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
