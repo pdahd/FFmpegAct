@@ -174,8 +174,17 @@ jobs:
     
     - name: Build FFmpeg for arm64-v8a
       run: |
+        echo "Current working directory:"
+        pwd
+        echo "Listing contents of the current directory:"
+        ls -l
+        echo "Changing to FFmpeg directory"
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        make clean all
+        echo "Current working directory after change:"
+        pwd
+        echo "Listing contents of the FFmpeg directory:"
+        ls -l
+        # 在这里添加您的编译命令，例如：
         make -j$(nproc)
         make install
 
