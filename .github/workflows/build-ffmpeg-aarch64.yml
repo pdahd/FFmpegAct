@@ -132,16 +132,23 @@ jobs:
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
-      continue-on-error: true 
+      
+    - name: Build FFmpeg for arm64-v8a
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        make clean all
+        make -j$(nproc)
+        make install
 
-  
-
-    - name: Upload config.log
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: config-log
-        path: ffmpeg-6.1.1/ffbuild/config.log
-        if-no-files-found: warn
-         
+    - name: Package FFmpeg library for arm64-v8a
+      run: |
+        OUTPUT=$GITHUB_WORKSPACE/android/arm64-v8a
+        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
+        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android
+        $TOOLCHAIN/bin/aarch64-linux-android-ld -L$OUTPUT/lib \
+          -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
+          -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $OUTPUT/libffmpeg.so \
+          -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
+          -lc -ldl -lm -lz -llog \
+          --dynamic-linker=/system/bin/linker
     
