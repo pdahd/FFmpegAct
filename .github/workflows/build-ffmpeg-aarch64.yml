@@ -126,7 +126,7 @@ jobs:
     - name: Check NDK directory structure
       run: |
         echo "Listing NDK directory structure..."
-        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc
+        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64
 
     - name: Check for libgcc and related libraries
       run: |
