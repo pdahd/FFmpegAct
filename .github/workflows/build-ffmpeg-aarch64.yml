@@ -107,6 +107,7 @@ jobs:
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
         EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib"
+        export LD_LIBRARY_PATH=$GITHUB_WORKSPACE/ffmpeg-6.1.1/libswscale:$LD_LIBRARY_PATH
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
