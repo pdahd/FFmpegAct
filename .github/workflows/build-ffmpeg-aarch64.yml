@@ -121,7 +121,12 @@ jobs:
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
-      
+      continue-on-error: true 
+
+    - name: List ffbuild directory contents
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild
+        ls -l
 
     - name: Upload config.log
       if: always()
@@ -129,5 +134,6 @@ jobs:
       with:
         name: config-log
         path: $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild/config.log
+        if-no-files-found: warn
          
     
