@@ -158,9 +158,10 @@ jobs:
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
 
     - name: Check for pkgconfig_generate.sh
+      working-directory: $GITHUB_WORKSPACE/ffmpeg-6.1.1 
       run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        ls -l $ffbuild/pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
+        cd ffbuild  # 使用 cd 命令进入 ffbuild 目录
+        ls -l ./pkgconfig_generate.sh || echo "pkgconfig_generate.sh not found"
     
     - name: Build FFmpeg for arm64-v8a
       run: |
