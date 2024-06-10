@@ -133,7 +133,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: config-log
-        path: $GITHUB_WORKSPACE/ffmpeg-6.1.1/ffbuild/config.log
+        path: ffmpeg-6.1.1/ffbuild/config.log
         if-no-files-found: warn
          
     
