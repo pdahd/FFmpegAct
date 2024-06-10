@@ -65,18 +65,24 @@ jobs:
     
     - name: Create symlinks for necessary tools
       run: |
-        # 查找并创建与 aarch64-linux-android 相关的工具的符号链接
-        for tool in ar nm ranlib; do
-          if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-$tool" ]; then
-            if [ -f "$TOOLCHAIN/bin/llvm-$tool" ]; then
-              ln -s $TOOLCHAIN/bin/llvm-$tool $TOOLCHAIN/bin/aarch64-linux-android-$tool
-            fi
-          fi
-        done
+        # 确保 llvm-nm 工具存在，并创建符号链接 aarch64-linux-android-nm
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-nm" ]; then
+          ln -s $TOOLCHAIN/bin/llvm-nm $TOOLCHAIN/bin/aarch64-linux-android-nm
+        fi
 
         # 确保 pkg-config 工具存在，并创建符号链接 aarch64-linux-android-pkg-config
         if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-pkg-config" ]; then
           ln -s /usr/bin/pkg-config $TOOLCHAIN/bin/aarch64-linux-android-pkg-config
+        fi
+
+        # 确保 llvm-ar 工具存在，并创建符号链接 aarch64-linux-android-ar
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ar" ]; then
+          ln -s $TOOLCHAIN/bin/llvm-ar $TOOLCHAIN/bin/aarch64-linux-android-ar
+        fi
+
+        # 确保 llvm-ranlib 工具存在，并创建符号链接 aarch64-linux-android-ranlib
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ranlib" ]; then
+          ln -s $TOOLCHAIN/bin/llvm-ranlib $TOOLCHAIN/bin/aarch64-linux-android-ranlib
         fi
     
     - name: Configure FFmpeg for arm64-v8a
