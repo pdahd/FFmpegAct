@@ -68,7 +68,7 @@ jobs:
     
     - name: Create symlinks for necessary tools
       run: |
-        for tool in ar nm ranlib; do
+        for tool in ar ld nm ranlib; do
           if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-$tool" ]; then
             if [ -f "$TOOLCHAIN/bin/llvm-$tool" ]; then
               ln -s $TOOLCHAIN/bin/llvm-$tool $TOOLCHAIN/bin/aarch64-linux-android-$tool
