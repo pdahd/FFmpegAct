@@ -54,10 +54,10 @@ jobs:
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
-    - name: Check GCC directory structure
+    - name: Check GCC directory structure for aarch64
       run: |
-        echo "Listing GCC directory structure..."
-        find /usr/lib/gcc -type d
+        echo "Listing GCC directory structure for aarch64..."
+        find /usr/lib/gcc -name '*aarch64*' -type d
     
     - name: Set environment variables
       run: |
