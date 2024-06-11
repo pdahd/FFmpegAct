@@ -148,6 +148,16 @@ jobs:
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
+          continue-on-error: true
+
+    - name: Upload config.log
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: config-log
+        path: ffmpeg-6.1.1/ffbuild/config.log
+        if-no-files-found: warn
+    
     
     - name: Build FFmpeg for arm64-v8a
       run: |
