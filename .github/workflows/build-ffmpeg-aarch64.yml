@@ -54,10 +54,10 @@ jobs:
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
-    - name: Find libgcc library path
+    - name: List all files in Clang aarch64 directory
       run: |
-        echo "Searching for libgcc library path..."
-        find /usr/lib/gcc -name 'libgcc*' -print
+        echo "Listing all files in Clang aarch64 directory..."
+        ls -R $GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/17/lib/linux/aarch64
     
     - name: Set environment variables
       run: |
