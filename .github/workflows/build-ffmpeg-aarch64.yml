@@ -54,6 +54,11 @@ jobs:
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
+    - name: Check GCC directory structure
+      run: |
+        echo "Listing GCC directory structure..."
+        find /usr/lib/gcc -type d
+    
     - name: Set environment variables
       run: |
         echo "API=21" >> $GITHUB_ENV
