@@ -164,6 +164,6 @@ jobs:
           -shared -nostdlib -Wl,-Bsymbolic -Wl,--whole-archive -Wl,--no-undefined -o $OUTPUT/libffmpeg.so \
           -Wl,--allow-multiple-definition \
           -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
-          -lc -ldl -lm -lz -llog \
+          -lc -ldl -lm -lz -llog -landroid \
           -Wl,--dynamic-linker=/system/bin/linker
     
