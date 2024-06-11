@@ -64,7 +64,7 @@ jobs:
     - name: List NDK directory structure
       run: |
         echo "Listing NDK directory structure..."
-        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin
+        ls -R $NDK/toolchains/lib
     
     - name: Create symlinks for necessary tools
       run: |
