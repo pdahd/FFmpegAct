@@ -54,11 +54,10 @@ jobs:
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
-    - name: Check NDK directory structure
+    - name: List all files in NDK toolchains directory
       run: |
-        NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        echo "Listing NDK directory structure..."
-        find $NDK -maxdepth 7 -type d
+        echo "Listing all files in NDK toolchains directory..."
+        find $GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64/lib -type d
     
     - name: Set environment variables
       run: |
