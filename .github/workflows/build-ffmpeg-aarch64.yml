@@ -61,11 +61,11 @@ jobs:
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
            
-    - name: Check for 4.9.x in NDK
+    - name: Check lib64 directory structure
       run: |
-        NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        echo "Searching for 4.9.x in NDK directory..."
-        find $NDK -name '*4.9.x*' -print || echo "No 4.9.x found in NDK directory."
+        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
+        echo "Listing lib64 directory structure..."
+        ls -l $TOOLCHAIN/lib64
     
     - name: Create symlinks for necessary tools
       run: |
