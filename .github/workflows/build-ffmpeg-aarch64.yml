@@ -80,9 +80,9 @@ jobs:
           ln -s /usr/bin/pkg-config $TOOLCHAIN/bin/aarch64-linux-android-pkg-config
         fi
 
-        # if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ld" ]; then
-         # ln -s $TOOLCHAIN/bin/ld.lld $TOOLCHAIN/bin/aarch64-linux-android-ld
-       # fi
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ld" ]; then
+          ln -s $TOOLCHAIN/bin/ld.lld $TOOLCHAIN/bin/aarch64-linux-android-ld
+        fi
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
@@ -157,13 +157,12 @@ jobs:
     - name: Package FFmpeg library for arm64-v8a
       run: |
         OUTPUT=$GITHUB_WORKSPACE/android/arm64-v8a
-        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-r26d/toolchains/llvm/prebuilt/linux-x86_64
+        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android
-        $TOOLCHAIN/bin/aarch64-linux-android$API-clang -fuse-ld=lld -L$OUTPUT/lib \
-          -Wl,-rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -Wl,-soname,libffmpeg.so \
-          -shared -nostdlib -Wl,-Bsymbolic -Wl,--whole-archive -Wl,--no-undefined -o $OUTPUT/libffmpeg.so \
-          -Wl,--allow-multiple-definition \
+        $TOOLCHAIN/bin/aarch64-linux-android-ld -L$OUTPUT/lib \
+          -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
+          -shared -nostdlib -Bsymbolic --whole-archive --no-undefined --allow-multiple-definition -o $OUTPUT/libffmpeg.so \
           -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
-          -lc -lm -ldl -lz -llog -landroid -latomic \
-          -Wl,--dynamic-linker=/system/bin/linker
+          -lc -ldl -lm -lz -llog -landroid -latomic -lgcc -lcompiler_rt \
+          --dynamic-linker=/system/bin/linker
     
