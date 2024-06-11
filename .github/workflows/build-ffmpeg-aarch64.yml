@@ -61,11 +61,11 @@ jobs:
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
            
-    - name: Check NDK directory structure
+    - name: Find Clang runtime libraries
       run: |
         NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        echo "Listing NDK directory structure..."
-        find $NDK -maxdepth 9 -type d
+        echo "Searching for Clang runtime libraries in NDK directory..."
+        find $NDK -name '*clang_rt*' -o -name '*unwind*' -print
     
     - name: Create symlinks for necessary tools
       run: |
