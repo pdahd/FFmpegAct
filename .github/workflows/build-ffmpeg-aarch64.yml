@@ -46,7 +46,7 @@ jobs:
           libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev \
           libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev \
           libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libxvidcore-dev libzimg-dev \
-          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev
+          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev gcc
 
     - name: Install gas-preprocessor
       run: |
@@ -97,9 +97,8 @@ jobs:
         ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
-        CLANG_LIB=$TOOLCHAIN/lib/clang/17/lib/linux/aarch64
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
-        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib -L$CLANG_LIB -lunwind -lclang_rt.builtins-aarch64-android"
+        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib"
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
@@ -170,11 +169,10 @@ jobs:
         OUTPUT=$GITHUB_WORKSPACE/android/arm64-v8a
         TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android
-        CLANG_LIB=$TOOLCHAIN/lib64/clang/$(ls $TOOLCHAIN/lib64/clang)
         $TOOLCHAIN/bin/aarch64-linux-android-ld -L$OUTPUT/lib \
           -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
-          -shared -nostdlib -Bsymbolic --whole-archive --no-undefined --allow-multiple-definition -o $OUTPUT/libffmpeg.so \
+          -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $OUTPUT/libffmpeg.so \
           -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
-          -lc -ldl -lm -lz -llog -landroid -latomic -L$CLANG_LIB -lunwind -lclang_rt.builtins-aarch64-android \
+          -lc -ldl -lm -lz -llog \
           --dynamic-linker=/system/bin/linker
     
