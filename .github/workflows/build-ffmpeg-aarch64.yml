@@ -95,9 +95,10 @@ jobs:
         PRE_CFLAGS="-march=$CPU"
         ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
+        GCC_L=/usr/lib/gcc/x86_64-linux-gnu/10
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
-        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib"
+        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -lgcc -L$OUTPUT/lib"
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
