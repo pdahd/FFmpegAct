@@ -97,7 +97,7 @@ jobs:
         ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
-        CLANG_LIB=$TOOLCHAIN/lib64/clang/$(ls $TOOLCHAIN/lib64/clang)
+        CLANG_LIB=$TOOLCHAIN/lib/clang/17/lib/linux/aarch64
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
         EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib -L$CLANG_LIB -lunwind -lclang_rt.builtins-aarch64-android"
         ./configure \
