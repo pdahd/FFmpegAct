@@ -163,6 +163,5 @@ jobs:
           -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
           -shared -nostdlib -Bsymbolic --whole-archive --no-undefined --allow-multiple-definition -o $OUTPUT/libffmpeg.so \
           -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
-          -lc -ldl -lm -lz -llog -landroid -latomic -lgcc -lcompiler_rt \
+          -lc -ldl -lm -lz -llog -landroid -L$TOOLCHAIN/lib/gcc/aarch64-linux-android/4.9.x -latomic -lgcc -lcompiler_rt \
           --dynamic-linker=/system/bin/linker
-    
