@@ -65,7 +65,7 @@ jobs:
       run: |
         NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         echo "Listing NDK directory structure..."
-        find $NDK -maxdepth 7 -type d
+        find $NDK 
     
     - name: Create symlinks for necessary tools
       run: |
