@@ -93,11 +93,12 @@ jobs:
         ANDROID=android
         CPU=armv8-a
         PRE_CFLAGS="-march=$CPU"
+        GCC_L=$NDK/toolchains/llvm/prebuilt/$OS_TYPE-x86_64/lib/gcc/$ARCH1-linux-$ANDROID/4.9.x
         ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
-        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib" 
+        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -lgcc -L$OUTPUT/lib" 
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
