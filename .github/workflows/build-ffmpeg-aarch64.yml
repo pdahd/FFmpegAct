@@ -93,12 +93,11 @@ jobs:
         ANDROID=android
         CPU=armv8-a
         PRE_CFLAGS="-march=$CPU"
-        CLANG_LIB=$TOOLCHAIN/lib/clang/17/lib/linux/aarch64
         ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
         SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
-        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib -L$CLANG_LIB -lunwind"
+        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib" 
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
@@ -154,16 +153,5 @@ jobs:
         make -j$(nproc)
         make install
 
-    - name: Package FFmpeg library for arm64-v8a
-      run: |
-        OUTPUT=$GITHUB_WORKSPACE/android/arm64-v8a
-        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-r26d/toolchains/llvm/prebuilt/linux-x86_64
-        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android
-        $TOOLCHAIN/bin/aarch64-linux-android$API-clang -fuse-ld=lld -L$OUTPUT/lib \
-          -Wl,-rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -Wl,-soname,libffmpeg.so \
-          -shared -nostdlib -Wl,-Bsymbolic -Wl,--whole-archive -Wl,--no-undefined -o $OUTPUT/libffmpeg.so \
-          -Wl,--allow-multiple-definition \
-          -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
-          -lc -lm -ldl -lz -llog -landroid -latomic \
-          -Wl,--dynamic-linker=/system/bin/linker
+     
     
