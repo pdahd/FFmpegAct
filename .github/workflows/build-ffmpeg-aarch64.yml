@@ -67,7 +67,7 @@ jobs:
         find $NDK -name "libatomic.a"
     
         echo "Searching for libcompiler_rt..."
-        find $NDK -name "libcompiler_rt.a"
+        find $NDK -name "libcompiler"
     
     - name: Create symlinks for necessary tools
       run: |
