@@ -73,7 +73,7 @@ jobs:
     - name: List libandroid-glob location in NDK
       run: |
         echo "Searching for libandroid-glob..."
-        find $NDK -name "libandroid-glob"
+        find $NDK -name "llvm-nm"
     
     - name: Create symlinks for necessary tools
       run: |
