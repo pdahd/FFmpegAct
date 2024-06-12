@@ -61,6 +61,14 @@ jobs:
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
     
+    - name: Find libatomic and libcompiler_rt in NDK
+      run: |
+        echo "Searching for libatomic..."
+        find $NDK -name "libatomic.a"
+    
+        echo "Searching for libcompiler_rt..."
+        find $NDK -name "libcompiler_rt.a"
+    
     - name: Create symlinks for necessary tools
       run: |
         for tool in ar nm ranlib; do
