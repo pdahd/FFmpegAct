@@ -72,11 +72,8 @@ jobs:
     
     - name: List libandroid-glob location in NDK
       run: |
-        echo "Searching for libandroid-glob..."
-        find $NDK -name "landroid"
-
-        echo "Searching for libatomic..."
-        find $NDK -name "as"
+        echo "Searching for libs..."
+        find $NDK -name "libs"
     
     - name: Create symlinks for necessary tools
       run: |
