@@ -61,9 +61,9 @@ jobs:
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
     
-    - name: Check GCC location
+    - name: List libandroid-glob location in NDK
       run: |
-        which gcc
+        find $GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }} -type f -name "libandroid-glob*.so"
     
     - name: Find libatomic and libcompiler_rt in NDK
       run: |
