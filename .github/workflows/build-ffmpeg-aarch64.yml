@@ -53,7 +53,6 @@ jobs:
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         API=21
         NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
@@ -70,6 +69,7 @@ jobs:
         ABI=arm64-v8a
         ARCH=aarch64
         EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
           --arch=$ARCH \
           --as=$AS \
