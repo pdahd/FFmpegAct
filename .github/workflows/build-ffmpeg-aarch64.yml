@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: r23c
+      ANDROID_NDK_VERSION: r24
 
     steps:
     - name: Checkout repository
