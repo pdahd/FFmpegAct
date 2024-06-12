@@ -91,18 +91,11 @@ jobs:
         ARCH1=aarch64
         ARCH2=aarch64
         ANDROID=android
-        CPU=armv8-a
-        PRE_CFLAGS="-march=$CPU"
-        ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
-        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
-        EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$OUTPUT/include"
-        EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$OUTPUT/lib" 
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
           --arch=$ARCH1 \
-          --cpu=$CPU \
           --sysroot=$TOOLCHAIN/sysroot \
           --enable-cross-compile \
           --enable-neon \
@@ -141,8 +134,6 @@ jobs:
           --disable-outdevs \
           --enable-decoders \
           --enable-demuxers \
-          --extra-cflags="$EXTRA_CFLAGS" \
-          --extra-ldflags="$EXTRA_LDFLAGS" \
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
