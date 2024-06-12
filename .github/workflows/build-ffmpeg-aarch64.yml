@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: r26b
+      ANDROID_NDK_VERSION: r21e
 
     steps:
     - name: Checkout repository
@@ -67,7 +67,7 @@ jobs:
         find $NDK -name "libatomic.a"
     
         echo "Searching for libcompiler_rt..."
-        find $NDK -name "libcompiler"
+        find $NDK -name "gcc"
     
     - name: Create symlinks for necessary tools
       run: |
