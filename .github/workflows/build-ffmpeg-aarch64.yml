@@ -72,7 +72,8 @@ jobs:
     
     - name: List libandroid-glob location in NDK
       run: |
-        find $GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }} -name "libandroid-glob*"
+        echo "Searching for libandroid-glob..."
+        find $NDK -name "libandroid-glob"
     
     - name: Create symlinks for necessary tools
       run: |
