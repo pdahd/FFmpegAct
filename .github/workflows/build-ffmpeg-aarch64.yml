@@ -46,7 +46,7 @@ jobs:
           libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev \
           libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev \
           libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libxvidcore-dev libzimg-dev \
-          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev 
+          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev libandroid-glob
 
     - name: Install gas-preprocessor
       run: |
