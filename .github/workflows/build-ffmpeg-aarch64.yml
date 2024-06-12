@@ -70,6 +70,10 @@ jobs:
         echo "Listing NDK directory structure..."
         ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin
     
+    - name: List libandroid-glob location in NDK
+      run: |
+        find $GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }} -name "libandroid-glob*"
+    
     - name: Create symlinks for necessary tools
       run: |
         for tool in ar nm ranlib; do
