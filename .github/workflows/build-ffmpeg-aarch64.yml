@@ -63,14 +63,8 @@ jobs:
     
     - name: Find libatomic and libcompiler_rt in NDK
       run: |
-        echo "Searching for libatomic..."
-        find $NDK -name "libatomic.a"
-    
-        echo "Searching for gcc..."
-        find $NDK -name "gcc"
-
-        echo "Searching for libcompiler_rt..."
-        find $ANDROID_NDK_HOME -name "libcompiler_rt.a"
+        echo "Listing NDK directory structure..."
+        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc
     
     - name: Create symlinks for necessary tools
       run: |
