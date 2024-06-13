@@ -74,6 +74,22 @@ jobs:
         # 更新库缓存
         sudo ldconfig
 
+    - name: List installed files for x264, x265, and gnutls
+      run: |
+        echo "Listing files for x264:"
+        dpkg -c /tmp/x264.deb
+
+        echo "Listing files for x265:"
+        dpkg -c /tmp/x265.deb
+
+        echo "Listing files for gnutls:"
+        dpkg -c /tmp/gnutls.deb
+    
+    - name: List NDK directory structure
+      run: |
+        echo "Listing NDK directory structure..."
+        ls -R $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/usr/lib
+    
     - name: Configure FFmpeg for arm64-v8a with external libraries
       run: |
         export API=21
