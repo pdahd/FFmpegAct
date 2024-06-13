@@ -82,13 +82,14 @@ jobs:
         ARCH2=aarch64
         ANDROID=android
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
+        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         ./configure \
           --target-os=android \
           --prefix=$OUTPUT \
           --arch=$ARCH1 \
           --sysroot=$TOOLCHAIN/sysroot \
           --enable-cross-compile \
-          --enable-gnutls \
+          --enable-libx264 \
           --enable-neon \
           --enable-hwaccels \
           $ASM_SWITCH \
