@@ -43,7 +43,7 @@ jobs:
           libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev \
           libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev \
           libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libxvidcore-dev libzimg-dev \
-          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev gnutls-dev
+          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev gnutls-bin gnutls-dev
 
     - name: Install gas-preprocessor
       run: |
@@ -68,6 +68,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export PKG_CONFIG=/usr/bin/pkg-config
+        export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/local/lib/pkgconfig
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
         _ARCH=aarch64
