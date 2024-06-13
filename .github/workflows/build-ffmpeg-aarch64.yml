@@ -56,9 +56,13 @@ jobs:
         
         # 下载并安装每个外部库
         for LIB in "${LIBS[@]}"; do
+          # 查找库所在的目录
+          LIB_DIR=$(curl -s $TERMUX_REPO/ | grep -oP 'href="\K[^"]*' | grep -E "^${LIB:0:1}/$" | head -n 1)
+          FULL_LIB_DIR="$TERMUX_REPO/$LIB_DIR$LIB/"
+          
           # 查找最新版本的 .deb 文件，匹配架构
-          DEB_URL=$(curl -s $TERMUX_REPO/$LIB/ | grep -oP 'href="\K[^"]*' | grep -E "aarch64\.deb$" | sort -V | tail -n 1)
-          FULL_URL="$TERMUX_REPO/$LIB/$DEB_URL"
+          DEB_URL=$(curl -s $FULL_LIB_DIR | grep -oP 'href="\K[^"]*' | grep -E "aarch64\.deb$" | sort -V | tail -n 1)
+          FULL_URL="$FULL_LIB_DIR$DEB_URL"
           
           # 下载 .deb 文件
           wget $FULL_URL -O /tmp/$LIB.deb
