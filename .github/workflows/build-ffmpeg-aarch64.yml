@@ -68,7 +68,6 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export PKG_CONFIG=/usr/bin/pkg-config
-        ASM_SWITCH='--enable-asm'
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
         _ARCH=aarch64
@@ -86,10 +85,10 @@ jobs:
           --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
           --disable-indevs \
           --disable-outdevs \
+          --enable-indev=lavfi \
           --disable-static \
           --disable-symver \
           --enable-cross-compile \
-          $ASM_SWITCH \
           --enable-gnutls \
           --enable-gpl \
           --enable-version3 \
