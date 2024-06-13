@@ -88,6 +88,7 @@ jobs:
           --arch=$ARCH1 \
           --sysroot=$TOOLCHAIN/sysroot \
           --enable-cross-compile \
+          --enable-gnutls \
           --enable-neon \
           --enable-hwaccels \
           $ASM_SWITCH \
