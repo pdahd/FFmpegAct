@@ -75,15 +75,15 @@ jobs:
         _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         ./configure \
           --arch="${_ARCH}" \
-          --as="${AS}" \
-          --cc="${CC}" \
-          --cxx="${CXX}" \
-          --ar="${AR}" \
-          --ranlib="${RANLIB}" \
-          --nm="${NM}" \
-          --pkg-config="${PKG_CONFIG}" \
-          --strip="${STRIP}" \
-          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+          --as="${{ env.AS }}" \
+          --cc="${{ env.CC }}" \
+          --cxx="${{ env.CXX }}" \
+          --ar="${{ env.AR }}" \
+          --ranlib="${{ env.RANLIB }}" \
+          --nm="${{ env.NM }}" \
+          --pkg-config="${{ env.PKG_CONFIG }}" \
+          --strip="${{ env.STRIP }}" \
+          --cross-prefix="${{ env.TERMUX_HOST_PLATFORM }}-" \
           --disable-indevs \
           --disable-outdevs \
           --enable-indev=lavfi \
