@@ -86,7 +86,6 @@ jobs:
           --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
           --disable-indevs \
           --disable-outdevs \
-          --enable-indev=lavfi \
           --disable-static \
           --disable-symver \
           --enable-cross-compile \
