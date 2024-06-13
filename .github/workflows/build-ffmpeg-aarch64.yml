@@ -66,6 +66,10 @@ jobs:
             fi
           fi
         done
+
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-pkg-config" ]; then
+          ln -s /usr/bin/pkg-config $TOOLCHAIN/bin/aarch64-linux-android-pkg-config
+        fi
     
     - name: Configure FFmpeg for arm64-v8a
       run: |
