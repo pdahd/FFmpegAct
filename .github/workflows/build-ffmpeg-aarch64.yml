@@ -62,6 +62,7 @@ jobs:
         export TERMUX_HOST_PLATFORM=aarch64-linux-android
         export CC=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang
         export CXX=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang++
+        export AS=$CC
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
@@ -73,6 +74,7 @@ jobs:
         _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         ./configure \
           --arch="${_ARCH}" \
+          --as="$AS" \
           --cc="$CC" \
           --cxx="$CXX" \
           --ar="$AR" \
