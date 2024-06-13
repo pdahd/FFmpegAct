@@ -54,6 +54,7 @@ jobs:
     - name: Set environment variables
       run: |
         echo "API=21" >> $GITHUB_ENV
+        echo "OS_TYPE=linux" >> $GITHUB_ENV
         echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
     
@@ -66,9 +67,11 @@ jobs:
             fi
           fi
         done
-
         if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-pkg-config" ]; then
           ln -s /usr/bin/pkg-config $TOOLCHAIN/bin/aarch64-linux-android-pkg-config
+        fi
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-ld" ]; then
+          ln -s $TOOLCHAIN/bin/ld.lld $TOOLCHAIN/bin/aarch64-linux-android-ld
         fi
     
     - name: Configure FFmpeg for arm64-v8a
@@ -78,68 +81,49 @@ jobs:
         ARCH1=aarch64
         ARCH2=aarch64
         ANDROID=android
-        ASM_SWITCH='--enable-asm'
         OUTPUT=$GITHUB_WORKSPACE/android/$ABI
         ./configure \
+          --target-os=android \
+          --prefix=$OUTPUT \
           --arch=$ARCH1 \
+          --sysroot=$TOOLCHAIN/sysroot \
+          --enable-cross-compile \
+          --enable-neon \
+          --enable-hwaccels \
+          $ASM_SWITCH \
+          --enable-small \
+          --enable-avcodec \
+          --enable-avformat \
+          --enable-avutil \
+          --enable-swresample \
+          --enable-swscale \
+          --enable-avfilter \
+          --enable-postproc \
+          --enable-network \
+          --enable-bsfs \
+          --enable-postproc \
+          --enable-filters \
+          --enable-encoders \
+          --enable-gpl \
+          --enable-muxers \
+          --enable-parsers \
+          --enable-protocols \
+          --enable-nonfree \
+          --enable-jni \
+          --enable-mediacodec \
+          --enable-static \
+          --disable-shared \
+          --disable-doc \
+          --disable-avdevice \
+          --disable-ffmpeg \
+          --disable-ffplay \
+          --disable-ffprobe \
+          --disable-debug \
+          --disable-symver \
           --disable-indevs \
           --disable-outdevs \
-          --enable-indev=lavfi \
-          --disable-static \
-          --disable-symver \
-          --enable-cross-compile \
-          --enable-gnutls \
-          $ASM_SWITCH \
-          --enable-gpl \
-          --enable-version3 \
-          --enable-jni \
-          --enable-lcms2 \
-          --enable-libaom \
-          --enable-libass \
-          --enable-libbluray \
-          --enable-libdav1d \
-          --enable-libfontconfig \
-          --enable-libfreetype \
-          --enable-libfribidi \
-          --enable-libgme \
-          --enable-libharfbuzz \
-          --enable-libmp3lame \
-          --enable-libopencore-amrnb \
-          --enable-libopencore-amrwb \
-          --enable-libopenmpt \
-          --enable-libopus \
-          --enable-librav1e \
-          --enable-libsoxr \
-          --enable-libsrt \
-          --enable-libssh \
-          --enable-libsvtav1 \
-          --enable-libtheora \
-          --enable-libv4l2 \
-          --enable-libvidstab \
-          --enable-libvo-amrwbenc \
-          --enable-libvorbis \
-          --enable-libvpx \
-          --enable-libwebp \
-          --enable-libx264 \
-          --enable-libx265 \
-          --enable-libxml2 \
-          --enable-libxvid \
-          --enable-libzimg \
-          --enable-mediacodec \
-          --enable-opencl \
-          --enable-shared \
-          --prefix=$OUTPUT \
-          --target-os=android \
-          --disable-vulkan \
-          --disable-libfdk-aac
+          --enable-decoders \
+          --enable-demuxers \
           --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
           --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
           --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
-    
-    - name: Upload config.log
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: config-log
-        path: ffmpeg-6.1.1/ffbuild/config.log
-        if-no-files-found: warn
