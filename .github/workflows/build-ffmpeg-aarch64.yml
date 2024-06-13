@@ -43,7 +43,7 @@ jobs:
           libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev \
           libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev \
           libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libxvidcore-dev libzimg-dev \
-          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev gnutls-bin 
+          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev 
     
     - name: Install gas-preprocessor
       run: |
@@ -51,39 +51,25 @@ jobs:
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
     
-    
+    - name: Set environment variables
+      run: |
+        echo "API=21" >> $GITHUB_ENV
+        echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+        echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
     
     - name: Configure FFmpeg for arm64-v8a
-      continue-on-error: true
       run: |
-        export API=21
-        export NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export TERMUX_HOST_PLATFORM=aarch64-linux-android
-        export CC=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang
-        export CXX=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang++
-        export AS=$CC
-        export AR=$TOOLCHAIN/bin/llvm-ar
-        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        export NM=$TOOLCHAIN/bin/llvm-nm
-        export STRIP=$TOOLCHAIN/bin/llvm-strip
-        export PKG_CONFIG=/usr/bin/pkg-config
-        export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
-        _ARCH=aarch64
-        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        ARCH1=aarch64
+        ARCH2=aarch64
+        ANDROID=android
+        ASM_SWITCH='--enable-asm'
+        OUTPUT=$GITHUB_WORKSPACE/android/$ABI
+        SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/$ARCH1-linux-$ANDROID
         ./configure \
-          --arch="${_ARCH}" \
-          --as="$AS" \
-          --cc="$CC" \
-          --cxx="$CXX" \
-          --ar="$AR" \
-          --ranlib="$RANLIB" \
-          --nm="$NM" \
-          --pkg-config="$PKG_CONFIG" \
-          --strip="$STRIP" \
-          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+          --arch=$ARCH1 \
+          --sysroot=$TOOLCHAIN/sysroot \
           --disable-indevs \
           --disable-outdevs \
           --enable-indev=lavfi \
@@ -91,6 +77,7 @@ jobs:
           --disable-symver \
           --enable-cross-compile \
           --enable-gnutls \
+          $ASM_SWITCH \
           --enable-gpl \
           --enable-version3 \
           --enable-jni \
@@ -129,11 +116,13 @@ jobs:
           --enable-mediacodec \
           --enable-opencl \
           --enable-shared \
-          --prefix=$GITHUB_WORKSPACE/android/$ABI \
+          --prefix=$OUTPUT \
           --target-os=android \
           --disable-vulkan \
-          $_EXTRA_CONFIGURE_FLAGS \
           --disable-libfdk-aac
+          --cc=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang \
+          --cxx=$TOOLCHAIN/bin/$ARCH2-linux-$ANDROID$API-clang++ \
+          --cross-prefix=$TOOLCHAIN/bin/$ARCH1-linux-$ANDROID-
     
     - name: Upload config.log
       if: always()
