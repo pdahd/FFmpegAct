@@ -1,4 +1,4 @@
-name: Build FFmpeg for Termux
+name: Build FFmpeg with external libraries for Android
 
 on:
   push:
@@ -19,39 +19,58 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download FFmpeg source
-      run: |
-        wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
-    
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'zulu'
-        java-version: '11'
-
     - name: Download and extract Android NDK
       run: |
         wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
-    
+
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm llvm \
-          fontconfig libfreetype6-dev libfribidi-dev libgme-dev libharfbuzz-dev libaom-dev libass-dev libbluray-dev libbz2-dev \
-          libdav1d-dev libgnutls28-dev libiconv-hook-dev liblzma-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev \
-          libopenmpt-dev libopus-dev libsoxr-dev libsrt-openssl-dev libssh-dev libtheora-dev libv4l-dev libvo-amrwbenc-dev \
-          libvorbis-dev libvpx-dev libvidstab-dev libwebp-dev libx264-dev libx265-dev libxml2-dev libxvidcore-dev libzimg-dev \
-          liblcms2-dev ocl-icd-opencl-dev libsvtav1-dev 
+        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm
 
     - name: Install gas-preprocessor
       run: |
         git clone https://github.com/FFmpeg/gas-preprocessor
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
-    
-    - name: Configure FFmpeg for arm64-v8a
+
+    - name: Download FFmpeg source
+      run: |
+        wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
+
+    - name: Download and install external libraries
+      run: |
+        # 指定安装目录
+        INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
+        
+        # 创建安装目录
+        mkdir -p $INSTALL_DIR
+        
+        # 外部库列表
+        LIBS=("x264" "x265" "gnutls")
+        
+        # Termux 包仓库 URL
+        TERMUX_REPO="https://packages.termux.dev/apt/termux-main/pool/main"
+        
+        # 下载并安装每个外部库
+        for LIB in "${LIBS[@]}"; do
+          # 查找最新版本的 .deb 文件，匹配架构
+          DEB_URL=$(curl -s $TERMUX_REPO/$LIB/ | grep -oP 'href="\K[^"]*' | grep -E "aarch64\.deb$" | sort -V | tail -n 1)
+          FULL_URL="$TERMUX_REPO/$LIB/$DEB_URL"
+          
+          # 下载 .deb 文件
+          wget $FULL_URL -O /tmp/$LIB.deb
+          
+          # 安装 .deb 文件到指定目录
+          dpkg -x /tmp/$LIB.deb $INSTALL_DIR
+        done
+        
+        # 更新库缓存
+        sudo ldconfig
+
+    - name: Configure FFmpeg for arm64-v8a with external libraries
       run: |
         export API=21
         export NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
@@ -65,6 +84,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export PKG_CONFIG=/usr/bin/pkg-config
+        export EXTERNAL_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
         _ARCH=aarch64
@@ -86,51 +106,21 @@ jobs:
           --disable-static \
           --disable-symver \
           --enable-cross-compile \
-          --enable-gnutls \
           --enable-gpl \
           --enable-version3 \
-          --enable-jni \
-          --enable-lcms2 \
-          --enable-libaom \
-          --enable-libass \
-          --enable-libbluray \
-          --enable-libdav1d \
-          --enable-libfontconfig \
-          --enable-libfreetype \
-          --enable-libfribidi \
-          --enable-libgme \
-          --enable-libharfbuzz \
-          --enable-libmp3lame \
-          --enable-libopencore-amrnb \
-          --enable-libopencore-amrwb \
-          --enable-libopenmpt \
-          --enable-libopus \
-          --enable-librav1e \
-          --enable-libsoxr \
-          --enable-libsrt \
-          --enable-libssh \
-          --enable-libsvtav1 \
-          --enable-libtheora \
-          --enable-libv4l2 \
-          --enable-libvidstab \
-          --enable-libvo-amrwbenc \
-          --enable-libvorbis \
-          --enable-libvpx \
-          --enable-libwebp \
           --enable-libx264 \
           --enable-libx265 \
-          --enable-libxml2 \
-          --enable-libxvid \
-          --enable-libzimg \
-          --enable-mediacodec \
-          --enable-opencl \
+          --enable-gnutls \
+          --extra-cflags="-I$EXTERNAL_LIBS_DIR/usr/include" \
+          --extra-ldflags="-L$EXTERNAL_LIBS_DIR/usr/lib" \
           --enable-shared \
           --prefix=$GITHUB_WORKSPACE/android/$ABI \
           --target-os=android \
           --disable-vulkan \
+          --sysroot=$TOOLCHAIN/sysroot \
           $_EXTRA_CONFIGURE_FLAGS \
           --disable-libfdk-aac
-    
+
     - name: Upload config.log
       if: always()
       uses: actions/upload-artifact@v2
