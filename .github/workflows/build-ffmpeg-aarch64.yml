@@ -51,36 +51,39 @@ jobs:
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
     
-    - name: Configure FFmpeg for arm64-v8a
+    - name: Set environment variables
       run: |
-        API=21
-        NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
-        TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64
-        TERMUX_HOST_PLATFORM=aarch64-linux-android
-        CC=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang
-        CXX=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang++
-        AS=$TOOLCHAIN/bin/llvm-as
-        AR=$TOOLCHAIN/bin/llvm-ar
-        RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        NM=$TOOLCHAIN/bin/llvm-nm
-        STRIP=$TOOLCHAIN/bin/llvm-strip
-        PKG_CONFIG=/usr/bin/pkg-config
+        echo "API=21" >> $GITHUB_ENV
+        echo "NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
+        echo "TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
+        echo "TERMUX_HOST_PLATFORM=aarch64-linux-android" >> $GITHUB_ENV
+        echo "CC=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang" >> $GITHUB_ENV
+        echo "CXX=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang++" >> $GITHUB_ENV
+        echo "AS=$TOOLCHAIN/bin/llvm-as" >> $GITHUB_ENV
+        echo "AR=$TOOLCHAIN/bin/llvm-ar" >> $GITHUB_ENV
+        echo "RANLIB=$TOOLCHAIN/bin/llvm-ranlib" >> $GITHUB_ENV
+        echo "NM=$TOOLCHAIN/bin/llvm-nm" >> $GITHUB_ENV
+        echo "STRIP=$TOOLCHAIN/bin/llvm-strip" >> $GITHUB_ENV
+        echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
+    
+    - name: Configure FFmpeg for arm64-v8a
+      continue-on-error: true
+      run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
-        ARCH=aarch64
-        EXTRA_CONFIGURE_FLAGS="--enable-neon"
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        _ARCH=aarch64
+        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
         ./configure \
-          --arch=$ARCH \
-          --as=$AS \
-          --cc=$CC \
-          --cxx=$CXX \
-          --ar=$AR \
-          --ranlib=$RANLIB \
-          --nm=$NM \
-          --pkg-config=$PKG_CONFIG \
-          --strip=$STRIP \
-          --cross-prefix=$TERMUX_HOST_PLATFORM \
+          --arch="${_ARCH}" \
+          --as="$AS" \
+          --cc="$CC" \
+          --cxx="$CXX" \
+          --ar="$AR" \
+          --ranlib="$RANLIB" \
+          --nm="$NM" \
+          --pkg-config="$PKG_CONFIG" \
+          --strip="$STRIP" \
+          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
           --disable-indevs \
           --disable-outdevs \
           --enable-indev=lavfi \
@@ -129,11 +132,13 @@ jobs:
           --prefix=$GITHUB_WORKSPACE/android/$ABI \
           --target-os=android \
           --disable-vulkan \
-          $EXTRA_CONFIGURE_FLAGS \
+          $_EXTRA_CONFIGURE_FLAGS \
           --disable-libfdk-aac
     
-    - name: Build FFmpeg for arm64-v8a
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        make -j$(nproc)
-        make install
+    - name: Upload config.log
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: config-log
+        path: ffmpeg-6.1.1/ffbuild/config.log
+        if-no-files-found: warn
