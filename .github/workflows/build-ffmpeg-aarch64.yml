@@ -62,17 +62,18 @@ jobs:
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
         export PATH=$TOOLCHAIN/bin:$PATH
-        export CROSS_PREFIX=aarch64-linux-android-
+        export CROSS_PREFIX=$TOOLCHAIN/bin/aarch64-linux-android-
         export CC=${CROSS_PREFIX}${API}-clang
         export CXX=${CROSS_PREFIX}${API}-clang++
         export CFLAGS="-DANDROID -Wall -fPIC"
+        export LD=$TOOLCHAIN/bin/ld.lld
 
         # 配置和编译 x264
         ./configure --prefix=$INSTALL_DIR \
                     --enable-static \
                     --enable-pic \
                     --disable-asm \
-                    --host=$CROSS_PREFIX \
+                    --host=aarch64-linux-android \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
                     --extra-cflags="$CFLAGS"
