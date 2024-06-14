@@ -61,12 +61,18 @@ jobs:
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
+
+        # 将工具链的 bin 目录添加到 PATH 环境变量中
         export PATH=$TOOLCHAIN/bin:$PATH
-        export CROSS_PREFIX=$TOOLCHAIN/bin/aarch64-linux-android-
+
+        # 设置编译器前缀
+        export CROSS_PREFIX=aarch64-linux-android-
+
+        # 设置编译器
         export CC=${CROSS_PREFIX}${API}-clang
         export CXX=${CROSS_PREFIX}${API}-clang++
         export CFLAGS="-DANDROID -Wall -fPIC"
-        export LD=$TOOLCHAIN/bin/ld.lld
+        export LDFLAGS="-DANDROID -Wall -fPIC"
 
         # 配置和编译 x264
         ./configure --prefix=$INSTALL_DIR \
