@@ -57,6 +57,8 @@ jobs:
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
 
+        patch -p1 < ../x264_fixes.patch
+
         export API=21
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
