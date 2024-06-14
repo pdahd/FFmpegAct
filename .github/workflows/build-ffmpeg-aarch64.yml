@@ -67,6 +67,7 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
         export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
         export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
+        export AR=$TOOLCHAIN/bin/llvm-ar
         export STRINGS=$TOOLCHAIN/bin/llvm-strings
         export CFLAGS="-DANDROID -Wall -fPIC"
     
