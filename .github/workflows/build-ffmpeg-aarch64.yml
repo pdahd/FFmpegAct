@@ -88,7 +88,7 @@ jobs:
     - name: List NDK directory structure
       run: |
         echo "Listing NDK directory structure..."
-        ls -R $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/usr/lib
+        ls -R $ANDROID_NDK_HOME/toolchains/sysroot/usr/lib
     
     - name: Configure FFmpeg for arm64-v8a with external libraries
       run: |
