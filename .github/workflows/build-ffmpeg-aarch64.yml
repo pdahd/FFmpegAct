@@ -53,7 +53,7 @@ jobs:
       run: |
         cd x264
         curl -O https://raw.githubusercontent.com/pdahd/HD/main/x264_fixes.patch
-        patch -p1 < x264_fixes.patch
+        patch -p0 < x264_fixes.patch
     
     - name: Compile and install x264
       run: |
