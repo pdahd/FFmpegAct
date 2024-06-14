@@ -14,6 +14,7 @@ jobs:
 
     env:
       ANDROID_NDK_VERSION: r26d
+      PKG_CONFIG_PATH: ${{ github.workspace }}/external_libs/lib/pkgconfig
 
     steps:
     - name: Checkout repository
@@ -102,7 +103,6 @@ jobs:
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
-        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GITHUB_WORKSPACE/external_libs/lib/pkgconfig
         export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
         pkg-config --cflags --libs x264
         
