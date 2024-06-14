@@ -101,7 +101,7 @@ jobs:
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
-        export PKG_CONFIG=usr/bin/pkg-config
+        export PKG_CONFIG=/usr/bin/pkg-config
         export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
     
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
