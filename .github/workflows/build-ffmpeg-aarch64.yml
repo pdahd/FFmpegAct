@@ -106,6 +106,7 @@ jobs:
         ./configure \
           --arch="${_ARCH}" \
           --as="$AS" \
+          --ld="$LD"
           --cc="$CC" \
           --cxx="$CXX" \
           --ar="$AR" \
