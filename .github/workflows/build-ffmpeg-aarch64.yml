@@ -53,6 +53,7 @@ jobs:
 
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
+        
         patch -p0 < ../x264_fixes.patch
         
         export API=21
@@ -87,51 +88,43 @@ jobs:
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
         export API=21
-        export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
+        export NDK=$ANDROID_NDK_HOME
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android/$API
-        export TERMUX_HOST_PLATFORM=aarch64-linux-android
-        export CC=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang
-        export CXX=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang++
-        export LD=$TOOLCHAIN/bin/ld.lld
+        export TERMUX=aarch64-linux-android
+        export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
+        export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
         export STRIP=$TOOLCHAIN/bin/llvm-strip
+        export STRINGS=$TOOLCHAIN/bin/llvm-strings
         export PKG_CONFIG=/usr/bin/pkg-config
-        export EXTERNAL_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
+        export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ABI=arm64-v8a
-        _ARCH=aarch64
-        _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        ARCH=aarch64
+        EXTRA_CONFIGURE_FLAGS="--enable-neon"
         ./configure \
-          --arch="${_ARCH}" \
-          --as="$AS" \
-          --ld="$LD"
-          --cc="$CC" \
-          --cxx="$CXX" \
-          --ar="$AR" \
-          --ranlib="$RANLIB" \
-          --nm="$NM" \
-          --pkg-config="$PKG_CONFIG" \
-          --strip="$STRIP" \
-          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+          --arch=$ARCH \
+          --strip=$STRIP \
+          --cross-prefix=$CROSS_PREFIX \
           --disable-indevs \
           --disable-outdevs \
-          --enable-indev=lavfi \
+         # --enable-indev=lavfi \
           --disable-static \
           --disable-symver \
           --enable-cross-compile \
           --enable-gpl \
           --enable-version3 \
           --enable-libx264 \
-          --extra-cflags="-I$EXTERNAL_LIBS_DIR/include" \
-          --extra-ldflags="-L$EXTERNAL_LIBS_DIR/lib" \
           --enable-shared \
           --prefix=$GITHUB_WORKSPACE/android/$ABI \
           --target-os=android \
           --disable-vulkan \
           --sysroot=$SYSROOT \
-          $_EXTRA_CONFIGURE_FLAGS \
+          $EXTRA_CONFIGURE_FLAGS \
           --disable-libfdk-aac
 
     - name: Upload config.log
