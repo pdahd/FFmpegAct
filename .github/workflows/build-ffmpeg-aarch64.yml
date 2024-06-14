@@ -45,6 +45,16 @@ jobs:
         echo "Listing NDK directory structure..."
         ls -R $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
     
+    - name: Download x264 source
+      run: |
+        git clone https://code.videolan.org/videolan/x264.git
+
+    - name: Apply patches to x264 source code
+      run: |
+        cd x264
+        curl -O https://raw.githubusercontent.com/pdahd/HD/main/x264_fixes.patch
+        patch -p1 < x264_fixes.patch
+    
     - name: Compile and install x264
       run: |
         # 指定安装目录
@@ -52,12 +62,6 @@ jobs:
         
         # 创建安装目录
         mkdir -p $INSTALL_DIR
-        
-        # 下载 x264 源代码
-        git clone https://code.videolan.org/videolan/x264.git
-        cd x264
-
-        patch -p1 < ../x264_fixes.patch
 
         export API=21
         export NDK=$ANDROID_NDK_HOME
