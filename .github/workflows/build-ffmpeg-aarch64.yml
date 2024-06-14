@@ -87,6 +87,10 @@ jobs:
         find $INSTALL_DIR -type f
         cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
 
+    - name: Set PKG_CONFIG_PATH
+      run: |
+        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig" >> $GITHUB_ENV
+    
     - name: Print PKG_CONFIG_PATH
       run: |
         echo $PKG_CONFIG_PATH
