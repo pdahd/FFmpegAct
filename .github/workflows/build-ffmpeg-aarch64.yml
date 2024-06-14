@@ -93,7 +93,7 @@ jobs:
         export TERMUX=aarch64-linux-android
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot/usr/lib/$TERMUX
+        export SYSROOT=$TOOLCHAIN/sysroot
         export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
         export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
