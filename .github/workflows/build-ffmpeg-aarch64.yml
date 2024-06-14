@@ -88,6 +88,8 @@ jobs:
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
         export API=21
+        export ARCH=aarch64
+        export ABI=arm64-v8a
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android/$API
@@ -103,19 +105,20 @@ jobs:
         export PKG_CONFIG=/usr/bin/pkg-config
         export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        ABI=arm64-v8a
-        ARCH=aarch64
-        EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        
         ./configure \
           --arch=$ARCH \
           --strip=$STRIP \
+          --cc=$CC \
+          --cxx=$CXX \
           --cross-prefix=$CROSS_PREFIX \
           --disable-indevs \
           --disable-outdevs \
-         # --enable-indev=lavfi \
+        # --enable-indev=lavfi \
           --disable-static \
           --disable-symver \
           --enable-cross-compile \
+          --enable-neon \
           --enable-gpl \
           --enable-version3 \
           --enable-libx264 \
@@ -124,7 +127,6 @@ jobs:
           --target-os=android \
           --disable-vulkan \
           --sysroot=$SYSROOT \
-          $EXTRA_CONFIGURE_FLAGS \
           --disable-libfdk-aac
 
     - name: Upload config.log
