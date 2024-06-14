@@ -40,6 +40,11 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: List NDK directory structure
+      run: |
+        echo "Listing NDK directory structure..."
+        ls -R $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
+    
     - name: Compile and install x264
       run: |
         # 指定安装目录
