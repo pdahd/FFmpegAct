@@ -113,6 +113,7 @@ jobs:
         export PKG_CONFIG=/usr/bin/pkg-config
         export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
         export PKG_CONFIG_PATH=$X264_LIBS_DIR/lib/pkgconfig
+        pkg-config --libs --cflags x264
     
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
