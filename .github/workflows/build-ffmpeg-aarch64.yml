@@ -87,6 +87,10 @@ jobs:
         find $INSTALL_DIR -type f
         cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
 
+    - name: Print PKG_CONFIG_PATH
+      run: |
+        echo $PKG_CONFIG_PATH
+    
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
         export API=21
