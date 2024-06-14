@@ -61,25 +61,26 @@ jobs:
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
-
-        # 将工具链的 bin 目录添加到 PATH 环境变量中
-        export PATH=$TOOLCHAIN/bin:$PATH
-
-        # 设置编译器前缀
-        export CROSS_PREFIX=aarch64-linux-android-
-
-        # 设置编译器
-        export CC=${CROSS_PREFIX}${API}-clang
-        export CXX=${CROSS_PREFIX}${API}-clang++
+        export TOOLNAME_BASE="aarch64-linux-android"
+        export COMPILER_BASE="aarch64-linux-android"
+        export HOST="aarch64-linux-android"
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
+        export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
+        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
+        export AR=$TOOLCHAIN/bin/llvm-ar
+        export LD=$TOOLCHAIN/bin/ld.lld
+        export STRINGS=$TOOLCHAIN/bin/llvm-strings
+        export NM=$TOOLCHAIN/bin/llvm-nm
+        export STRIP=$TOOLCHAIN/bin/llvm-strip
+        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export CFLAGS="-DANDROID -Wall -fPIC"
-        export LDFLAGS="-DANDROID -Wall -fPIC"
-
+    
         # 配置和编译 x264
         ./configure --prefix=$INSTALL_DIR \
                     --enable-static \
                     --enable-pic \
                     --disable-asm \
-                    --host=aarch64-linux-android \
+                    --host=$HOST \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
                     --extra-cflags="$CFLAGS"
