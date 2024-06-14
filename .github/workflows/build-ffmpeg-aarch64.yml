@@ -102,9 +102,8 @@ jobs:
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$GITHUB_WORKSPACE/external_libs/lib/pkgconfig
         export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
-        echo "X264_LIBS_DIR: $X264_LIBS_DIR"  # 添加这行
-        echo "Current working directory: $(pwd)"   # 添加这行
         
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
