@@ -103,6 +103,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
+        export PKG_CONFIG_PATH=$X264_LIBS_DIR/lib/pkgconfig
     
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
