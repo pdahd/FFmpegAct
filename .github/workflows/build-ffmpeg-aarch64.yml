@@ -67,12 +67,7 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
         export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
         export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
-        export AR=$TOOLCHAIN/bin/llvm-ar
-        export LD=$TOOLCHAIN/bin/ld.lld
         export STRINGS=$TOOLCHAIN/bin/llvm-strings
-        export NM=$TOOLCHAIN/bin/llvm-nm
-        export STRIP=$TOOLCHAIN/bin/llvm-strip
-        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export CFLAGS="-DANDROID -Wall -fPIC"
     
         # 配置和编译 x264
