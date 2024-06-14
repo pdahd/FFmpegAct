@@ -68,6 +68,7 @@ jobs:
         export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
         export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
         export AR=$TOOLCHAIN/bin/llvm-ar
+        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export STRINGS=$TOOLCHAIN/bin/llvm-strings
         export CFLAGS="-DANDROID -Wall -fPIC"
     
