@@ -61,31 +61,29 @@ jobs:
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
-        export PATH=$TOOLCHAIN/bin:$PATH
-        export CC=$TOOLCHAIN/bin/aarch64-linux-android$API-clang
-        export CXX=$TOOLCHAIN/bin/aarch64-linux-android$API-clang++
+        export TOOLNAME_BASE="aarch64-linux-android"
+        export COMPILER_BASE="aarch64-linux-android"
+        export HOST="aarch64-linux-android"
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
+        export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
+        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
         export AR=$TOOLCHAIN/bin/llvm-ar
-        export AS=$CC
         export LD=$TOOLCHAIN/bin/ld.lld
+        export AS=$CC
+        export NM=$TOOLCHAIN/bin/llvm-nm
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        export NM=$TOOLCHAIN/bin/llvm-nm
-        export OBJCOPY=$TOOLCHAIN/bin/llvm-objcopy
-        export OBJDUMP=$TOOLCHAIN/bin/llvm-objdump
-        export READELF=$TOOLCHAIN/bin/llvm-readelf
-        export SIZE=$TOOLCHAIN/bin/llvm-size
-        export STRINGS=$TOOLCHAIN/bin/llvm-strings
-        export CFLAGS="--target=aarch64-none-linux-android$API --sysroot=$SYSROOT"
-        export LDFLAGS="--target=aarch64-none-linux-android$API --sysroot=$SYSROOT"
+        export CFLAGS="-DANDROID -Wall -fPIC"
     
         # 配置和编译 x264
         ./configure --prefix=$INSTALL_DIR \
-                    --host=aarch64-linux-android \
-                    --cross-prefix=$TOOLCHAIN/bin/aarch64-linux-android- \
-                    --sysroot=$SYSROOT \
-                    --enable-pic \
                     --enable-static \
-                    --disable-cli
+                    --enable-pic \
+                    --disable-asm \
+                    --host=$HOST \
+                    --cross-prefix=$CROSS_PREFIX \
+                    --sysroot=$SYSROOT \
+                    --extra-cflags="$CFLAGS"
         make -j$(nproc)
         make install
         
