@@ -1,4 +1,4 @@
-name: Build FFmpeg with external libraries for Android
+name: Build FFmpeg with libx264 for Android
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Download and install external libraries
+    - name: Download and install libx264-dev
       run: |
         # 指定安装目录
         INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
@@ -48,53 +48,29 @@ jobs:
         # 创建安装目录
         mkdir -p $INSTALL_DIR
         
-        # 外部库列表
-        LIBS=("x264" "x265" "gnutls")
+        # Ubuntu 包仓库 URL
+        UBUNTU_REPO="http://archive.ubuntu.com/ubuntu/pool/universe/x/x264"
         
-        # Termux 包仓库 URL
-        TERMUX_REPO="https://packages.termux.dev/apt/termux-main/pool/main"
+        # 查找最新版本的 libx264-dev .deb 文件
+        DEB_URL=$(curl -s $UBUNTU_REPO/ | grep -oP 'href="\K[^"]*' | grep -E "libx264-dev.*\.deb$" | sort -V | tail -n 1)
+        FULL_URL="$UBUNTU_REPO/$DEB_URL"
         
-        # 下载并安装每个外部库
-        for LIB in "${LIBS[@]}"; do
-          # 查找库所在的目录
-          LIB_DIR=$(curl -s $TERMUX_REPO/ | grep -oP 'href="\K[^"]*' | grep -E "^${LIB:0:1}/$" | head -n 1)
-          FULL_LIB_DIR="$TERMUX_REPO/$LIB_DIR$LIB/"
-          
-          # 查找最新版本的 .deb 文件，匹配架构
-          DEB_URL=$(curl -s $FULL_LIB_DIR | grep -oP 'href="\K[^"]*' | grep -E "aarch64\.deb$" | sort -V | tail -n 1)
-          FULL_URL="$FULL_LIB_DIR$DEB_URL"
-          
-          # 下载 .deb 文件
-          wget $FULL_URL -O /tmp/$LIB.deb
-          
-          # 安装 .deb 文件到指定目录
-          dpkg -x /tmp/$LIB.deb $INSTALL_DIR
-        done
+        # 下载 .deb 文件
+        wget $FULL_URL -O /tmp/libx264-dev.deb
         
-        # 更新库缓存
-        sudo ldconfig
+        # 安装 .deb 文件到指定目录
+        dpkg -x /tmp/libx264-dev.deb $INSTALL_DIR
+        
+        # 列出安装后的文件
+        echo "Listing files for libx264-dev:"
+        find $INSTALL_DIR -type f
 
-    - name: List installed files for x264, x265, and gnutls
-      run: |
-        echo "Listing files for x264:"
-        dpkg -c /tmp/x264.deb
-
-        echo "Listing files for x265:"
-        dpkg -c /tmp/x265.deb
-
-        echo "Listing files for gnutls:"
-        dpkg -c /tmp/gnutls.deb
-    
-    - name: List NDK directory structure
-      run: |
-        echo "Listing NDK directory structure..."
-        ls -R $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-    
-    - name: Configure FFmpeg for arm64-v8a with external libraries
+    - name: Configure FFmpeg for arm64-v8a with libx264
       run: |
         export API=21
         export NDK=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot/usr/lib/aarch64-linux-android/$API
         export TERMUX_HOST_PLATFORM=aarch64-linux-android
         export CC=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang
         export CXX=$TOOLCHAIN/bin/$TERMUX_HOST_PLATFORM$API-clang++
@@ -129,15 +105,13 @@ jobs:
           --enable-gpl \
           --enable-version3 \
           --enable-libx264 \
-          --enable-libx265 \
-          --enable-gnutls \
           --extra-cflags="-I$EXTERNAL_LIBS_DIR/usr/include" \
           --extra-ldflags="-L$EXTERNAL_LIBS_DIR/usr/lib" \
           --enable-shared \
           --prefix=$GITHUB_WORKSPACE/android/$ABI \
           --target-os=android \
           --disable-vulkan \
-          --sysroot=$TOOLCHAIN/sysroot \
+          --sysroot=$SYSROOT \
           $_EXTRA_CONFIGURE_FLAGS \
           --disable-libfdk-aac
 
