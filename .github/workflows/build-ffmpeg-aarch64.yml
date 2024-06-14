@@ -57,7 +57,6 @@ jobs:
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
 
-        # 设置编译环境变量
         export API=21
         export NDK=$ANDROID_NDK_HOME
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
@@ -67,7 +66,7 @@ jobs:
         export CXX=$TOOLCHAIN/bin/aarch64-linux-android$API-clang++
         export AR=$TOOLCHAIN/bin/llvm-ar
         export AS=$CC
-        export LD=$TOOLCHAIN/bin/ld
+        export LD=$TOOLCHAIN/bin/ld.lld
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
@@ -75,13 +74,14 @@ jobs:
         export OBJDUMP=$TOOLCHAIN/bin/llvm-objdump
         export READELF=$TOOLCHAIN/bin/llvm-readelf
         export SIZE=$TOOLCHAIN/bin/llvm-size
+        export STRINGS=$TOOLCHAIN/bin/llvm-strings
         export CFLAGS="--target=aarch64-none-linux-android$API --sysroot=$SYSROOT"
         export LDFLAGS="--target=aarch64-none-linux-android$API --sysroot=$SYSROOT"
     
         # 配置和编译 x264
         ./configure --prefix=$INSTALL_DIR \
                     --host=aarch64-linux-android \
-                    --cross-prefix=$TOOLCHAIN/bin/aarch64-linux-android21 \
+                    --cross-prefix=$TOOLCHAIN/bin/aarch64-linux-android- \
                     --sysroot=$SYSROOT \
                     --enable-pic \
                     --enable-static \
