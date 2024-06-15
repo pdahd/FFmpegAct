@@ -85,45 +85,46 @@ jobs:
       run: |
         echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
         echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
-        echo "API=21" >> $GITHUB_ENV
-        echo "ARCH=aarch64" >> $GITHUB_ENV
-        echo "ABI=arm64-v8a" >> $GITHUB_ENV
-        echo "TERMUX=aarch64-linux-android" >> $GITHUB_ENV
-        echo "NDK=$ANDROID_NDK_HOME" >> $GITHUB_ENV
-        echo "TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
-        echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
-        echo "CC=$TOOLCHAIN/bin/$TERMUX$API-clang" >> $GITHUB_ENV
-        echo "CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++" >> $GITHUB_ENV
-        echo "CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-" >> $GITHUB_ENV
-        echo "AR=$TOOLCHAIN/bin/llvm-ar" >> $GITHUB_ENV
-        echo "RANLIB=$TOOLCHAIN/bin/llvm-ranlib" >> $GITHUB_ENV
-        echo "NM=$TOOLCHAIN/bin/llvm-nm" >> $GITHUB_ENV
-        echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
 
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
+        export API=21
+        export ARCH=aarch64
+        export PREFIX=$GITHUB_WORKSPACE/android/arm64-v8a
+        export TERMUX=aarch64-linux-android
+        export NDK=$ANDROID_NDK_HOME
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot
+        export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
+        export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
+        export AR=$TOOLCHAIN/bin/llvm-ar
+        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+        export NM=$TOOLCHAIN/bin/llvm-nm
+        export PKG_CONFIG=/usr/bin/pkg-config
+        
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
-          --arch="${ARCH}" \
-          --nm="${NM}" \
-          --cc="${CC}" \
-          --cxx="${CXX}" \
-          --cross-prefix="${CROSS_PREFIX}" \
+          --arch="$ARCH" \
+          --nm="$NM" \
+          --cc="$CC" \
+          --cxx="$CXX" \
+          --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
           --disable-static \
           --disable-symver \
-          --pkg-config="${PKG_CONFIG}" \
+          --pkg-config="$PKG_CONFIG" \
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
           --enable-shared \
-          --prefix="$GITHUB_WORKSPACE/android/$ABI" \
+          --prefix="$PREFIX" \
           --target-os=android \
           --extra-cflags="-I${X264_INCLUDE}" \
           --extra-ldflags="-L${X264_LIB}" \
           --disable-vulkan \
-          --sysroot="${SYSROOT}" \
+          --sysroot="$SYSROOT" \
           --disable-libfdk-aac
 
     - name: Compile FFmpeg
