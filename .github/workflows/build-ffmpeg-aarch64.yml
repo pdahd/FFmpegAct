@@ -19,6 +19,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Uninstall and clean pre-installed NDK versions
+      run: |
+        sudo rm -rf /usr/local/lib/android/sdk/ndk/*
+        if [ "$(ls -A /usr/local/lib/android/sdk/ndk)" ]; then
+          echo "Some NDK versions are still present."
+        else
+          echo "All pre-installed NDK versions have been successfully removed."
+        fi
+         
     - name: Check pre-installed Android NDK
       run: |
         if [ -z "$ANDROID_NDK_ROOT" ]; then
