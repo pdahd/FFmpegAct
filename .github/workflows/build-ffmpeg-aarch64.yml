@@ -27,6 +27,10 @@ jobs:
           echo "Pre-installed Android NDK found at: $ANDROID_NDK_ROOT"
         fi
     
+    - name: List pre-installed Android NDK versions
+      run: |
+        ls -l /usr/local/lib/android/sdk/ndk || echo "No NDK directory found."
+    
     - name: Download and extract Android NDK
       run: |
         wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
