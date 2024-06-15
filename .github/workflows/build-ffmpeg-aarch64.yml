@@ -50,8 +50,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y autoconf automake build-essential cmake git libtool pkg-config texinfo zlib1g-dev yasm
-        which pkg-config
+        sudo apt-get install -y autoconf automake build-essential cmake git libtool texinfo zlib1g-dev yasm
+        
 
     - name: Install gas-preprocessor
       run: |
