@@ -102,6 +102,7 @@ jobs:
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
+        export STRIP=$TOOLCHAIN/bin/llvm-strip
         
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
@@ -109,6 +110,7 @@ jobs:
           --nm="$NM" \
           --cc="$CC" \
           --cxx="$CXX" \
+          --strip="$STRIP" \
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
