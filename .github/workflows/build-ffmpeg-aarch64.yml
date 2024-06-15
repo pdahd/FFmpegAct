@@ -88,6 +88,15 @@ jobs:
         find $INSTALL_DIR -type f
         cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
 
+    - name: Create pkg-config wrapper
+      run: |
+        echo '#!/bin/sh' > aarch64-linux-android-pkg-config
+        echo 'PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR} /usr/bin/pkg-config "$@"' >> aarch64-linux-android-pkg-config
+        chmod +x aarch64-linux-android-pkg-config
+        sudo mv aarch64-linux-android-pkg-config /usr/local/bin/
+
+        export PKG_CONFIG_LIBDIR=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig
+        echo "PKG_CONFIG_LIBDIR=$PKG_CONFIG_LIBDIR" >> $GITHUB_ENV
     
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
@@ -104,7 +113,7 @@ jobs:
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
-        export PKG_CONFIG=/usr/bin/pkg-config
+        
         pkg-config --libs --cflags x264
         
     
@@ -114,7 +123,6 @@ jobs:
           --nm=$NM \
           --cc=$CC \
           --cxx=$CXX \
-          --pkg-config=$PKG_CONFIG \
           --cross-prefix=$CROSS_PREFIX \
           --disable-indevs \
           --disable-outdevs \
