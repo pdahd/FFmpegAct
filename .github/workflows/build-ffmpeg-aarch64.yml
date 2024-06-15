@@ -29,6 +29,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libx265-dev  libx264-dev 
+        echo "Listing installation files for libx265-dev:"
+        dpkg -L libx265-dev
+        echo "Listing installation files for libx264-dev:"
+        dpkg -L libx264-dev
     
     - name: Compile and install x264
       if: false
