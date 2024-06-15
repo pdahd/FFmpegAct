@@ -104,7 +104,9 @@ jobs:
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
-        export PKG_CONFIG=/usr/bin/pkg-config
+        if [ ! -f "$TOOLCHAIN/bin/aarch64-linux-android-pkg-config" ]; then
+          ln -s /usr/bin/pkg-config $TOOLCHAIN/bin/aarch64-linux-android-pkg-config
+        fi
     
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
