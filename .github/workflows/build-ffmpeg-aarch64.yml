@@ -18,53 +18,13 @@ jobs:
     - name: Setup environment variables
       run: |
         echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "X264_INCLUDE=${{ github.workspace }}/external_libs/include" >> $GITHUB_ENV
-        echo "X264_LIB=${{ github.workspace }}/external_libs/lib" >> $GITHUB_ENV
         echo "API=21" >> $GITHUB_ENV
-        echo "ARCH=aarch64" >> $GITHUB_ENV
-        echo "PREFIX=${{ github.workspace }}/android/arm64-v8a" >> $GITHUB_ENV
-        echo "TERMUX=aarch64-linux-android" >> $GITHUB_ENV
-        echo "TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
-        echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
-        echo "CC=$TOOLCHAIN/bin/$TERMUX$API-clang" >> $GITHUB_ENV
-        echo "CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++" >> $GITHUB_ENV
-        echo "CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-" >> $GITHUB_ENV
-        echo "AR=$TOOLCHAIN/bin/llvm-ar" >> $GITHUB_ENV
-        echo "RANLIB=$TOOLCHAIN/bin/llvm-ranlib" >> $GITHUB_ENV
-        echo "NM=$TOOLCHAIN/bin/llvm-nm" >> $GITHUB_ENV
-        echo "STRIP=$TOOLCHAIN/bin/llvm-strip" >> $GITHUB_ENV
-        echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
-
-    - name: List NDK directory structure using ls
-      run: |
-        ls -R /usr/local/lib/android/sdk/ndk/25.2.9519653
-    
-    - name: Download and extract Android NDK
-      if: false
-      run: |
-        wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
-        unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
-        echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
-        
-    - name: Install dependencies
-      if: false
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y autoconf automake build-essential cmake git libtool texinfo zlib1g-dev yasm
-
-    - name: Install gas-preprocessor
-      if: false
-      run: |
-        git clone https://github.com/FFmpeg/gas-preprocessor
-        sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
-        sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
     - name: Download FFmpeg source
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     - name: Compile and install x264
-      if: false
       run: |
         INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
         
@@ -75,8 +35,7 @@ jobs:
         
         patch -p0 < ../x264_fixes.patch
         
-        export API=21
-        export NDK=$ANDROID_NDK_HOME
+        export NDK=$ANDROID_NDK_ROOT
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
         export TOOLNAME_BASE="aarch64-linux-android"
@@ -103,22 +62,16 @@ jobs:
         
         echo "Listing files for x264:"
         find $INSTALL_DIR -type f
-        cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
-
-    - name: Set environment variables for FFmpeg
-      if: false
-      run: |
+        
         echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
         echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
 
     - name: Configure FFmpeg for arm64-v8a with x264
-      if: false
       run: |
-        export API=21
         export ARCH=aarch64
         export PREFIX=$GITHUB_WORKSPACE/android/arm64-v8a
         export TERMUX=aarch64-linux-android
-        export NDK=$ANDROID_NDK_HOME
+        export NDK=$ANDROID_NDK_ROOT
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
         export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
@@ -129,9 +82,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
-        
-    - name: 4449 for FFmpeg
-      run: |   
+         
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
           --arch="$ARCH" \
@@ -158,7 +109,6 @@ jobs:
           --disable-libfdk-aac
 
     - name: Compile FFmpeg
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         make -j$(nproc)
