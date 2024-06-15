@@ -25,12 +25,10 @@ jobs:
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
         
-    
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y autoconf automake build-essential cmake git libtool texinfo zlib1g-dev yasm
-        
 
     - name: Install gas-preprocessor
       run: |
@@ -42,11 +40,6 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: List NDK directory structure
-      run: |
-        echo "Listing NDK directory structure..."
-        ls -R $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
-    
     - name: Compile and install x264
       run: |
         INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
@@ -88,55 +81,53 @@ jobs:
         find $INSTALL_DIR -type f
         cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
 
-    - name: Create pkg-config wrapper
+    - name: Set environment variables for FFmpeg
       run: |
         echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
         echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
-    
+        echo "API=21" >> $GITHUB_ENV
+        echo "ARCH=aarch64" >> $GITHUB_ENV
+        echo "ABI=arm64-v8a" >> $GITHUB_ENV
+        echo "TERMUX=aarch64-linux-android" >> $GITHUB_ENV
+        echo "NDK=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+        echo "TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
+        echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
+        echo "CC=$TOOLCHAIN/bin/$TERMUX$API-clang" >> $GITHUB_ENV
+        echo "CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++" >> $GITHUB_ENV
+        echo "CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-" >> $GITHUB_ENV
+        echo "AR=$TOOLCHAIN/bin/llvm-ar" >> $GITHUB_ENV
+        echo "RANLIB=$TOOLCHAIN/bin/llvm-ranlib" >> $GITHUB_ENV
+        echo "NM=$TOOLCHAIN/bin/llvm-nm" >> $GITHUB_ENV
+        echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
+
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
-        export API=21
-        export ARCH=aarch64
-        export ABI=arm64-v8a
-        export TERMUX=aarch64-linux-android
-        export NDK=$ANDROID_NDK_HOME
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot
-        export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
-        export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
-        export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
-        export AR=$TOOLCHAIN/bin/llvm-ar
-        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        export NM=$TOOLCHAIN/bin/llvm-nm
-        
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
-          --arch=$ARCH \
-          --nm=$NM \
-          --cc=$CC \
-          --cxx=$CXX \
-          --cross-prefix=$CROSS_PREFIX \
+          --arch="$ARCH" \
+          --nm="$NM" \
+          --cc="$CC" \
+          --cxx="$CXX" \
+          --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
           --disable-static \
           --disable-symver \
-          --pkg-config="/usr/bin/pkg-config" \
+          --pkg-config="$PKG_CONFIG" \
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
           --enable-shared \
-          --prefix=$GITHUB_WORKSPACE/android/$ABI \
+          --prefix="$GITHUB_WORKSPACE/android/$ABI" \
           --target-os=android \
           --extra-cflags="-I${X264_INCLUDE}" \
           --extra-ldflags="-L${X264_LIB}" \
           --disable-vulkan \
-          --sysroot=$SYSROOT \
+          --sysroot="$SYSROOT" \
           --disable-libfdk-aac
 
-    - name: Upload config.log
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: config-log
-        path: ffmpeg-6.1.1/ffbuild/config.log
-        if-no-files-found: warn
+    - name: Compile FFmpeg
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        make -j$(nproc)
+        make install
