@@ -62,8 +62,11 @@ jobs:
         
         echo "Listing files for x264:"
         find $INSTALL_DIR -type f
+        
+        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
 
     - name: Set and echo PKG_CONFIG_PATH
+      if: false
       run: |
         echo "PKG_CONFIG_PATH=/home/runner/work/HD/HD/external_libs/lib/pkgconfig" >> $GITHUB_ENV
         echo "PKG_CONFIG_PATH:${PKG_CONFIG_PATH}"
@@ -84,8 +87,8 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
-        X264_INCLUDE=/home/runner/work/HD/HD/external_libs/include
-        X264_LIB=/home/runner/work/HD/HD/external_libs/lib
+        export X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include
+        export X264_LIB=$GITHUB_WORKSPACE/external_libs/lib
          
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
