@@ -80,9 +80,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
-        export X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include
-        export X264_LIB=$GITHUB_WORKSPACE/external_libs/lib
-         
+        
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
           --arch="$ARCH" \
@@ -103,8 +101,6 @@ jobs:
           --enable-shared \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I$X264_INCLUDE" \
-          --extra-ldflags="-L$X264_LIB" \
           --disable-vulkan \
           --sysroot="$SYSROOT" \
           --disable-libfdk-aac
