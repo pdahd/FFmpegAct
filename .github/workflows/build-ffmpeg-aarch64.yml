@@ -79,8 +79,8 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
-        exprot EXTRA_CFLAGS=$GITHUB_WORKSPACE/external_libs/include
-        exprot EXTRA_LDFLAGS=$GITHUB_WORKSPACE/external_libs/lib
+        X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include
+        X264_LIB=$GITHUB_WORKSPACE/external_libs/lib
          
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
@@ -102,14 +102,16 @@ jobs:
           --enable-shared \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="EXTRA_CFLAGS" \
-          --extra-ldflags="EXTRA_LDFLAGS" \
+          --extra-cflags="-I$X264_INCLUDE" \
+          --extra-ldflags="-L$X264_LIB" \
           --disable-vulkan \
           --sysroot="$SYSROOT" \
           --disable-libfdk-aac
 
-    - name: Compile FFmpeg
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
-        make -j$(nproc)
-        make install
+    - name: Upload config.log
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: config-log
+        path: ffmpeg-6.1.1/ffbuild/config.log
+        if-no-files-found: warn
