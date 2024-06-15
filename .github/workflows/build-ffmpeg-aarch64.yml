@@ -122,6 +122,7 @@ jobs:
           --cc=$CC \
           --cxx=$CXX \
           --cross-prefix=$CROSS_PREFIX \
+          --extra-libs="-L$GITHUB_WORKSPACE/external_libs/lib -lx264" \
           --extra-cflags="-I$GITHUB_WORKSPACE/external_libs/include" \
           --extra-ldflags="-L$GITHUB_WORKSPACE/external_libs/lib" \
           --disable-indevs \
