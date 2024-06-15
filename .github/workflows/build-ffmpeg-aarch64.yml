@@ -97,6 +97,8 @@ jobs:
 
         export PKG_CONFIG_LIBDIR=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig
         echo "PKG_CONFIG_LIBDIR=$PKG_CONFIG_LIBDIR" >> $GITHUB_ENV
+        echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
+        echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
     
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
@@ -135,6 +137,8 @@ jobs:
           --enable-shared \
           --prefix=$GITHUB_WORKSPACE/android/$ABI \
           --target-os=android \
+          --extra-cflags="-I${X264_INCLUDE}" \
+          --extra-ldflags="-L${X264_LIB}" \
           --disable-vulkan \
           --sysroot=$SYSROOT \
           --disable-libfdk-aac
