@@ -46,6 +46,11 @@ jobs:
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-${{ env.ANDROID_NDK_VERSION }}" >> $GITHUB_ENV
 
+    - name: Set NDK environment variables
+      run: |
+        echo "ANDROID_NDK_ROOT=$GITHUB_WORKSPACE/android-ndk-r26d" >> $GITHUB_ENV
+        
+    
     - name: Install dependencies
       run: |
         sudo apt-get update
