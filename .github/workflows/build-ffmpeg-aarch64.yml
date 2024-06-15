@@ -32,6 +32,7 @@ jobs:
         sudo apt-get install -y autoconf automake build-essential cmake git libtool texinfo zlib1g-dev yasm
 
     - name: Install gas-preprocessor
+      if: false
       run: |
         git clone https://github.com/FFmpeg/gas-preprocessor
         sudo cp gas-preprocessor/gas-preprocessor.pl /usr/local/bin/
