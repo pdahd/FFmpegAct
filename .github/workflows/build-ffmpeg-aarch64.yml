@@ -104,8 +104,6 @@ jobs:
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
-        export PKG_CONFIG=/usr/bin/pkg-config
-        pkg-config --libs --cflags x264
     
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
@@ -114,8 +112,6 @@ jobs:
           --cc=$CC \
           --cxx=$CXX \
           --cross-prefix=$CROSS_PREFIX \
-          --extra-cflags="-I$GITHUB_WORKSPACE/external_libs/include" \
-          --extra-ldflags="-L$GITHUB_WORKSPACE/external_libs/lib" \
           --disable-indevs \
           --disable-outdevs \
           --disable-static \
