@@ -90,13 +90,6 @@ jobs:
 
     - name: Create pkg-config wrapper
       run: |
-        echo '#!/bin/sh' > aarch64-linux-android-pkg-config
-        echo 'PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR} /usr/bin/pkg-config "$@"' >> aarch64-linux-android-pkg-config
-        chmod +x aarch64-linux-android-pkg-config
-        sudo mv aarch64-linux-android-pkg-config /usr/local/bin/
-
-        export PKG_CONFIG_LIBDIR=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig
-        echo "PKG_CONFIG_LIBDIR=$PKG_CONFIG_LIBDIR" >> $GITHUB_ENV
         echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
         echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
     
@@ -116,9 +109,6 @@ jobs:
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
         
-        pkg-config --libs --cflags x264
-        
-    
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
           --arch=$ARCH \
@@ -130,7 +120,7 @@ jobs:
           --disable-outdevs \
           --disable-static \
           --disable-symver \
-          --pkg-config="/usr/local/bin/aarch64-linux-android-pkg-config" \
+          --pkg-config="/usr/bin/pkg-config" \
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
