@@ -19,7 +19,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       
+    - name: List NDK directory structure using ls
+      run: |
+        ls -R /usr/local/lib/android/sdk/ndk/25.2.9519653
+    
     - name: Download and extract Android NDK
+      if: false
       run: |
         wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
         unzip android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
@@ -39,10 +44,12 @@ jobs:
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
     - name: Download FFmpeg source
+      if: false
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     - name: Compile and install x264
+      if: false
       run: |
         INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
         
