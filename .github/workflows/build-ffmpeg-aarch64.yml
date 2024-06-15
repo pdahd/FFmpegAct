@@ -13,7 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_VERSION: r26d
+      ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
+      X264_INCLUDE: ${{ github.workspace }}/external_libs/include
+      X264_LIB: ${{ github.workspace }}/external_libs/lib
+      API: 21
+      ARCH: aarch64
+      PREFIX: ${{ github.workspace }}/android/arm64-v8a
+      TERMUX: aarch64-linux-android
+      TOOLCHAIN: ${{ env.ANDROID_NDK_ROOT }}/toolchains/llvm/prebuilt/linux-x86_64
+      SYSROOT: ${{ env.TOOLCHAIN }}/sysroot
+      CC: ${{ env.TOOLCHAIN }}/bin/${{ env.TERMUX }}${{ env.API }}-clang
+      CXX: ${{ env.TOOLCHAIN }}/bin/${{ env.TERMUX }}${{ env.API }}-clang++
+      CROSS_PREFIX: ${{ env.TOOLCHAIN }}/bin/${{ env.TERMUX }}-
+      AR: ${{ env.TOOLCHAIN }}/bin/llvm-ar
+      RANLIB: ${{ env.TOOLCHAIN }}/bin/llvm-ranlib
+      NM: ${{ env.TOOLCHAIN }}/bin/llvm-nm
+      STRIP: ${{ env.TOOLCHAIN }}/bin/llvm-strip
+      PKG_CONFIG: /usr/bin/pkg-config
 
     steps:
     - name: Checkout repository
@@ -44,7 +60,6 @@ jobs:
         sudo chmod +x /usr/local/bin/gas-preprocessor.pl
 
     - name: Download FFmpeg source
-      if: false
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
@@ -91,11 +106,13 @@ jobs:
         cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
 
     - name: Set environment variables for FFmpeg
+      if: false
       run: |
         echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
         echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
 
     - name: Configure FFmpeg for arm64-v8a with x264
+      if: false
       run: |
         export API=21
         export ARCH=aarch64
@@ -113,6 +130,8 @@ jobs:
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         
+    - name: 4449 for FFmpeg
+      run: |   
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
           --arch="$ARCH" \
@@ -139,6 +158,7 @@ jobs:
           --disable-libfdk-aac
 
     - name: Compile FFmpeg
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         make -j$(nproc)
