@@ -119,8 +119,6 @@ jobs:
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
-          --enable-version3 \
-          --enable-libx264 \
           --enable-shared \
           --prefix=$GITHUB_WORKSPACE/android/$ABI \
           --target-os=android \
