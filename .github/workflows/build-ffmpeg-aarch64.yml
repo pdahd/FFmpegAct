@@ -18,28 +18,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
-    - name: Uninstall and clean pre-installed NDK versions
-      run: |
-        sudo rm -rf /usr/local/lib/android/sdk/ndk/*
-        if [ "$(ls -A /usr/local/lib/android/sdk/ndk)" ]; then
-          echo "Some NDK versions are still present."
-        else
-          echo "All pre-installed NDK versions have been successfully removed."
-        fi
-         
-    - name: Check pre-installed Android NDK
-      run: |
-        if [ -z "$ANDROID_NDK_ROOT" ]; then
-          echo "No pre-installed Android NDK found."
-        else
-          echo "Pre-installed Android NDK found at: $ANDROID_NDK_ROOT"
-        fi
-    
-    - name: List pre-installed Android NDK versions
-      run: |
-        ls -l /usr/local/lib/android/sdk/ndk || echo "No NDK directory found."
-        which pkg-config
+      
     - name: Download and extract Android NDK
       run: |
         wget https://dl.google.com/android/repository/android-ndk-${{ env.ANDROID_NDK_VERSION }}-linux.zip
@@ -109,13 +88,6 @@ jobs:
         find $INSTALL_DIR -type f
         cat $GITHUB_WORKSPACE/external_libs/lib/pkgconfig/x264.pc
 
-    - name: Set PKG_CONFIG_PATH
-      run: |
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig" >> $GITHUB_ENV
-    
-    - name: Print PKG_CONFIG_PATH
-      run: |
-        echo $PKG_CONFIG_PATH
     
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
@@ -133,8 +105,6 @@ jobs:
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
-        export X264_LIBS_DIR=$GITHUB_WORKSPACE/external_libs
-        export PKG_CONFIG_PATH=$X264_LIBS_DIR/lib/pkgconfig
         pkg-config --libs --cflags x264
     
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
@@ -144,7 +114,6 @@ jobs:
           --cc=$CC \
           --cxx=$CXX \
           --cross-prefix=$CROSS_PREFIX \
-          --extra-libs="-L$GITHUB_WORKSPACE/external_libs/lib -lx264" \
           --extra-cflags="-I$GITHUB_WORKSPACE/external_libs/include" \
           --extra-ldflags="-L$GITHUB_WORKSPACE/external_libs/lib" \
           --disable-indevs \
