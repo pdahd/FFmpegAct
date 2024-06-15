@@ -62,9 +62,6 @@ jobs:
         
         echo "Listing files for x264:"
         find $INSTALL_DIR -type f
-        
-        echo "X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include" >> $GITHUB_ENV
-        echo "X264_LIB=$GITHUB_WORKSPACE/external_libs/lib" >> $GITHUB_ENV
 
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
@@ -82,6 +79,8 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
+        exprot X264_INCLUDE=$GITHUB_WORKSPACE/external_libs/include
+        exprot X264_LIB=$GITHUB_WORKSPACE/external_libs/lib
          
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
@@ -103,8 +102,8 @@ jobs:
           --enable-shared \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I${X264_INCLUDE}" \
-          --extra-ldflags="-L${X264_LIB}" \
+          --extra-cflags="-I$X264_INCLUDE" \
+          --extra-ldflags="-L$X264_LIB" \
           --disable-vulkan \
           --sysroot="$SYSROOT" \
           --disable-libfdk-aac
