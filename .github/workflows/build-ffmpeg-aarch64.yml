@@ -97,6 +97,7 @@ jobs:
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
           --enable-cross-compile \
+          --enable-libx264 \
           --enable-neon \
           --enable-gpl \
           --enable-shared \
