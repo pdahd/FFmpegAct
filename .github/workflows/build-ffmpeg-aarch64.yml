@@ -128,7 +128,7 @@ jobs:
           --disable-outdevs \
           --disable-static \
           --disable-symver \
-          --enable-libx264 \
+          --pkg-config="/usr/local/bin/aarch64-linux-android-pkg-config" \
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
