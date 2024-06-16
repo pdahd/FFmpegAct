@@ -13,12 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
-      API: 24
-      INSTALL_DIR: ${{ github.workspace }}/external_libs
+      NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
+      INST_DIR: ${{ github.workspace }}/external_libs
       PREFIX: ${{ github.workspace }}/android/armeabi-v7a
-      ARCH: arm
-      TERMUX: armv7a-linux-androideabi
 
     steps:
     - name: Checkout repository
@@ -26,8 +23,11 @@ jobs:
 
     - name: Setup environment variables
       run: |
-        echo "ANDROID_NDK_ROOT=${{ env.ANDROID_NDK_ROOT }}" >> $GITHUB_ENV
-        echo "API=${{ env.API }}" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$INST_DIR/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        echo "NDK=${{ env.NDK_ROOT }}" >> $GITHUB_ENV
+        echo "T_PLAT=armv7a-linux-androideabi" >> $GITHUB_ENV
+        echo "API=21" >> $GITHUB_ENV
+        echo "ARCH=arm" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
       run: |
@@ -35,21 +35,20 @@ jobs:
 
     - name: Compile and install x264 for armv7a
       run: |
-        mkdir -p $INSTALL_DIR
+        mkdir -p $INST_DIR
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
         
         patch -p0 < ../x264_fixes.patch
         
-        export NDK=$ANDROID_NDK_ROOT
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
-        export TOOLNAME_BASE="armv7a-linux-androideabi"
-        export COMPILER_BASE="armv7a-linux-androideabi"
+        export T_NAME="armv7a-linux-androideabi"
+        export C_BASE="armv7a-linux-androideabi"
         export HOST="armv7a-linux-androideabi"
-        export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
-        export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
-        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$T_NAME-
+        export CC=$TOOLCHAIN/bin/$C_BASE$API-clang
+        export CXX=$TOOLCHAIN/bin/$C_BASE$API-clang++
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export STRINGS=$TOOLCHAIN/bin/llvm-strings
@@ -65,21 +64,14 @@ jobs:
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
         make install
-        echo "PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
-
-    - name: Set environment variables for FFmpeg
-      run: |
-        echo "X264_INCLUDE=$INSTALL_DIR/include" >> $GITHUB_ENV
-        echo "X264_LIB=$INSTALL_DIR/lib" >> $GITHUB_ENV
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
-        export NDK=$ANDROID_NDK_ROOT
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
-        export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
-        export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
-        export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
+        export CC=$TOOLCHAIN/bin/$T_PLAT$API-clang
+        export CXX=$TOOLCHAIN/bin/$T_PLAT$API-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$T_PLAT-
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export NM=$TOOLCHAIN/bin/llvm-nm
