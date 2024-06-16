@@ -38,6 +38,10 @@ jobs:
     - name: Set PKG_CONFIG_PATH
       run: |
         echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+
+    - name: Print PKG_CONFIG_PATH
+      run: |
+        echo "PKG_CONFIG_PATH is set to ${PKG_CONFIG_PATH}"
     
     - name: Compile and install x264
       if: false
