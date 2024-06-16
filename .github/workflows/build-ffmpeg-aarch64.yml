@@ -69,7 +69,6 @@ jobs:
           --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
-          --pkg-config="pkg-config --static" \
           --enable-cross-compile \
           --enable-libx265 \
           --enable-neon \
