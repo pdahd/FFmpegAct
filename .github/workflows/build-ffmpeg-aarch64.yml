@@ -31,6 +31,7 @@ jobs:
         echo "Listing installation files for libx265-dev:"
         dpkg -L libx265-dev
         cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
+        dpkg -s libx265-dev | grep Architecture
         
       
     - name: Append to PKG_CONFIG_PATH
