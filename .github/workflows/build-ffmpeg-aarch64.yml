@@ -19,7 +19,7 @@ jobs:
       run: |
         echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
         
-        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        
         echo "API=21" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
@@ -34,6 +34,10 @@ jobs:
         dpkg -L libx265-dev
         echo "Listing installation files for libx264-dev:"
         dpkg -L libx264-dev
+      
+    - name: Set PKG_CONFIG_PATH
+      run: |
+        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
     
     - name: Compile and install x264
       if: false
