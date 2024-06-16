@@ -18,7 +18,7 @@ jobs:
     - name: Setup environment variables
       run: |
         echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "API=21" >> $GITHUB_ENV
+        echo "API=24" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
       run: |
@@ -37,9 +37,9 @@ jobs:
         export NDK=$ANDROID_NDK_ROOT
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
-        export TOOLNAME_BASE="aarch64-linux-android"
-        export COMPILER_BASE="aarch64-linux-android"
-        export HOST="aarch64-linux-android"
+        export TOOLNAME_BASE="armv7a-linux-androideabi"
+        export COMPILER_BASE="armv7a-linux-androideabi"
+        export HOST="armv7a-linux-androideabi"
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
         export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
         export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
@@ -63,9 +63,9 @@ jobs:
     
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
-        export ARCH=aarch64
-        export PREFIX=$GITHUB_WORKSPACE/android/arm64-v8a
-        export TERMUX=aarch64-linux-android
+        export ARCH=arm
+        export PREFIX=$GITHUB_WORKSPACE/android/armeabi-v7a
+        export TERMUX=armv7a-linux-androideabi
         export NDK=$ANDROID_NDK_ROOT
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot
@@ -113,5 +113,5 @@ jobs:
     - name: Upload FFmpeg Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ffmpeg-arm64-v8a
-        path: ${{ github.workspace }}/android/arm64-v8a/**
+        name: ffmpeg-armeabi-v7a
+        path: ${{ github.workspace }}/android/armeabi-v7a/**
