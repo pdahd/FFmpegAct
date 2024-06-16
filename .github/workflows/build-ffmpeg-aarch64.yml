@@ -32,11 +32,9 @@ jobs:
         dpkg -L libx265-dev
         
       
-    - name: DohhFFmpeg s44
+    - name: Append to PKG_CONFIG_PATH
       run: |
-        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH:${PKG_CONFIG_PATH}"
-
+        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
     
     
     - name: Configure FFmpeg for arm64-v8a with x264
@@ -55,6 +53,8 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
+        X265_INCLUDE=/usr/include
+        X265_LIB=/usr/lib/x86_64-linux-gnu
         
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
@@ -69,6 +69,7 @@ jobs:
           --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
+          --pkg-config="pkg-config --static" \
           --enable-cross-compile \
           --enable-libx265 \
           --enable-neon \
@@ -76,6 +77,8 @@ jobs:
           --enable-shared \
           --prefix="$PREFIX" \
           --target-os=android \
+          --extra-cflags="-I$X265_INCLUDE" \
+          --extra-ldflags="-L$X265_LIB" \
           --disable-vulkan \
           --sysroot="$SYSROOT" \
           --disable-libfdk-aac
