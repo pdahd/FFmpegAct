@@ -11,16 +11,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
+      API: 24
+      INSTALL_DIR: ${{ github.workspace }}/external_libs
+      PREFIX: ${{ github.workspace }}/android/armeabi-v7a
+      ARCH: arm
+      TERMUX: armv7a-linux-androideabi
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
-      
+
     - name: Setup environment variables
       run: |
-        echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "API=24" >> $GITHUB_ENV
-        echo "TOOLCHAIN=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
-        echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
+        echo "ANDROID_NDK_ROOT=${{ env.ANDROID_NDK_ROOT }}" >> $GITHUB_ENV
+        echo "API=${{ env.API }}" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
       run: |
@@ -28,7 +35,6 @@ jobs:
 
     - name: Compile and install x264 for armv7a
       run: |
-        INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
         mkdir -p $INSTALL_DIR
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
@@ -36,8 +42,8 @@ jobs:
         patch -p0 < ../x264_fixes.patch
         
         export NDK=$ANDROID_NDK_ROOT
-        export TOOLCHAIN=$TOOLCHAIN
-        export SYSROOT=$SYSROOT
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot
         export TOOLNAME_BASE="armv7a-linux-androideabi"
         export COMPILER_BASE="armv7a-linux-androideabi"
         export HOST="armv7a-linux-androideabi"
@@ -59,16 +65,18 @@ jobs:
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
         make install
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+
+    - name: Set environment variables for FFmpeg
+      run: |
+        echo "X264_INCLUDE=$INSTALL_DIR/include" >> $GITHUB_ENV
+        echo "X264_LIB=$INSTALL_DIR/lib" >> $GITHUB_ENV
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
-        export ARCH=arm
-        export PREFIX=$GITHUB_WORKSPACE/android/armeabi-v7a
-        export TERMUX=armv7a-linux-androideabi
         export NDK=$ANDROID_NDK_ROOT
-        export TOOLCHAIN=$TOOLCHAIN
-        export SYSROOT=$SYSROOT
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot
         export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
         export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
@@ -111,7 +119,6 @@ jobs:
         make install
 
     - name: Upload FFmpeg Build Artifact for armv7a
-      if: ${{ always() }} 
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
