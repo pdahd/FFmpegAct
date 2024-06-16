@@ -18,8 +18,6 @@ jobs:
     - name: Setup environment variables
       run: |
         echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        
-        
         echo "API=21" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
@@ -29,59 +27,17 @@ jobs:
     - name: Install x265 and libass development packages
       run: |
         sudo apt-get update
-        sudo apt-get install -y libx265-dev  libx264-dev 
+        sudo apt-get install -y libx265-dev  
         echo "Listing installation files for libx265-dev:"
         dpkg -L libx265-dev
-        echo "Listing installation files for libx264-dev:"
-        dpkg -L libx264-dev
+        
       
-    - name: Set PKG_CONFIG_PATH
+    - name: DohhFFmpeg s44
       run: |
         echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH:${PKG_CONFIG_PATH}"
 
-    - name: Print PKG_CONFIG_PATH
-      run: |
-        echo "PKG_CONFIG_PATH is set to ${PKG_CONFIG_PATH}"
     
-    - name: Compile and install x264
-      if: false
-      run: |
-        INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
-        
-        mkdir -p $INSTALL_DIR
-
-        git clone https://code.videolan.org/videolan/x264.git
-        cd x264
-        
-        patch -p0 < ../x264_fixes.patch
-        
-        export NDK=$ANDROID_NDK_ROOT
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot
-        export TOOLNAME_BASE="aarch64-linux-android"
-        export COMPILER_BASE="aarch64-linux-android"
-        export HOST="aarch64-linux-android"
-        export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
-        export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
-        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
-        export AR=$TOOLCHAIN/bin/llvm-ar
-        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        export STRINGS=$TOOLCHAIN/bin/llvm-strings
-        export CFLAGS="-DANDROID -Wall -fPIC"
-    
-        ./configure --prefix=$INSTALL_DIR \
-                    --enable-static \
-                    --enable-pic \
-                    --disable-asm \
-                    --host=$HOST \
-                    --cross-prefix=$CROSS_PREFIX \
-                    --sysroot=$SYSROOT \
-                    --extra-cflags="$CFLAGS"
-        make -j$(nproc)
-        make install
-        
-        echo "Listing files for x264:"
-        find $INSTALL_DIR -type f
     
     - name: Configure FFmpeg for arm64-v8a with x264
       run: |
@@ -113,9 +69,7 @@ jobs:
           --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
-          --pkg-config="pkg-config --static" \
           --enable-cross-compile \
-          --enable-libx264 \
           --enable-libx265 \
           --enable-neon \
           --enable-gpl \
