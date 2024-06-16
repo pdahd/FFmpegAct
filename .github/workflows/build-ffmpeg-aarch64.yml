@@ -53,6 +53,7 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
+        export LDFLAGS="-fuse-ld=lld"
         X265_INCLUDE=/usr/include
         X265_LIB=/usr/lib/x86_64-linux-gnu
         
