@@ -78,7 +78,7 @@ jobs:
           --prefix="$PREFIX" \
           --target-os=android \
           --extra-cflags="-I$X265_INCLUDE" \
-          --extra-ldflags="-L$X265_LIB" \
+          --extra-ldflags="$LDFLAGS -L$X265_LIB" \
           --disable-vulkan \
           --sysroot="$SYSROOT" \
           --disable-libfdk-aac
