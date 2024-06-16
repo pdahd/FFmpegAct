@@ -18,7 +18,7 @@ jobs:
     - name: Setup environment variables
       run: |
         echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        
         echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
         echo "API=21" >> $GITHUB_ENV
 
