@@ -86,7 +86,7 @@ jobs:
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
         
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
           --arch="$ARCH" \
           --nm="$NM" \
@@ -114,7 +114,7 @@ jobs:
 
     - name: Build FFmpeg for armv7a
       run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
         make install
 
