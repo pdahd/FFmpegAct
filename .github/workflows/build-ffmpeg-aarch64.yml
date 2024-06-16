@@ -85,6 +85,7 @@ jobs:
           --cc="$CC" \
           --ar="$AR" \
           --cxx="$CXX" \
+          --ranlib="$RANLIB" \
           --strip="$STRIP" \
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
