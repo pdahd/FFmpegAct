@@ -83,6 +83,7 @@ jobs:
           --arch="$ARCH" \
           --nm="$NM" \
           --cc="$CC" \
+          --ar="$AR" \
           --cxx="$CXX" \
           --strip="$STRIP" \
           --cross-prefix="$CROSS_PREFIX" \
