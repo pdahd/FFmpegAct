@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4.1.5
       
     - name: Setup environment variables
       run: |
@@ -24,19 +24,41 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Install x265 and libass development packages
+    - name: Compile and install x264
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libx265-dev  
-        echo "Listing installation files for libx265-dev:"
-        dpkg -L libx265-dev
-        cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
-        dpkg -s libx265-dev | grep Architecture
+        INSTALL_DIR=$GITHUB_WORKSPACE/external_libs
         
-      
-    - name: Append to PKG_CONFIG_PATH
-      run: |
-        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        mkdir -p $INSTALL_DIR
+        git clone https://code.videolan.org/videolan/x264.git
+        cd x264
+        
+        patch -p0 < ../x264_fixes.patch
+        
+        export NDK=$ANDROID_NDK_ROOT
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot
+        export TOOLNAME_BASE="aarch64-linux-android"
+        export COMPILER_BASE="aarch64-linux-android"
+        export HOST="aarch64-linux-android"
+        export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
+        export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
+        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
+        export AR=$TOOLCHAIN/bin/llvm-ar
+        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+        export STRINGS=$TOOLCHAIN/bin/llvm-strings
+        export CFLAGS="-DANDROID -Wall -fPIC"
+    
+        ./configure --prefix=$INSTALL_DIR \
+                    --enable-static \
+                    --enable-pic \
+                    --disable-asm \
+                    --host=$HOST \
+                    --cross-prefix=$CROSS_PREFIX \
+                    --sysroot=$SYSROOT \
+                    --extra-cflags="$CFLAGS"
+        make -j$(nproc)
+        make install
+        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/external_libs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
     
     
     - name: Configure FFmpeg for arm64-v8a with x264
@@ -55,9 +77,6 @@ jobs:
         export NM=$TOOLCHAIN/bin/llvm-nm
         export PKG_CONFIG=/usr/bin/pkg-config
         export STRIP=$TOOLCHAIN/bin/llvm-strip
-        export LDFLAGS="-fuse-ld=lld"
-        X265_INCLUDE=/usr/include
-        X265_LIB=/usr/lib/x86_64-linux-gnu
         
         cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
         ./configure \
@@ -69,26 +88,28 @@ jobs:
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
-          --disable-static \
+          --disable-shared \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
+          --enable-static \
           --enable-cross-compile \
-          --enable-libx265 \
+          --enable-libx264 \
           --enable-neon \
           --enable-gpl \
-          --enable-shared \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I$X265_INCLUDE" \
-          --extra-ldflags="$LDFLAGS -L$X265_LIB" \
           --disable-vulkan \
           --sysroot="$SYSROOT" \
           --disable-libfdk-aac
 
-    - name: Upload config.log
-      if: always()
-      uses: actions/upload-artifact@v2
+    - name: Build FFmpeg for arm64-v8a
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-6.1.1
+        make -j$(nproc)
+        make install
+
+    - name: Upload FFmpeg Build Artifact
+      uses: actions/upload-artifact@v4
       with:
-        name: config-log
-        path: ffmpeg-6.1.1/ffbuild/config.log
-        if-no-files-found: warn
+        name: ffmpeg-arm64-v8a
+        path: ${{ github.workspace }}/android/arm64-v8a/**
