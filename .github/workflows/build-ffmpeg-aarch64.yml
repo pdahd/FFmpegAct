@@ -35,15 +35,16 @@ jobs:
         
         patch -p0 < ../x264_fixes.patch
         
+        # x264 编译环境变量
         export NDK=${{ env.ANDROID_NDK_ROOT }}
         export TOOLCHAIN=${{ env.TOOLCHAIN }}
         export SYSROOT=${{ env.SYSROOT }}
-        export TOOLNAME_BASE="armv7a-linux-androideabi"
-        export COMPILER_BASE="armv7a-linux-androideabi"
-        export HOST="armv7a-linux-androideabi"
+        export TOOLNAME_BASE="armv7a-linux-androideabi" 
+        export COMPILER_BASE="armv7a-linux-androideabi" 
+        export HOST="armv7a-linux-androideabi" 
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TOOLNAME_BASE-
-        export CC=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang
-        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE$API-clang++
+        export CC=$TOOLCHAIN/bin/$COMPILER_BASE${{ env.API }}-clang
+        export CXX=$TOOLCHAIN/bin/$COMPILER_BASE${{ env.API }}-clang++
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
         export STRINGS=$TOOLCHAIN/bin/llvm-strings
@@ -63,14 +64,15 @@ jobs:
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
+        # FFmpeg 编译环境变量
         export ARCH=arm
         export PREFIX=$GITHUB_WORKSPACE/android/armeabi-v7a
-        export TERMUX=armv7a-linux-androideabi
+        export TERMUX=armv7a-linux-androideabi 
         export NDK=${{ env.ANDROID_NDK_ROOT }}
         export TOOLCHAIN=${{ env.TOOLCHAIN }}
         export SYSROOT=${{ env.SYSROOT }}
-        export CC=$TOOLCHAIN/bin/$TERMUX$API-clang
-        export CXX=$TOOLCHAIN/bin/$TERMUX$API-clang++
+        export CC=$TOOLCHAIN/bin/$TERMUX${{ env.API }}-clang
+        export CXX=$TOOLCHAIN/bin/$TERMUX${{ env.API }}-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/$TERMUX-
         export AR=$TOOLCHAIN/bin/llvm-ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
@@ -82,11 +84,11 @@ jobs:
         ./configure \
           --arch="$ARCH" \
           --nm="$NM" \
-          --cc="$CC" \
-          --ar="$AR" \
-          --cxx="$CXX" \
-          --ranlib="$RANLIB" \
-          --strip="$STRIP" \
+          --cc="$CC" 
+          --ar="$AR" 
+          --cxx="$CXX" 
+          --ranlib="$RANLIB" 
+          --strip="$STRIP" 
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
