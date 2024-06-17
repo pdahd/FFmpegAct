@@ -30,6 +30,12 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cat fftools/cmdutils.c
     
+    - name: Upload cmdutils.c file
+      uses: actions/upload-artifact@v4
+      with:
+        name: cmdutils.c
+        path: $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools/cmdutils.c
+    
     - name: Compile and install x264 for armv7a
       if: false
       run: |
