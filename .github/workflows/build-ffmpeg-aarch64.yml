@@ -23,7 +23,7 @@ jobs:
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
         echo "TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
         echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
-        echo "CC=$TOOLCHAIN/bin/$TT$APT-clang" >> $GITHUB_ENV
+        echo "CC=$TOOLCHAIN/bin/$TT$API-clang" >> $GITHUB_ENV
         echo "CXX=$TOOLCHAIN/bin/$TT$API-clang++" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$TOOLCHAIN/bin/llvm-" >> $GITHUB_ENV
         echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
