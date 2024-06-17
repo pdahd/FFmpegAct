@@ -29,6 +29,7 @@ jobs:
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
         patch -p0 < ../x264_fixes.patch
+        
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
         export CC=$TOOLCHAIN/bin/${TT}24-clang
@@ -36,15 +37,16 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export CFLAGS="-DANDROID -Wall -fPIC" 
         export PREFIX=$GITHUB_WORKSPACE/exlibs
-        export HOST=$TT
+        export HOST="armv7a-linux-androideabi"
+        
         ./configure \ 
-          --prefix=$PREFIX \
+          --prefix="$PREFIX" \
           --enable-static \
           --enable-pic \
           --disable-asm \
           --host="$HOST" \
           --cross-prefix="$CROSS_PREFIX" \
-          --sysroot=$SYSROOT \
+          --sysroot="$SYSROOT" \
           --extra-cflags="$CFLAGS"
         make -j$(nproc)
         make install
