@@ -25,11 +25,16 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: List files in fftools directory
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools
+        ls -l
+
     - name: Print original cmdutils.c content
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cat fftools/cmdutils.c
-    
+
     - name: Upload cmdutils.c file
       uses: actions/upload-artifact@v4
       with:
