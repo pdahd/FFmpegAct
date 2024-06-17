@@ -28,7 +28,7 @@ jobs:
     - name: Print original ffmpeg.c content
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        cat fftools/ffmpeg.c
+        cat fftools/ffmpeg_opt.c
     
     - name: Modify FFmpeg source to display custom logo only
       run: |
