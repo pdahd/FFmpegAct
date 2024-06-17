@@ -17,7 +17,6 @@ jobs:
       
     - name: Setup environment variables
       run: |
-        echo "API=24" >> $GITHUB_ENV
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
         echo "CFLAGS=-DANDROID -Wall -fPIC" >> $GITHUB_ENV
@@ -53,8 +52,8 @@ jobs:
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
-        export CC=$TOOLCHAIN/bin/$TT$API-clang
-        export CXX=$TOOLCHAIN/bin/$TT$API-clang++
+        export CC=$TOOLCHAIN/bin/${TT}24-clang
+        export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
