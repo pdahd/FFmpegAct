@@ -22,8 +22,6 @@ jobs:
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
         echo "TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
         echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
-        echo "CC=$TOOLCHAIN/bin/${TT}24-clang" >> $GITHUB_ENV
-        echo "CXX=$TOOLCHAIN/bin/${TT}24-clang++" >> $GITHUB_ENV
         echo "CROSS_PREFIX=$TOOLCHAIN/bin/llvm-" >> $GITHUB_ENV
         echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
         echo "CFLAGS=-DANDROID -Wall -fPIC" >> $GITHUB_ENV
@@ -40,10 +38,10 @@ jobs:
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
         patch -p0 < ../x264_fixes.patch
+        export CC=$TOOLCHAIN/bin/${TT}24-clang
+        export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         ./configure \ 
           --prefix=$INSTALL_DIR \
-          --cc="$CC" \
-          --cxx="$CXX" \
           --enable-static \
           --enable-pic \
           --disable-asm \
