@@ -62,22 +62,22 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
           --arch="$ARCH" \
-          --cc="$CC" \
-          --cxx="$CXX" \
-          --cross-prefix="$CROSS_PREFIX" \
+          --cc="${{ env.CC }}" \
+          --cxx="${{ env.CXX }}" \
+          --cross-prefix="${{ env.CROSS_PREFIX }}" \
           --disable-indevs \
           --disable-outdevs \
           --disable-shared \
           --disable-symver \
-          --pkg-config="$PKG_CONFIG" \
+          --pkg-config="${{ env.PKG_CONFIG }}" \
           --enable-static \
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
-          --prefix="$PREFIX" \
+          --prefix="${{ env.PREFIX }}" \
           --target-os=android \
           --disable-vulkan \
-          --sysroot="$SYSROOT" \
+          --sysroot="${{ env.SYSROOT }}" \
           --disable-libfdk-aac
 
     - name: Build FFmpeg for armv7a
