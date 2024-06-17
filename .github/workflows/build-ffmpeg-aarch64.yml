@@ -35,6 +35,7 @@ jobs:
         export CC=$TOOLCHAIN/bin/${TT}24-clang
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
+        export AR=$TOOLCHAIN/bin/llvm-ar
         export CFLAGS="-DANDROID -Wall -fPIC" 
         export INST_DIR=$GITHUB_WORKSPACE/exlibs
         export HOST=$TT
