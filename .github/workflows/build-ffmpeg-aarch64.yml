@@ -19,8 +19,6 @@ jobs:
       run: |
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "CFLAGS=-DANDROID -Wall -fPIC" >> $GITHUB_ENV
-        echo "INSTALL_DIR=$GITHUB_WORKSPACE/exlibs" >> $GITHUB_ENV
         echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/exlibs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
@@ -28,20 +26,26 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     - name: Compile and install x264 for armv7a
-      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
         patch -p0 < ../x264_fixes.patch
-       
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot 
+        export CC=$TOOLCHAIN/bin/${TT}24-clang
+        export CXX=$TOOLCHAIN/bin/${TT}24-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
+        export CFLAGS="-DANDROID -Wall -fPIC" 
+        export INST_DIR=$GITHUB_WORKSPACE/exlibs
+        export HOST=$TT
         ./configure \ 
-          --prefix=$INSTALL_DIR \
+          --prefix=$INST_DIR \
           --cc="$CC" \
           --cxx="$CXX" \
           --enable-static \
           --enable-pic \
           --disable-asm \
-          --host="$TT" \
+          --host="$HOST" \
           --cross-prefix="$CROSS_PREFIX" \
           --sysroot=$SYSROOT \
           --extra-cflags="$CFLAGS"
@@ -71,16 +75,15 @@ jobs:
           --pkg-config="$PKG_CONFIG" \
           --enable-static \
           --enable-cross-compile \
+          --enable-libx264 \
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
           --disable-vulkan \
-          --sysroot="$SYSROOT" \
-          --disable-libfdk-aac
+          --sysroot="$SYSROOT" 
 
     - name: Build FFmpeg for armv7a
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
