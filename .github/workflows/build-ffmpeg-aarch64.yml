@@ -25,7 +25,26 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: Modify FFmpeg source to display custom logo only
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        sed -i '/static void show_banner(int argc, char **argv, const OptionDef \*options)/,/^}/c\
+        static void show_banner(int argc, char **argv, const OptionDef *options) {\
+        av_log(NULL, AV_LOG_INFO, "\\n");\
+        av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture\\n", FFMPEG_VERSION);\
+        av_log(NULL, AV_LOG_INFO, "  Copyright (c) 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\\n");\
+        av_log(NULL, AV_LOG_INFO, "  Built by pdahd from GitHub (https://github.com/pdahd)\\n");\
+        av_log(NULL, AV_LOG_INFO, "  Build date: %s\\n", __DATE__);\
+        av_log(NULL, AV_LOG_INFO, "\\n");\
+        av_log(NULL, AV_LOG_INFO, "  This FFmpeg build is customized for specific needs.\\n");\
+        av_log(NULL, AV_LOG_INFO, "  If you use this YAML file to build your own version, please retain the original copyright information.\\n");\
+        av_log(NULL, AV_LOG_INFO, "\\n");\
+        }' fftools/ffmpeg.c
+        # 打印修改后的内容以验证修改是否成功
+        grep -A 10 'static void show_banner' fftools/ffmpeg.c
+    
     - name: Compile and install x264 for armv7a
+      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
