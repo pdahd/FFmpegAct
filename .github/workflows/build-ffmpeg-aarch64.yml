@@ -40,8 +40,6 @@ jobs:
         export HOST=$TT
         ./configure \ 
           --prefix=$INST_DIR \
-          --cc="$CC" \
-          --cxx="$CXX" \
           --enable-static \
           --enable-pic \
           --disable-asm \
