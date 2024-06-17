@@ -29,18 +29,18 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
-        printf '%s\n' '#include "libavutil/log.h"' \
-        '#include "libavutil/version.h"' \
-        '#include "config.h"' \
-        '#include "cmdutils.h"' \
-        'void show_banner(int argc, char **argv, const OptionDef *options) {' \
-        '    av_log(NULL, AV_LOG_INFO, "\n");' \
-        '    av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture (static build)\n", FFMPEG_VERSION);" \
-        '    av_log(NULL, AV_LOG_INFO, "  ©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\n");' \
-        '    av_log(NULL, AV_LOG_INFO, "  Built by pdahd from GitHub (https://github.com/pdahd)\n");' \
-        '    av_log(NULL, AV_LOG_INFO, "  Build date: '$BUILD_DATE'\n");' \
-        '    av_log(NULL, AV_LOG_INFO, "\n");' \
-        '}' > fftools/cmdutils.c
+        echo '#include "libavutil/log.h"' > fftools/cmdutils.c
+        echo '#include "libavutil/version.h"' >> fftools/cmdutils.c
+        echo '#include "config.h"' >> fftools/cmdutils.c
+        echo '#include "cmdutils.h"' >> fftools/cmdutils.c
+        echo 'void show_banner(int argc, char **argv, const OptionDef *options) {' >> fftools/cmdutils.c
+        echo '    av_log(NULL, AV_LOG_INFO, "\n");' >> fftools/cmdutils.c
+        echo '    av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture (static build)\n", FFMPEG_VERSION);' >> fftools/cmdutils.c
+        echo '    av_log(NULL, AV_LOG_INFO, "  ©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\n");' >> fftools/cmdutils.c
+        echo '    av_log(NULL, AV_LOG_INFO, "  Built by pdahd from GitHub (https://github.com/pdahd)\n");' >> fftools/cmdutils.c
+        echo '    av_log(NULL, AV_LOG_INFO, "  Build date: '$BUILD_DATE'\n");' >> fftools/cmdutils.c
+        echo '    av_log(NULL, AV_LOG_INFO, "\n");' >> fftools/cmdutils.c
+        echo '}' >> fftools/cmdutils.c
     
     - name: Compile and install x264 for armv7a
       run: |
