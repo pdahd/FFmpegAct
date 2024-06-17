@@ -39,15 +39,14 @@ jobs:
         export PREFIX=$GITHUB_WORKSPACE/exlibs
         export HOST="armv7a-linux-androideabi"
         
-        ./configure \ 
-          --prefix="$PREFIX" \
-          --enable-static \
-          --enable-pic \
-          --disable-asm \
-          --host="$HOST" \
-          --cross-prefix="$CROSS_PREFIX" \
-          --sysroot="$SYSROOT" \
-          --extra-cflags="$CFLAGS"
+        ./configure --prefix="$PREFIX" \
+                    --enable-static \
+                    --enable-pic \
+                    --disable-asm \
+                    --host="$HOST" \
+                    --cross-prefix="$CROSS_PREFIX" \
+                    --sysroot="$SYSROOT" \
+                    --extra-cflags="$CFLAGS"
         make -j$(nproc)
         make install
         echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/exlibs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
