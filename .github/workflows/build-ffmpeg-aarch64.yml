@@ -11,23 +11,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
-      INST_DIR: ${{ github.workspace }}/external_libs
-      PREFIX: ${{ github.workspace }}/android/armeabi-v7a
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
-
+      
     - name: Setup environment variables
       run: |
-        echo "PKG_CONFIG_PATH=$INST_DIR/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
-        echo "NDK=${{ env.NDK_ROOT }}" >> $GITHUB_ENV
-        echo "T_PLAT=armv7a-linux-androideabi" >> $GITHUB_ENV
-        echo "API=21" >> $GITHUB_ENV
         echo "ARCH=arm" >> $GITHUB_ENV
+        echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
+        echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+        echo "TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64" >> $GITHUB_ENV
+        echo "SYSROOT=$TOOLCHAIN/sysroot" >> $GITHUB_ENV
+        echo "CC=$TOOLCHAIN/bin/${TT}24-clang" >> $GITHUB_ENV
+        echo "CXX=$TOOLCHAIN/bin/${TT}24-clang++" >> $GITHUB_ENV
+        echo "CROSS_PREFIX=$TOOLCHAIN/bin/llvm-" >> $GITHUB_ENV
+        echo "PKG_CONFIG=/usr/bin/pkg-config" >> $GITHUB_ENV
+        echo "CFLAGS=-DANDROID -Wall -fPIC" >> $GITHUB_ENV
+        echo "INSTALL_DIR=$GITHUB_WORKSPACE/exlibs" >> $GITHUB_ENV
+        echo "PREFIX=$GITHUB_WORKSPACE/2024" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/exlibs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
 
     - name: Download FFmpeg source
       run: |
@@ -35,58 +37,30 @@ jobs:
 
     - name: Compile and install x264 for armv7a
       run: |
-        mkdir -p $INST_DIR
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
-        
         patch -p0 < ../x264_fixes.patch
-        
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot
-        export T_NAME="armv7a-linux-androideabi"
-        export C_BASE="armv7a-linux-androideabi"
-        export HOST="armv7a-linux-androideabi"
-        export CROSS_PREFIX=$TOOLCHAIN/bin/$T_NAME-
-        export CC=$TOOLCHAIN/bin/$C_BASE$API-clang
-        export CXX=$TOOLCHAIN/bin/$C_BASE$API-clang++
-        export AR=$TOOLCHAIN/bin/llvm-ar
-        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        export STRINGS=$TOOLCHAIN/bin/llvm-strings
-        export CFLAGS="-DANDROID -Wall -fPIC"
-    
-        ./configure --prefix=$INSTALL_DIR \
-                    --enable-static \
-                    --enable-pic \
-                    --disable-asm \
-                    --host=$HOST \
-                    --cross-prefix=$CROSS_PREFIX \
-                    --sysroot=$SYSROOT \
-                    --extra-cflags="$CFLAGS"
+        ./configure \ 
+          --prefix=$INSTALL_DIR \
+          --cc="$CC" \
+          --cxx="$CXX" \
+          --enable-static \
+          --enable-pic \
+          --disable-asm \
+          --host="$TT" \
+          --cross-prefix="$CROSS_PREFIX" \
+          --sysroot=$SYSROOT \
+          --extra-cflags="$CFLAGS"
         make -j$(nproc)
         make install
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot
-        export CC=$TOOLCHAIN/bin/$T_PLAT$API-clang
-        export CXX=$TOOLCHAIN/bin/$T_PLAT$API-clang++
-        export CROSS_PREFIX=$TOOLCHAIN/bin/$T_PLAT-
-        export AR=$TOOLCHAIN/bin/llvm-ar
-        export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
-        export NM=$TOOLCHAIN/bin/llvm-nm
-        export PKG_CONFIG=/usr/bin/pkg-config
-        export STRIP=$TOOLCHAIN/bin/llvm-strip
-        
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
           --arch="$ARCH" \
-          --nm="$NM" \
           --cc="$CC" \
-          --ar="$AR" \
           --cxx="$CXX" \
-          --ranlib="$RANLIB" \
-          --strip="$STRIP" \
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
@@ -114,4 +88,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
-        path: ${{ github.workspace }}/android/armeabi-v7a/**
+        path: ${{ github.workspace }}/2024/**
