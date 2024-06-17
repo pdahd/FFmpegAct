@@ -29,10 +29,44 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
-        echo '#include "libavutil/log.h"' > fftools/cmdutils.c
-        echo '#include "libavutil/version.h"' >> fftools/cmdutils.c
-        echo '#include "config.h"' >> fftools/cmdutils.c
+        echo '#include "config.h"' > fftools/cmdutils.c
+        echo '#include "libavutil/avstring.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/bprint.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/common.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/eval.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/ffversion.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/intreadwrite.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/opt.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/parseutils.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/pixdesc.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/random_seed.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/time.h"' >> fftools/cmdutils.c
+        echo '#include "libavutil/timestamp.h"' >> fftools/cmdutils.c
+        echo '#include "libavcodec/avcodec.h"' >> fftools/cmdutils.c
+        echo '#include "libavdevice/avdevice.h"' >> fftools/cmdutils.c
+        echo '#include "libavfilter/avfilter.h"' >> fftools/cmdutils.c
+        echo '#include "libavformat/avformat.h"' >> fftools/cmdutils.c
+        echo '#include "libavformat/avio.h"' >> fftools/cmdutils.c
+        echo '#include "libswresample/swresample.h"' >> fftools/cmdutils.c
+        echo '#include "libswscale/swscale.h"' >> fftools/cmdutils.c
         echo '#include "cmdutils.h"' >> fftools/cmdutils.c
+        echo '#include <fcntl.h>' >> fftools/cmdutils.c
+        echo '#include <math.h>' >> fftools/cmdutils.c
+        echo '#include <limits.h>' >> fftools/cmdutils.c
+        echo '#include <stdlib.h>' >> fftools/cmdutils.c
+        echo '#include <string.h>' >> fftools/cmdutils.c
+        echo '#include <sys/stat.h>' >> fftools/cmdutils.c
+        echo '#include <sys/types.h>' >> fftools/cmdutils.c
+        echo '#include <unistd.h>' >> fftools/cmdutils.c
+        echo '#if HAVE_SYS_RESOURCE_H' >> fftools/cmdutils.c
+        echo '#include <sys/resource.h>' >> fftools/cmdutils.c
+        echo '#endif' >> fftools/cmdutils.c
+        echo '#if CONFIG_AVDEVICE' >> fftools/cmdutils.c
+        echo '#include "libavdevice/avdevice.h"' >> fftools/cmdutils.c
+        echo '#endif' >> fftools/cmdutils.c
+        echo '#if CONFIG_NETWORK' >> fftools/cmdutils.c
+        echo '#include "libavformat/network.h"' >> fftools/cmdutils.c
+        echo '#endif' >> fftools/cmdutils.c
         echo 'void show_banner(int argc, char **argv, const OptionDef *options) {' >> fftools/cmdutils.c
         echo '    av_log(NULL, AV_LOG_INFO, "\n");' >> fftools/cmdutils.c
         echo '    av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture (static build)\n", FFMPEG_VERSION);' >> fftools/cmdutils.c
