@@ -25,10 +25,16 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Print original ffmpeg.c content
+    - name: Search for show_banner function definition
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        cat fftools/ffmpeg_opt.c
+        grep -rnw . -e 'show_banner'
+
+    - name: Print the file containing show_banner function
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        FILE=$(grep -rl 'show_banner' .)
+        cat $FILE
     
     - name: Modify FFmpeg source to display custom logo only
       run: |
