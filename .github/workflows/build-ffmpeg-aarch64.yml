@@ -87,7 +87,6 @@ jobs:
           --pkg-config="$PKG_CONFIG" \
           --enable-static \
           --enable-mediacodec \
-          --enable-opencl \
           --enable-version3 \
           --enable-jni \
           --enable-indev=lavfi \
