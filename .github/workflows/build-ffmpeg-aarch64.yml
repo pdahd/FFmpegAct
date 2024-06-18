@@ -29,11 +29,10 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
-        sed -i "/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/}/c\\
+        sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-        av_log(NULL, AV_LOG_INFO, \"\\nFFmpeg %s - arm static build © 2000-2024 FFmpeg Team\\n\", FFMPEG_VERSION);\n\
-        av_log(NULL, AV_LOG_INFO, \"Built by pdahd (https://github.com/pdahd) on %s\\n\", \"$BUILD_DATE\");\n\
-        }" fftools/opt_common.c
+        av_log(NULL, AV_LOG_INFO, "FFmpeg %s - arm static build © 2000-2024 FFmpeg Team.\\nBuilt by pdahd (https://github.com/pdahd) on %s.\\n", FFMPEG_VERSION, "'$BUILD_DATE'");\n\
+        }' fftools/opt_common.c
     
     - name: Compile and install x264 for armv7a
       run: |
