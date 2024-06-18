@@ -30,6 +30,11 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         grep -rnw . -e 'developers'
     
+    - name: Print opt_common.c content
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cat fftools/opt_common.c
+    
     - name: Compile and install x264 for armv7a
       if: false
       run: |
