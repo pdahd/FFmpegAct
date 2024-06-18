@@ -28,7 +28,7 @@ jobs:
     - name: Remove duplicate show_banner function definition
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        sed -i '/void show_banner(int argc, char **argv, const OptionDef \*options)/,/^}/d' fftools/opt_common.c
+        sed -i '/void show_banner(void)/,/^}/d' fftools/opt_common.c
 
     - name: Modify FFmpeg source to display custom logo only
       run: |
