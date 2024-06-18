@@ -25,29 +25,15 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Modify FFmpeg source to display custom logo only
+    - name: Modify cmdutils.c to customize banner
       run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        BUILD_DATE=$(date +"%Y-%m-%d")
-        cat <<EOL > fftools/cmdutils.c
-        #include "config.h"
-        #include "libavutil/log.h"
-        #include "libavutil/version.h"
-        #include "cmdutils.h"
-
-        #ifndef FFMPEG_VERSION
-        #define FFMPEG_VERSION "N/A"
-        #endif
-
-        void show_banner(int argc, char **argv, const OptionDef *options) {
-        av_log(NULL, AV_LOG_INFO, "\n");
-        av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture (static build)\n", FFMPEG_VERSION);
-        av_log(NULL, AV_LOG_INFO, "  ©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\n");
-        av_log(NULL, AV_LOG_INFO, "  Built by pdahd from GitHub (https://github.com/pdahd)\n");
-        av_log(NULL, AV_LOG_INFO, "  Build date: $BUILD_DATE\n");
-        av_log(NULL, AV_LOG_INFO, "\n");
-        }
-        EOL
+        sed -i '/static void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
+        static void show_banner(int argc, char **argv, const OptionDef *options) {\n\
+        av_log(NULL, AV_LOG_INFO, "FFmpeg version 7.0.1 for arm architecture (static build)\\n");\n\
+        av_log(NULL, AV_LOG_INFO, "©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\\n");\n\
+        av_log(NULL, AV_LOG_INFO, "Built by pdahd from GitHub (https://github.com/pdahd)\\n");\n\
+        av_log(NULL, AV_LOG_INFO, "Build date: 2024-6-18\\n");\n\
+        }' $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools/cmdutils.c
     
     - name: Compile and install x264 for armv7a
       run: |
