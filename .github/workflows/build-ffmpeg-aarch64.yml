@@ -28,7 +28,7 @@ jobs:
     - name: Search for show_banner function usage
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        grep -rnw . -e 'developers'
+        cat fftools/opt_common.c
     
     - name: Customize FFmpeg banner
       run: |
@@ -50,7 +50,6 @@ jobs:
         cat fftools/opt_common.c
     
     - name: Compile and install x264 for armv7a
-      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
