@@ -25,11 +25,6 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Print libavutil/version.h content
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        cat libavutil/version.h
-    
     - name: Modify FFmpeg source to display custom logo only
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
@@ -39,6 +34,10 @@ jobs:
         #include "libavutil/log.h"
         #include "libavutil/version.h"
         #include "cmdutils.h"
+
+        #ifndef FFMPEG_VERSION
+        #define FFMPEG_VERSION "N/A"
+        #endif
 
         void show_banner(int argc, char **argv, const OptionDef *options) {
         av_log(NULL, AV_LOG_INFO, "\n");
@@ -51,7 +50,6 @@ jobs:
         EOL
     
     - name: Compile and install x264 for armv7a
-      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
