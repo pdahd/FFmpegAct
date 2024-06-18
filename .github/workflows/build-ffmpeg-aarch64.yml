@@ -25,19 +25,10 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Modify cmdutils.c to customize banner
+    - name: Search for show_banner function usage
       run: |
-        sed -i '/static void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
-        static void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-        av_log(NULL, AV_LOG_INFO, "FFmpeg version 7.0.1 for arm architecture (static build)\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "Built by pdahd from GitHub (https://github.com/pdahd)\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "Build date: 2024-6-18\\n");\n\
-        }' $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools/cmdutils.c
-    
-    - name: Check cmdutils.c modification
-      run: |
-        grep -A 10 "show_banner" $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools/cmdutils.c || true
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        grep -rnw . -e 'show_banner'
     
     - name: Compile and install x264 for armv7a
       if: false
