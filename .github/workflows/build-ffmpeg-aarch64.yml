@@ -34,15 +34,14 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
-        sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
-        void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-        av_log(NULL, AV_LOG_INFO, "\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture (static build)\\n", FFMPEG_VERSION);\n\
-        av_log(NULL, AV_LOG_INFO, "  ©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "  Built by pdahd from GitHub (https://github.com/pdahd)\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "  Build date: '"$BUILD_DATE"'\\n");\n\
-        av_log(NULL, AV_LOG_INFO, "\\n");\n\
-        }' fftools/opt_common.c
+        printf '%s\n' 'void show_banner(int argc, char **argv, const OptionDef *options) {' \
+        '    av_log(NULL, AV_LOG_INFO, "\n");' \
+        '    av_log(NULL, AV_LOG_INFO, "  FFmpeg version %s for arm architecture (static build)\n", FFMPEG_VERSION);' \
+        '    av_log(NULL, AV_LOG_INFO, "  ©️ 2000-2024 the FFmpeg developers. Licensed under the LGPLv2.1 and later.\n");' \
+        '    av_log(NULL, AV_LOG_INFO, "  Built by pdahd from GitHub (https://github.com/pdahd)\n");' \
+        '    av_log(NULL, AV_LOG_INFO, "  Build date: '"$BUILD_DATE"'\n");' \
+        '    av_log(NULL, AV_LOG_INFO, "\n");' \
+        '}' > fftools/opt_common.c
     
     - name: Print opt_common.c content
       run: |
