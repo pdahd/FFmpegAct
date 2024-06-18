@@ -35,7 +35,12 @@ jobs:
         av_log(NULL, AV_LOG_INFO, "Build date: 2024-6-18\\n");\n\
         }' $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools/cmdutils.c
     
+    - name: Check cmdutils.c modification
+      run: |
+        grep -A 10 "static void show_banner" $GITHUB_WORKSPACE/ffmpeg-7.0.1/fftools/cmdutils.c
+    
     - name: Compile and install x264 for armv7a
+      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
