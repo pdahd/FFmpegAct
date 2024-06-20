@@ -118,7 +118,6 @@ jobs:
           --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
-          --enable-opengl \
           --enable-filter=gltransition \
           --enable-shared \
           --enable-mediacodec \
