@@ -30,6 +30,7 @@ jobs:
         cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
         # 检查文件是否成功复制
         ls $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c
+        ls $NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib
     
     - name: Apply gltransition patch
       run: |
