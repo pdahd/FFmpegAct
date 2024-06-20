@@ -128,6 +128,7 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
+          --extra-cflags="-I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/EGL -I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES -I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES2 -I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES3" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
