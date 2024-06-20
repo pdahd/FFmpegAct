@@ -28,7 +28,7 @@ jobs:
     - name: 显示可用的FFmpeg配置选项
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        cp ~/ffmpeg-gl-transition/vf_gltransition.c libavfilter/
+        cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
         ls libavfilter/vf_gltransition.c
         ./configure --help
     
