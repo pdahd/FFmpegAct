@@ -121,7 +121,7 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export CFLAGS="-I$SYSROOT/usr/include"  
+        export CFLAGS="-I$SYSROOT/usr/include/GLES2"  
         export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/24 -lGLESv2"
         
         
@@ -142,6 +142,7 @@ jobs:
           --pkg-config="$PKG_CONFIG" \
           --enable-filter=gltransition \
           --enable-shared \
+          --enable-opengl \
           --enable-mediacodec \
           --enable-version3 \
           --enable-jni \
