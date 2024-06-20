@@ -36,7 +36,7 @@ jobs:
         ls $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c
         ls $NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/24
         find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name pkgconfig
-        find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name glesv2.pc
+        find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name .pc
         
         find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name libGLESv2.so
     
