@@ -114,6 +114,7 @@ jobs:
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
+        export NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
         export CC=$TOOLCHAIN/bin/${TT}24-clang
@@ -121,10 +122,7 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export CFLAGS="-I$SYSROOT/usr/include/GLES2"  
-        export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/24 -lGLESv2"
-        
-        
+      
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
         echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
@@ -152,8 +150,8 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="$CFLAGS" \
-          --extra-ldflags="$LDFLAGS" \
+          --extra-cflags="-I$NDK/sysroot/usr/include/GLES2" \
+          --extra-ldflags="-L$NDK/sysroot/usr/lib/arm-linux-androideabi/24 -lGLESv2" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
