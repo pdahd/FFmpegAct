@@ -103,8 +103,8 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export CFLAGS="$SYSROOT/usr/include/GLES2"
-        export LDFLAGS="$SYSROOT/usr/lib/arm-linux-androideabi/24"
+        export CFLAGS="-I$SYSROOT/usr/include/GLES2"
+        export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/24 -lGLESv2"
         
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
@@ -130,8 +130,8 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I$CFLAGS" \
-          --extra-ldflags="-L$LDFLAGS" \
+          --extra-cflags="$CFLAGS" \
+          --extra-ldflags="$LDFLAGS" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
