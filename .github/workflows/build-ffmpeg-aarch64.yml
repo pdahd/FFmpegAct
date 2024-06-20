@@ -104,8 +104,8 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export CFLAGS="-I$SYSROOT/usr/include/GLES2"
-        export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/$TARGET_API -lGLESv2"
+        export CFLAGS="-I$SYSROOT/usr/include/GLES2/gl2.h"
+        export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/$TARGET_API/libGLESv2.so"
         
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
