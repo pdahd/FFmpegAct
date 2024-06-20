@@ -96,7 +96,6 @@ jobs:
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
-        export NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
         export CC=$TOOLCHAIN/bin/${TT}24-clang
@@ -104,6 +103,8 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
+        export GLES2_INCLUDE=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES2
+        export GLES2_LIB=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/24
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
@@ -129,7 +130,8 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/EGL -I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES -I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES2 -I$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES3" \
+          --extra-cflags="-I$GLES2_INCLUDE" \
+          --extra-ldflags="-L$GLES2_LIB -lGLESv2" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
