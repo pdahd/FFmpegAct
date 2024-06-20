@@ -28,6 +28,8 @@ jobs:
     - name: 显示可用的FFmpeg配置选项
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cp ~/ffmpeg-gl-transition/vf_gltransition.c libavfilter/
+        ls libavfilter/vf_gltransition.c
         ./configure --help
     
     - name: Customize FFmpeg banner in opt_common.c with green color
@@ -36,7 +38,7 @@ jobs:
         BUILD_DATE=$(date +"%Y-%m-%d")
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-        av_log(NULL, AV_LOG_INFO, "\033[32mFFmpeg %s - arm static build © 2000-2024 FFmpeg Team.\\nBuilt by pdahd (https://github.com/pdahd) on %s.\033[0m\\n", FFMPEG_VERSION, "'$BUILD_DATE'");\n\
+        av_log(NULL, AV_LOG_INFO, "FFmpeg %s - arm static build © 2000-2024 FFmpeg Team.\\nBuilt by pdahd (https://github.com/pdahd) on %s.\\n", FFMPEG_VERSION, "'$BUILD_DATE'");\n\
         }' fftools/opt_common.c
     
     - name: Compile and install x264 for armv7a
