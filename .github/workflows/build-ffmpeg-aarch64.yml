@@ -25,6 +25,11 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: Print FFmpeg configure script content
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cat configure
+    
     - name: 查一
       run: |
         ls -R /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include
