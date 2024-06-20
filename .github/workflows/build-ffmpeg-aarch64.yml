@@ -30,7 +30,8 @@ jobs:
         cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
         # 检查文件是否成功复制
         ls $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c
-        ls $NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib
+        ls $NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi
+        
         find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name libGLESv2.so
     
     - name: Apply gltransition patch
