@@ -28,6 +28,7 @@ jobs:
     - name: 查一
       run: |
         ls /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/python3/lib/pkgconfig
+        find $NDK -name "*.pc"
     
     - name: Copy gltransition filter source
       run: |
