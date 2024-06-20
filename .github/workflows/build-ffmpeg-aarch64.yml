@@ -25,6 +25,15 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: Modify configure script for OpenGL ES
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        sed -i '/enabled opengl/,+4d' configure
+        sed -i '/enabled opengl/a \
+        enabled opengl && { check_lib opengl "GLES2/gl2.h" glGetError "-lGLESv2" || \
+                        die "ERROR: opengl not found." \
+                      }' configure
+    
     - name: Print FFmpeg configure script content
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
