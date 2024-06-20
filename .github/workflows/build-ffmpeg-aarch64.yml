@@ -25,6 +25,11 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: 显示可用的FFmpeg配置选项
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        ./configure --help
+    
     - name: Customize FFmpeg banner in opt_common.c with green color
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
@@ -35,6 +40,7 @@ jobs:
         }' fftools/opt_common.c
     
     - name: Compile and install x264 for armv7a
+      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
