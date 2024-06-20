@@ -136,14 +136,10 @@ jobs:
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
-    - name: Build FFmpeg for armv7a
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        make -j$(nproc)
-        make install
-    
-    - name: Upload FFmpeg Build Artifact for armv7a
-      uses: actions/upload-artifact@v4
+    - name: Upload config.log
+      if: always()
+      uses: actions/upload-artifact@v2
       with:
-        name: ffmpeg-armeabi-v7a
-        path: ${{ github.workspace }}/2024/**
+        name: config-log
+        path: ffmpeg-7.0.1/ffbuild/config.log
+        if-no-files-found: warn
