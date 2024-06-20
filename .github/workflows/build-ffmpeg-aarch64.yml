@@ -35,6 +35,7 @@ jobs:
         find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name libGLESv2.so
     
     - name: Copy gltransition filter source
+      if: false
       run: |
         cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
         # 检查文件是否成功复制
@@ -46,6 +47,7 @@ jobs:
         find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name libGLESv2.so
     
     - name: Apply gltransition patch
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         git apply $GITHUB_WORKSPACE/ffmpeg.diff
@@ -108,6 +110,8 @@ jobs:
         
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
+        git apply $GITHUB_WORKSPACE/ffmpeg.diff
         ./configure \
           --arch=arm \
           --cc="$CC" \
