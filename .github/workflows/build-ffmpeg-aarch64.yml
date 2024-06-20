@@ -98,13 +98,15 @@ jobs:
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
+        export TARGET_API=24
         export CC=$TOOLCHAIN/bin/${TT}24-clang
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export GLES2_INCLUDE=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/GLES2
-        export GLES2_LIB=$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/24
+        export CFLAGS="-I$SYSROOT/usr/include/GLES2"
+        export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/$TARGET_API -lGLESv2"
+        
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
@@ -125,13 +127,12 @@ jobs:
           --enable-jni \
           --enable-indev=lavfi \
           --enable-cross-compile \
-          --enable-libx264 \
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I$GLES2_INCLUDE" \
-          --extra-ldflags="-L$GLES2_LIB -lGLESv2" \
+          --extra-cflags="$CFLAGS" \
+          --extra-ldflags="$LDFLAGS" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
