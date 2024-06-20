@@ -25,7 +25,14 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: Copy gltransition filter source
+      run: |
+        cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
+        # 检查文件是否成功复制
+        ls $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c
+    
     - name: 显示可用的FFmpeg配置选项
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
