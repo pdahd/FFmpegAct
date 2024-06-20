@@ -19,7 +19,7 @@ jobs:
       run: |
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/exlibs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        
 
     - name: Download FFmpeg source
       run: |
@@ -98,14 +98,13 @@ jobs:
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
-        export TARGET_API=24
         export CC=$TOOLCHAIN/bin/${TT}24-clang
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export CFLAGS="-I$SYSROOT/usr/include/GLES2/gl2.h"
-        export LDFLAGS="-L$SYSROOT/usr/lib/arm-linux-androideabi/$TARGET_API/libGLESv2.so"
+        export CFLAGS="$SYSROOT/usr/include/GLES2"
+        export LDFLAGS="$SYSROOT/usr/lib/arm-linux-androideabi/24"
         
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
@@ -131,8 +130,8 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="$CFLAGS" \
-          --extra-ldflags="$LDFLAGS" \
+          --extra-cflags="-I$CFLAGS" \
+          --extra-ldflags="-L$LDFLAGS" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
