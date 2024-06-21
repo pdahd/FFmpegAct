@@ -121,7 +121,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        sudu make install
+        sudo make install
 
     - name: Copy filter and apply patch
       run: |
