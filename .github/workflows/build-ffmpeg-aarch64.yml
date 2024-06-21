@@ -33,6 +33,7 @@ jobs:
         grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
     - name: 444 content
+      if: false
       run: |
         grep -Ri "opengl" $GITHUB_WORKSPACE/ffmpeg-7.0.1
         
@@ -43,16 +44,19 @@ jobs:
         sed -i '/enabled opengl            && { check_lib opengl GL\/glx.h glXGetProcAddress "-lGL" ||/,/^                             }/c\enabled opengl            && { check_lib opengl "GLES2\/gl2.h" glGetError "-lGLESv2" || die "ERROR: opengl not found."; }' configure
     
     - name: Print FFmpeg configure script content
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cat configure
     
     - name: 查一
+      if: false
       run: |
         ls -R /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include
         find $NDK -name "*.pc"
     
     - name: 查2
+      if: false
       run: |
         find /usr/local/lib/android/sdk/ndk/25.2.9519653 -name libGLESv2.so
     
@@ -104,7 +108,7 @@ jobs:
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export CFLAGS="-DANDROID -Wall -fPIC" 
-        export PREFIX=$GITHUB_WORKSPACE/exlibs
+        export PREFIX=/usr/local
         export HOST=$TT
         
         ./configure --prefix="$PREFIX" \
@@ -116,7 +120,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        make install
+        sudo make install
 
     - name: Copy filter and apply patch
       run: |
@@ -154,6 +158,7 @@ jobs:
           --pkg-config="$PKG_CONFIG" \
           --enable-filter=gltransition \
           --enable-shared \
+          --enable-libx264 \
           --enable-opengl \
           --enable-mediacodec \
           --enable-version3 \
