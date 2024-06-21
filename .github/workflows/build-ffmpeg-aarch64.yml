@@ -27,8 +27,8 @@ jobs:
 
     - name: 444 content
       run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        find -name "*opengl"
+        grep -Ri "opengl" $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        
     
     - name: Modify configure script for OpenGL ES
       run: |
