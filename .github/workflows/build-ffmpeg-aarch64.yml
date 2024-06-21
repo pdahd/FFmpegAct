@@ -123,12 +123,13 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
         echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
-        patch -p1 < ../ffmpeg.diff || true
+        patch -p1 < ../ff.patch 
     
-    - name: Show .rej file content
+    - name: Show around target lines in Makefile and allfilters.c
       run: |
-        cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile.rej || echo "No Makefile.rej file found."
-        cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c.rej || echo "No allfilters.c.rej file found."
+        grep -C 5 "CONFIG_ZSCALE_FILTER" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile
+        echo "----------------------------------------"
+        grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
     - name: Configure FFmpeg for armv7a with x264
       run: |
