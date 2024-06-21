@@ -115,7 +115,7 @@ jobs:
       run: |
         cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
         echo "vf_gltransition.c copied to: $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c"
-        patch -p1 < $GITHUB_WORKSPACE/ffmpeg.diff || true
+        patch -p0 < $GITHUB_WORKSPACE/ffmpeg.diff || true
         echo "Attempted to apply patch"
 
     - name: Show .rej file content
