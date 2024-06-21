@@ -124,7 +124,7 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
         echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
-        patch -p0 < ../ffmpeg.diff
+        patch -p1 < ../ffmpeg.diff
         echo "Patch applied successfully"
         ./configure \
           --arch=arm \
