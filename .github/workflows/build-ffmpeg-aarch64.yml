@@ -27,6 +27,7 @@ jobs:
 
     
     - name: Show context around target lines in Makefile and allfilters.c
+      if: false
       run: |
         grep -C 5 "CONFIG_ZSCALE_FILTER" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile
         echo "----------------------------------------"
@@ -120,7 +121,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        sudo make install
+        make install
 
     - name: Copy filter and apply patch
       run: |
@@ -130,6 +131,7 @@ jobs:
         patch -p0 < ../ff.patch 
     
     - name: Show around target lines in Makefile and allfilters.c
+      if: false
       run: |
         grep -C 5 "CONFIG_ZSCALE_FILTER" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile
         echo "----------------------------------------"
@@ -173,6 +175,7 @@ jobs:
           --sysroot="$SYSROOT" 
 
     - name: Upload Makefile and allfilters.c for download
+      if: false
       uses: actions/upload-artifact@v2
       with:
         name: FFmpeg-original-files
