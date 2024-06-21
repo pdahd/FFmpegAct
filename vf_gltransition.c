@@ -7,25 +7,26 @@
 #include "libavutil/opt.h"
 #include "internal.h"
 #include "framesync.h"
+#include <GLES2/gl2.h>
 
-#ifndef __APPLE__
-# define GL_TRANSITION_USING_EGL //remove this line if you don't want to use EGL
-#endif
+// #ifndef __APPLE__
+// # define GL_TRANSITION_USING_EGL //remove this line if you don't want to use EGL
+// #endif
 
-#ifdef __APPLE__
-# define __gl_h_
-# define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
-# include <OpenGL/gl3.h>
-#else
-# include <GL/glew.h>
-#endif
+// #ifdef __APPLE__
+// # define __gl_h_
+// # define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+// # include <OpenGL/gl3.h>
+// #else
+// # include <GL/glew.h>
+// #endif
 
-#ifdef GL_TRANSITION_USING_EGL
-# include <EGL/egl.h>
-# include <EGL/eglext.h>
-#else
-# include <GLFW/glfw3.h>
-#endif
+// #ifdef GL_TRANSITION_USING_EGL
+// # include <EGL/egl.h>
+// # include <EGL/eglext.h>
+// #else
+// # include <GLFW/glfw3.h>
+// #endif
 
 #include <stdio.h>
 #include <stdlib.h>
