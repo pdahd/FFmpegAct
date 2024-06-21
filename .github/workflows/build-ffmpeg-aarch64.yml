@@ -121,7 +121,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        sodu make install
+        sudu make install
 
     - name: Copy filter and apply patch
       run: |
