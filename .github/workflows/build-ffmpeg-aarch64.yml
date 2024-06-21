@@ -113,7 +113,6 @@ jobs:
 
     - name: Configure FFmpeg for armv7a with x264
       run: |
-        export NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
         export CC=$TOOLCHAIN/bin/${TT}24-clang
@@ -149,8 +148,6 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
-          --extra-cflags="-I$NDK/sysroot/usr/include/GLES2" \
-          --extra-ldflags="-L$NDK/sysroot/usr/lib/arm-linux-androideabi/24 -lGLESv2" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
