@@ -123,7 +123,7 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
         echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
-        patch -p1 < ../ff.patch 
+        patch -p0 < ../ff.patch 
     
     - name: Show around target lines in Makefile and allfilters.c
       run: |
