@@ -25,6 +25,12 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: Show context around target lines in Makefile and allfilters.c
+      run: |
+        grep -C 5 "CONFIG_ZSCALE_FILTER" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile
+        echo "----------------------------------------"
+        grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
+    
     - name: 444 content
       run: |
         grep -Ri "opengl" $GITHUB_WORKSPACE/ffmpeg-7.0.1
