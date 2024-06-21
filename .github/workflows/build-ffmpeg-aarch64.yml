@@ -32,6 +32,7 @@ jobs:
     
     - name: Modify configure script for OpenGL ES
       run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         sed -i '/enabled opengl            && { check_lib opengl GL\/glx.h glXGetProcAddress "-lGL" ||/,/                               }/c\
         enabled opengl            && { check_lib opengl "GLES2/gl2.h" glGetError "-lGLESv2" || die "ERROR: opengl not found."; }' configure
     
