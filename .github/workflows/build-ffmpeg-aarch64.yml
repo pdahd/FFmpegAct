@@ -126,6 +126,8 @@ jobs:
         echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
         patch -p1 < ../ffmpeg.diff
         echo "Patch applied successfully"
+        cat libavfilter/Makefile.rej
+        cat libavfilter/allfilters.c.rej
         ./configure \
           --arch=arm \
           --cc="$CC" \
