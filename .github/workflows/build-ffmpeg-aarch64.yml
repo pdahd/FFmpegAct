@@ -25,11 +25,6 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Copy Makefile and allfilters.c to repository root
-      run: |
-        cp $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile $GITHUB_WORKSPACE/Makefile_ffmpeg
-        cp $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c $GITHUB_WORKSPACE/allfilters_ffmpeg.c
-        echo "Makefile and allfilters.c copied to repository root"
     
     - name: Show context around target lines in Makefile and allfilters.c
       run: |
@@ -171,10 +166,10 @@ jobs:
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
-    - name: Upload config.log
-      if: always()
+    - name: Upload Makefile and allfilters.c for download
       uses: actions/upload-artifact@v2
       with:
-        name: config-log
-        path: ffmpeg-7.0.1/ffbuild/config.log
-        if-no-files-found: warn
+        name: FFmpeg-original-files
+        path: |
+          ${{ github.workspace }}/ffmpeg-7.0.1/libavfilter/Makefile
+          ${{ github.workspace }}/ffmpeg-7.0.1/libavfilter/allfilters.c
