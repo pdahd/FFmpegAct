@@ -25,6 +25,12 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
+    - name: Copy Makefile and allfilters.c to repository root
+      run: |
+        cp $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile $GITHUB_WORKSPACE/Makefile_ffmpeg
+        cp $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c $GITHUB_WORKSPACE/allfilters_ffmpeg.c
+        echo "Makefile and allfilters.c copied to repository root"
+    
     - name: Show context around target lines in Makefile and allfilters.c
       run: |
         grep -C 5 "CONFIG_ZSCALE_FILTER" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile
