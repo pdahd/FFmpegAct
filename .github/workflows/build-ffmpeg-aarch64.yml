@@ -121,7 +121,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        make install
+        sodu make install
 
     - name: Copy filter and apply patch
       run: |
@@ -174,9 +174,21 @@ jobs:
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
+    - name: Build FFmpeg for armv7a
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        make -j$(nproc)
+        make install
+    
+    - name: Upload FFmpeg Build Artifact for armv7a
+      uses: actions/upload-artifact@v4
+      with:
+        name: ffmpeg-armeabi-v7a
+        path: ${{ github.workspace }}/2024/**
+    
     - name: Upload Makefile and allfilters.c for download
       if: false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: FFmpeg-original-files
         path: |
