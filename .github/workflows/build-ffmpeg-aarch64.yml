@@ -39,7 +39,6 @@ jobs:
     - name: Print FFmpeg configure script content
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        grep -A 5 -B 2 "enabled opengl" configure
         cat configure
     
     - name: 查一
