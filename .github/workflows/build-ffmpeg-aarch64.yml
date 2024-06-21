@@ -111,17 +111,17 @@ jobs:
         make -j$(nproc)
         make install
 
-        - name: Copy filter and apply patch
-        run: |
-          cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
-          echo "vf_gltransition.c copied to: $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c"
-          git -C $GITHUB_WORKSPACE/ffmpeg-7.0.1 apply $GITHUB_WORKSPACE/ffmpeg.diff || true
-          echo "Attempted to apply patch"
+    - name: Copy filter and apply patch
+      run: |
+        cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
+        echo "vf_gltransition.c copied to: $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c"
+        git -C $GITHUB_WORKSPACE/ffmpeg-7.0.1 apply $GITHUB_WORKSPACE/ffmpeg.diff || true
+        echo "Attempted to apply patch"
 
-        - name: Show .rej file content
-        run: |
-          cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile.rej || echo "No Makefile.rej file found."
-          cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c.rej || echo "No allfilters.c.rej file found."
+    - name: Show .rej file content
+      run: |
+        cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile.rej || echo "No Makefile.rej file found."
+        cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c.rej || echo "No allfilters.c.rej file found."
     
     - name: Configure FFmpeg for armv7a with x264
       run: |
