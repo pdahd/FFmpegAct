@@ -113,11 +113,11 @@ jobs:
 
     - name: Copy filter and apply patch
       run: |
-        cp $GITHUB_WORKSPACE/vf_gltransition.c $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/
-        echo "vf_gltransition.c copied to: $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_gltransition.c"
-        patch -p0 < $GITHUB_WORKSPACE/ffmpeg.diff || true
-        echo "Attempted to apply patch"
-
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
+        echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
+        patch -p1 < ../ffmpeg.diff
+    
     - name: Show .rej file content
       run: |
         cat $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/Makefile.rej || echo "No Makefile.rej file found."
