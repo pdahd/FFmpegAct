@@ -33,12 +33,12 @@ jobs:
     - name: Modify configure script for OpenGL ES
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        sed -i '7048,7053d' configure
-        sed -i '7047a enabled opengl            && { check_lib opengl "GLES2/gl2.h" glGetError "-lGLESv2" || die "ERROR: opengl not found."; }' configure
+        sed -i '7048,7053d;7047a enabled opengl            && { check_lib opengl "GLES2/gl2.h" glGetError "-lGLESv2" || die "ERROR: opengl not found."; }' configure
     
     - name: Print FFmpeg configure script content
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        grep -A 5 -B 2 "enabled opengl" configure
         cat configure
     
     - name: 查一
