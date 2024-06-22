@@ -122,7 +122,7 @@ typedef struct {
   EGLSurface eglSurf;
   EGLContext eglCtx;
 #else
-  GLFWwindow    *window;
+  
 #endif
 
   GLchar *f_shader_source;
@@ -310,9 +310,59 @@ static AVFrame *apply_transition(FFFrameSync *fs,
                                  AVFrame *fromFrame,
                                  const AVFrame *toFrame)
 {
-
   GLTransitionContext *c = ctx->priv;
+  AVFilterLink *fromLink = ctx->inputs[FROM];
+  AVFilterLink *toLink = ctx->inputs[TO];
+  AVFilterLink *outLink = ctx->outputs[0];
+  AVFrame *outFrame;
+
+  // 获取输出帧
+  outFrame = ff_get_video_buffer(outLink, outLink->w, outLink->h);
+  if (!outFrame) {
+    return NULL;
+  }
+
+  // 复制帧属性
+  av_frame_copy_props(outFrame, fromFrame);
+  
   glUseProgram(c->program);
+
+  // 计算转场进度
+  const float ts = ((fs->pts - c->first_pts) / (float)fs->time_base.den) - c->offset;
+  const float progress = FFMAX(0.0f, FFMIN(1.0f, ts / c->duration));
+  glUniform1f(c->progress, progress);
+
+  // 设置像素存储方式
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  // 绑定 from 纹理
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, c->from);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, fromFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fromLink->w, fromLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, fromFrame->data[0]);
+
+  // 绑定 to 纹理
+  glActiveTexture(GL_TEXTURE0 + 1);
+  glBindTexture(GL_TEXTURE_2D, c->to);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, toFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, toLink->w, toLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, toFrame->data[0]);
+
+  // 绘制图形
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  // 读取像素数据到输出帧
+  glPixelStorei(GL_PACK_ROW_LENGTH_EXT, outFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
+  glReadPixels(0, 0, outLink->w, outLink->h, PIXEL_FORMAT, GL_UNSIGNED_BYTE, (GLvoid *)outFrame->data[0]);
+
+  // 重置像素存储方式
+  glPixelStorei(GL_PACK_ROW_LENGTH_EXT, 0); // 使用 OpenGL ES 常量
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0); // 使用 OpenGL ES 常量
+
+  // 释放输入帧
+  av_frame_free(&fromFrame);
+
+  return outFrame;
 
 }
 
@@ -343,6 +393,15 @@ static int blend_frame(FFFrameSync *fs)
 
 static av_cold int init(AVFilterContext *ctx)
 {
+  GLTransitionContext *c = ctx->priv;
+  c->fs.on_event = blend_frame;
+  c->first_pts = AV_NOPTS_VALUE;
+
+  // 初始化 FFramSync 结构体
+  int ret = ff_framesync_init_dualinput(&c->fs, ctx);
+  if (ret < 0) {
+    return ret;
+  }
 
   return 0;
 }
