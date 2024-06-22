@@ -8,6 +8,7 @@
 #include "internal.h"
 #include "framesync.h"
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include "avfilter.h"
 
 #include <stdio.h>
@@ -18,8 +19,6 @@
 #define TO   (1)
 
 #define PIXEL_FORMAT (GL_RGB)
-
-// 移除所有与 EGL 和 GLFW 相关的代码
 
 static const float position[12] = {
   -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f
@@ -109,6 +108,7 @@ static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GL
 {
   GLuint shader = glCreateShader(type);
   if (!shader || !glIsShader(shader)) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to create shader object\n");
     return 0;
   }
 
@@ -117,8 +117,16 @@ static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GL
 
   GLint status;
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+  if (status != GL_TRUE) {
+    char log[1024];
+    GLsizei len;
+    glGetShaderInfoLog(shader, sizeof(log), &len, log);
+    av_log(ctx, AV_LOG_ERROR, "Shader compilation failed: %s\n", log);
+    glDeleteShader(shader);
+    return 0;
+  }
 
-  return (status == GL_TRUE ? shader : 0);
+  return shader;
 }
 
 static int build_program(AVFilterContext *ctx)
@@ -127,7 +135,6 @@ static int build_program(AVFilterContext *ctx)
   GLTransitionContext *c = ctx->priv;
 
   if (!(v_shader = build_shader(ctx, v_shader_source, GL_VERTEX_SHADER))) {
-    av_log(ctx, AV_LOG_ERROR, "invalid vertex shader\n");
     return -1;
   }
 
@@ -154,33 +161,50 @@ static int build_program(AVFilterContext *ctx)
 
   const char *transition_source = source ? source : f_default_transition_source;
 
-  int len = strlen(f_shader_template) + strlen(transition_source);
+  int len = strlen(f_shader_template) + strlen(transition_source) + 1;
   c->f_shader_source = av_calloc(len, sizeof(*c->f_shader_source));
   if (!c->f_shader_source) {
+    free(source);
     return AVERROR(ENOMEM);
   }
 
-  snprintf(c->f_shader_source, len * sizeof(*c->f_shader_source), f_shader_template, transition_source);
+  snprintf(c->f_shader_source, len, f_shader_template, transition_source);
   av_log(ctx, AV_LOG_DEBUG, "\n%s\n", c->f_shader_source);
 
-  if (source) {
-    free(source);
-    source = NULL;
-  }
+  free(source);
 
   if (!(f_shader = build_shader(ctx, c->f_shader_source, GL_FRAGMENT_SHADER))) {
-    av_log(ctx, AV_LOG_ERROR, "invalid fragment shader\n");
     return -1;
   }
 
   c->program = glCreateProgram();
+  if (!c->program) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to create program object\n");
+    glDeleteShader(v_shader);
+    glDeleteShader(f_shader);
+    return -1;
+  }
+
   glAttachShader(c->program, v_shader);
   glAttachShader(c->program, f_shader);
   glLinkProgram(c->program);
 
   GLint status;
   glGetProgramiv(c->program, GL_LINK_STATUS, &status);
-  return status == GL_TRUE ? 0 : -1;
+  if (status != GL_TRUE) {
+    char log[1024];
+    GLsizei len;
+    glGetProgramInfoLog(c->program, sizeof(log), &len, log);
+    av_log(ctx, AV_LOG_ERROR, "Program linking failed: %s\n", log);
+    glDeleteProgram(c->program);
+    glDeleteShader(v_shader);
+    glDeleteShader(f_shader);
+    return -1;
+  }
+
+  glDeleteShader(v_shader);
+  glDeleteShader(f_shader);
+  return 0;
 }
 
 static void setup_vbo(GLTransitionContext *c)
@@ -289,7 +313,8 @@ static AVFrame *apply_transition(FFFrameSync *fs,
 
   // 复制帧属性
   av_frame_copy_props(outFrame, fromFrame);
-  
+
+  // 使用着色器程序
   glUseProgram(c->program);
 
   // 计算转场进度
@@ -419,7 +444,6 @@ static int config_output(AVFilterLink *outLink)
   GLTransitionContext *c = ctx->priv;
   AVFilterLink *fromLink = ctx->inputs[FROM];
   AVFilterLink *toLink = ctx->inputs[TO];
-  int ret;
 
   if (fromLink->format != toLink->format) {
     av_log(ctx, AV_LOG_ERROR, "inputs must be of same pixel format\n");
@@ -456,7 +480,8 @@ static const AVFilterPad gltransition_inputs[] = {
   {NULL}
 };
 
-static const AVFilterPad gltransition_outputs[] = {
+static const AVFilterPad
+gltransition_outputs[] = {
   {
     .name = "default",
     .type = AVMEDIA_TYPE_VIDEO,
