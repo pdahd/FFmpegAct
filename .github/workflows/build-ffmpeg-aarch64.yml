@@ -153,6 +153,7 @@ jobs:
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
+          --extra-cflags="-std=gnu99" \
           --disable-indevs \
           --disable-outdevs \
           --disable-static \
