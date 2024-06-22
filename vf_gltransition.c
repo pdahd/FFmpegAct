@@ -8,6 +8,7 @@
 #include "internal.h"
 #include "framesync.h"
 #include <GLES2/gl2.h>
+#include "avfilter.h"
 
 // #ifndef __APPLE__
 // # define GL_TRANSITION_USING_EGL //remove this line if you don't want to use EGL
@@ -310,6 +311,7 @@ static AVFrame *apply_transition(FFFrameSync *fs,
                                  const AVFrame *toFrame)
 {
 
+  GLTransitionContext *c = ctx->priv;
   glUseProgram(c->program);
 
 }
@@ -328,7 +330,7 @@ static int blend_frame(FFFrameSync *fs)
   }
 
   if (c->first_pts == AV_NOPTS_VALUE && fromFrame && fromFrame->pts != AV_NOPTS_VALUE) {
-    c->first_pts = fromFrame-n ff_filter_frame(ctx->outputs[0], fromFrame);
+    c->first_pts = fromFrame->pts;
   }
 
   outFrame = apply_transition(fs, ctx, fromFrame, toFrame);
@@ -341,17 +343,6 @@ static int blend_frame(FFFrameSync *fs)
 
 static av_cold int init(AVFilterContext *ctx)
 {
-  GLTransitionContext *c = ctx->priv;
-  c->fs.on_event = blend_frame;
-  c->first_pts = AV_NOPTS_VALUE;
-
-
-#ifndef GL_TRANSITION_USING_EGL
-  if (!glfwInit())
-  {
-    return -1;
-  }
-#endif
 
   return 0;
 }
