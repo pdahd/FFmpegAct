@@ -289,65 +289,6 @@ static int setup_gl(AVFilterLink *inLink)
   AVFilterContext *ctx = inLink->dst;
   GLTransitionContext *c = ctx->priv;
 
-
-#ifdef GL_TRANSITION_USING_EGL
-  //init EGL
-  // 1. Initialize EGL
-  // c->eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
-  #define MAX_DEVICES 4
-  EGLDeviceEXT eglDevs[MAX_DEVICES];
-  EGLint numDevices;
-
-  PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT =(PFNEGLQUERYDEVICESEXTPROC)
-  eglGetProcAddress("eglQueryDevicesEXT");
-
-  eglQueryDevicesEXT(MAX_DEVICES, eglDevs, &numDevices);
-
-  PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =  (PFNEGLGETPLATFORMDISPLAYEXTPROC)
-  eglGetProcAddress("eglGetPlatformDisplayEXT");
-
-  c->eglDpy = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[0], 0);
-
-  EGLint major, minor;
-  eglInitialize(c->eglDpy, &major, &minor);
-  av_log(ctx, AV_LOG_DEBUG, "%d%d", major, minor);
-  // 2. Select an appropriate configuration
-  EGLint numConfigs;
-  EGLint pbufferAttribs[] = {
-      EGL_WIDTH,
-      inLink->w,
-      EGL_HEIGHT,
-      inLink->h,
-      EGL_NONE,
-  };
-  eglChooseConfig(c->eglDpy, configAttribs, &c->eglCfg, 1, &numConfigs);
-  // 3. Create a surface
-  c->eglSurf = eglCreatePbufferSurface(c->eglDpy, c->eglCfg,
-                                       pbufferAttribs);
-  // 4. Bind the API
-  eglBindAPI(EGL_OPENGL_API);
-  // 5. Create a context and make it current
-  c->eglCtx = eglCreateContext(c->eglDpy, c->eglCfg, EGL_NO_CONTEXT, NULL);
-  eglMakeCurrent(c->eglDpy, c->eglSurf, c->eglSurf, c->eglCtx);
-#else
-  //glfw
-
-  glfwWindowHint(GLFW_VISIBLE, 0);
-  c->window = glfwCreateWindow(inLink->w, inLink->h, "", NULL, NULL);
-  if (!c->window) {
-    av_log(ctx, AV_LOG_ERROR, "setup_gl ERROR");
-    return -1;
-  }
-  glfwMakeContextCurrent(c->window);
-
-#endif
-
-#ifndef __APPLE__
-  glewExperimental = GL_TRUE;
-  glewInit();
-#endif
-
   glViewport(0, 0, inLink->w, inLink->h);
 
   int ret;
@@ -368,55 +309,9 @@ static AVFrame *apply_transition(FFFrameSync *fs,
                                  AVFrame *fromFrame,
                                  const AVFrame *toFrame)
 {
-  GLTransitionContext *c = ctx->priv;
-  AVFilterLink *fromLink = ctx->inputs[FROM];
-  AVFilterLink *toLink = ctx->inputs[TO];
-  AVFilterLink *outLink = ctx->outputs[0];
-  AVFrame *outFrame;
-
-  outFrame = ff_get_video_buffer(outLink, outLink->w, outLink->h);
-  if (!outFrame) {
-    return NULL;
-  }
-
-  av_frame_copy_props(outFrame, fromFrame);
-
-#ifdef GL_TRANSITION_USING_EGL
-  eglMakeCurrent(c->eglDpy, c->eglSurf, c->eglSurf, c->eglCtx);
-#else
-  glfwMakeContextCurrent(c->window);
-#endif
 
   glUseProgram(c->program);
 
-  const float ts = ((fs->pts - c->first_pts) / (float)fs->time_base.den) - c->offset;
-  const float progress = FFMAX(0.0f, FFMIN(1.0f, ts / c->duration));
-  // av_log(ctx, AV_LOG_ERROR, "transition '%s' %llu %f %f\n", c->source, fs->pts - c->first_pts, ts, progress);
-  glUniform1f(c->progress, progress);
-
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, c->from);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, fromFrame->linesize[0] / 3);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fromLink->w, fromLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, fromFrame->data[0]);
-
-  glActiveTexture(GL_TEXTURE0 + 1);
-  glBindTexture(GL_TEXTURE_2D, c->to);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, toFrame->linesize[0] / 3);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, toLink->w, toLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, toFrame->data[0]);
-
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  glPixelStorei(GL_PACK_ROW_LENGTH, outFrame->linesize[0] / 3);
-  glReadPixels(0, 0, outLink->w, outLink->h, PIXEL_FORMAT, GL_UNSIGNED_BYTE, (GLvoid *)outFrame->data[0]);
-
-  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-
-  av_frame_free(&fromFrame);
-
-  return outFrame;
 }
 
 static int blend_frame(FFFrameSync *fs)
@@ -433,11 +328,7 @@ static int blend_frame(FFFrameSync *fs)
   }
 
   if (c->first_pts == AV_NOPTS_VALUE && fromFrame && fromFrame->pts != AV_NOPTS_VALUE) {
-    c->first_pts = fromFrame->pts;
-  }
-
-  if (!toFrame) {
-    return ff_filter_frame(ctx->outputs[0], fromFrame);
+    c->first_pts = fromFrame-n ff_filter_frame(ctx->outputs[0], fromFrame);
   }
 
   outFrame = apply_transition(fs, ctx, fromFrame, toFrame);
@@ -469,24 +360,18 @@ static av_cold void uninit(AVFilterContext *ctx) {
   GLTransitionContext *c = ctx->priv;
   ff_framesync_uninit(&c->fs);
 
-#ifdef GL_TRANSITION_USING_EGL
-  if (c->eglDpy) {
+  if (c->from) {
     glDeleteTextures(1, &c->from);
-    glDeleteTextures(1, &c->to);
-    glDeleteBuffers(1, &c->posBuf);
-    glDeleteProgram(c->program);
-    eglTerminate(c->eglDpy);
   }
-#else
-  if (c->window) {
-    glDeleteTextures(1, &c->from);
+  if (c->to) {
     glDeleteTextures(1, &c->to);
-    glDeleteBuffers(1, &c->posBuf);
-    glDeleteProgram(c->program);
-    glfwDestroyWindow(c->window);
   }
-#endif
-
+  if (c->posBuf) {
+    glDeleteBuffers(1, &c->posBuf);
+  }
+  if (c->program) {
+    glDeleteProgram(c->program);
+  }
   if (c->f_shader_source) {
     av_freep(&c->f_shader_source);
   }
