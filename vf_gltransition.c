@@ -10,25 +10,6 @@
 #include <GLES2/gl2.h>
 #include "avfilter.h"
 
-// #ifndef __APPLE__
-// # define GL_TRANSITION_USING_EGL //remove this line if you don't want to use EGL
-// #endif
-
-// #ifdef __APPLE__
-// # define __gl_h_
-// # define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
-// # include <OpenGL/gl3.h>
-// #else
-// # include <GL/glew.h>
-// #endif
-
-// #ifdef GL_TRANSITION_USING_EGL
-// # include <EGL/egl.h>
-// # include <EGL/eglext.h>
-// #else
-// # include <GLFW/glfw3.h>
-// #endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
@@ -38,16 +19,8 @@
 
 #define PIXEL_FORMAT (GL_RGB)
 
-#ifdef GL_TRANSITION_USING_EGL
-static const EGLint configAttribs[] = {
-    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-    EGL_BLUE_SIZE, 8,
-    EGL_GREEN_SIZE, 8,
-    EGL_RED_SIZE, 8,
-    EGL_DEPTH_SIZE, 8,
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
-    EGL_NONE};
-#endif
+// 移除所有与 EGL 和 GLFW 相关的代码
+
 static const float position[12] = {
   -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f
 };
@@ -116,14 +89,6 @@ typedef struct {
   // internal state
   GLuint        posBuf;
   GLuint        program;
-#ifdef GL_TRANSITION_USING_EGL
-  EGLDisplay eglDpy;
-  EGLConfig eglCfg;
-  EGLSurface eglSurf;
-  EGLContext eglCtx;
-#else
-  
-#endif
 
   GLchar *f_shader_source;
 } GLTransitionContext;
@@ -338,26 +303,26 @@ static AVFrame *apply_transition(FFFrameSync *fs,
   // 绑定 from 纹理
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, c->from);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, fromFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, fromFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fromLink->w, fromLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, fromFrame->data[0]);
 
   // 绑定 to 纹理
   glActiveTexture(GL_TEXTURE0 + 1);
   glBindTexture(GL_TEXTURE_2D, c->to);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, toFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, toFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, toLink->w, toLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, toFrame->data[0]);
 
   // 绘制图形
   glDrawArrays(GL_TRIANGLES, 0, 6);
 
   // 读取像素数据到输出帧
-  glPixelStorei(GL_PACK_ROW_LENGTH_EXT, outFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
+  glPixelStorei(GL_PACK_ROW_LENGTH, outFrame->linesize[0] / 3); // 使用 OpenGL ES 常量
   glReadPixels(0, 0, outLink->w, outLink->h, PIXEL_FORMAT, GL_UNSIGNED_BYTE, (GLvoid *)outFrame->data[0]);
 
   // 重置像素存储方式
-  glPixelStorei(GL_PACK_ROW_LENGTH_EXT, 0); // 使用 OpenGL ES 常量
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0); // 使用 OpenGL ES 常量
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0); // 使用 OpenGL ES 常量
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0); // 使用 OpenGL ES 常量
 
   // 释放输入帧
   av_frame_free(&fromFrame);
@@ -374,13 +339,18 @@ static int blend_frame(FFFrameSync *fs)
   AVFrame *fromFrame, *toFrame, *outFrame;
   int ret;
 
+  if (fromFrame && fromFrame->pts != AV_NOPTS_VALUE) {
+    c->first_pts = fromFrame->pts;
+  }
+
   ret = ff_framesync_dualinput_get(fs, &fromFrame, &toFrame);
   if (ret < 0) {
     return ret;
   }
 
-  if (c->first_pts == AV_NOPTS_VALUE && fromFrame && fromFrame->pts != AV_NOPTS_VALUE) {
-    c->first_pts = fromFrame->pts;
+
+  if (!toFrame) {
+    return ff_filter_frame(ctx->outputs[0], fromFrame);
   }
 
   outFrame = apply_transition(fs, ctx, fromFrame, toFrame);
@@ -469,10 +439,6 @@ static int config_output(AVFilterLink *outLink)
   outLink->h = fromLink->h;
   // outLink->time_base = fromLink->time_base;
   outLink->frame_rate = fromLink->frame_rate;
-
-  if ((ret = ff_framesync_init_dualinput(&c->fs, ctx)) < 0) {
-    return ret;
-  }
 
   return ff_framesync_configure(&c->fs);
 }
