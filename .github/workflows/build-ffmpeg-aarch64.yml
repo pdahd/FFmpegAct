@@ -27,12 +27,14 @@ jobs:
 
     
     - name: Find AVFilter struct definition
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         grep -rn 'typedef struct AVFilter' --include='*.h'
         cat libavfilter/avfilter.h
     
     - name: 看看
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cat libavfilter/formats.h
@@ -56,6 +58,7 @@ jobs:
         sed -i '/enabled opengl            && { check_lib opengl GL\/glx.h glXGetProcAddress "-lGL" ||/,/^                             }/c\enabled opengl            && { check_lib opengl "GLES2\/gl2.h" glGetError "-lGLESv2" || check_lib opengl "EGL/egl.h" eglGetDisplay "-lEGL" || die "ERROR: opengl not found."; }' configure
     
     - name: Print FFmpeg configure script content
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cat configure
@@ -165,11 +168,11 @@ jobs:
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
-          --disable-static \
+          --disable-shared \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
           --enable-filter=gltransition \
-          --enable-shared \
+          --enable-static \
           --enable-libx264 \
           --enable-opengl \
           --enable-mediacodec \
@@ -191,7 +194,6 @@ jobs:
         make install
     
     - name: Upload FFmpeg Build Artifact for armv7a
-      if: false
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
