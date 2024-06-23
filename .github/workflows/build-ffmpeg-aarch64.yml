@@ -32,6 +32,11 @@ jobs:
         grep -rn 'typedef struct AVFilter' --include='*.h'
         cat libavfilter/avfilter.h
     
+    - name: 看看
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cat libavfilter/formats.h
+    
     - name: Show context around target lines in Makefile and allfilters.c
       if: false
       run: |
