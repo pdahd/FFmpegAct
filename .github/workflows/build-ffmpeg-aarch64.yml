@@ -168,11 +168,11 @@ jobs:
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
-          --disable-shared \
+          --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
           --enable-filter=gltransition \
-          --enable-static \
+          --enable-shared \
           --enable-libx264 \
           --enable-opengl \
           --enable-mediacodec \
