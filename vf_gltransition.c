@@ -381,12 +381,6 @@ static const AVFilterPad gltransition_outputs[] = {
   { NULL }
 };
 
-static int activate(AVFilterContext *ctx)
-{
-  GLTransitionContext *c = ctx->priv;
-  return ff_framesync_activate(&c->fs);
-}
-
 static int query_formats(AVFilterContext *ctx)
 {
   static const enum AVPixelFormat formats[] = {
@@ -394,6 +388,12 @@ static int query_formats(AVFilterContext *ctx)
     AV_PIX_FMT_NONE
   };
   return ff_set_common_formats(ctx, ff_make_format_list(formats));
+}
+
+static int activate(AVFilterContext *ctx)
+{
+  GLTransitionContext *c = ctx->priv;
+  return ff_framesync_activate(&c->fs);
 }
 
 AVFilter ff_vf_gltransition = {
