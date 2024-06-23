@@ -123,7 +123,6 @@ jobs:
         sudo make install
 
     - name: Copy filter and apply patch
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
@@ -153,7 +152,6 @@ jobs:
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
-          --extra-cflags="-std=gnu99" \
           --disable-indevs \
           --disable-outdevs \
           --disable-static \
@@ -176,7 +174,6 @@ jobs:
           --sysroot="$SYSROOT" 
 
     - name: Build FFmpeg for armv7a
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
