@@ -140,7 +140,6 @@ static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GL
 
 static int build_program(AVFilterContext *ctx)
 {
-  unsigned long fsize = ftell(f);
   GLuint v_shader, f_shader;
   GLTransitionContext *c = ctx->priv;
   char *source = NULL;
@@ -160,6 +159,7 @@ static int build_program(AVFilterContext *ctx)
       return -1;
     }
     fseek(f, 0, SEEK_END);
+    unsigned long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
     source = malloc(fsize + 1);
     fread(source, fsize, 1, f);
@@ -196,10 +196,10 @@ static int build_program(AVFilterContext *ctx)
 
 static void setup_vbo(GLTransitionContext *c)
 {
+  GLint loc = glGetAttribLocation(c->program, "position");
   glGenBuffers(1, &c->posBuf);
   glBindBuffer(GL_ARRAY_BUFFER, c->posBuf);
   glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STATIC_DRAW);
-  GLint loc = glGetAttribLocation(c->program, "position");
   glEnableVertexAttribArray(loc);
   glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
