@@ -29,11 +29,9 @@ jobs:
     - name: Configure FFmpeg for Android with OpenGL
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        sed -i '/enabled opengl && {/a \
-        check_lib opengl GLES2/gl2.h glGetError "-lGLESv2" || \
-        check_lib opengl GLES3/gl3.h glGetError "-lGLESv3" || \
-        die "ERROR: opengl not found." \
-        ' configure
+        sed -i '/check_lib opengl GL\/gl.h glXGetProcAddress "-lGL"/a\
+        check_lib opengl GLES2\/gl2.h glGetError "-lGLESv2" || \\\n\
+        check_lib opengl GLES3\/gl3.h glGetError "-lGLESv3" ||' configure
     
     - name: Show context around target lines in Makefile and allfilters.c
       if: false
