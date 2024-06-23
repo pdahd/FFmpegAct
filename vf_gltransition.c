@@ -140,6 +140,7 @@ static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GL
 
 static int build_program(AVFilterContext *ctx)
 {
+  unsigned long fsize = ftell(f);
   GLuint v_shader, f_shader;
   GLTransitionContext *c = ctx->priv;
   char *source = NULL;
@@ -159,7 +160,6 @@ static int build_program(AVFilterContext *ctx)
       return -1;
     }
     fseek(f, 0, SEEK_END);
-    unsigned long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
     source = malloc(fsize + 1);
     fread(source, fsize, 1, f);
