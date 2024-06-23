@@ -381,6 +381,12 @@ static const AVFilterPad gltransition_outputs[] = {
   { NULL }
 };
 
+static int activate(AVFilterContext *ctx)
+{
+  GLTransitionContext *c = ctx->priv;
+  return ff_framesync_activate(&c->fs);
+}
+
 AVFilter ff_vf_gltransition = {
   .name          = "gltransition",
   .description   = NULL_IF_CONFIG_SMALL("Apply GLSL transitions between video streams."),
@@ -388,11 +394,9 @@ AVFilter ff_vf_gltransition = {
   .init          = init,
   .uninit        = uninit,
   .query_formats = ff_default_query_formats,
-  .activate      = filter_frame_event,
+  .activate      = activate,
   .inputs        = gltransition_inputs,
   .outputs       = gltransition_outputs,
   .priv_class    = &gltransition_class,
   .flags         = AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC,
 };
-
- 
