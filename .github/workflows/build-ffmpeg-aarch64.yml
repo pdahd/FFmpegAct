@@ -26,6 +26,11 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     
+    - name: Find AVFilter struct definition
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        grep -rn 'typedef struct AVFilter' --include='*.h'
+    
     - name: Show context around target lines in Makefile and allfilters.c
       if: false
       run: |
