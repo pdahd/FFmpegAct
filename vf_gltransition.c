@@ -301,7 +301,7 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 {
   AVFilterContext *ctx = fs->parent;
   GLTransitionContext *c = ctx->priv;
-  AVFrame *in = ff_framesync_get_frame(fs, index, out);
+  AVFrame *in = ff_framesync_get_frame(fs, index, out, 0);
   if (!in)
     return AVERROR(EINVAL);
 
