@@ -237,6 +237,11 @@ static int init_gl(AVFilterContext *ctx)
   GLTransitionContext *c = ctx->priv;
   EGLint numConfigs;
 
+  static const EGLint contextAttribs[] = {
+    EGL_CONTEXT_CLIENT_VERSION, 2,
+    EGL_NONE
+  };
+    
   c->eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
   if (c->eglDpy == EGL_NO_DISPLAY) {
     av_log(ctx, AV_LOG_ERROR, "Failed to get EGL display\n");
@@ -258,11 +263,6 @@ static int init_gl(AVFilterContext *ctx)
     av_log(ctx, AV_LOG_ERROR, "Failed to create EGL surface\n");
     return -1;
   }
-
-  static const EGLint contextAttribs[] = {
-    EGL_CONTEXT_CLIENT_VERSION, 2,
-    EGL_NONE
-  };
 
   c->eglCtx = eglCreateContext(c->eglDpy, c->eglCfg, EGL_NO_CONTEXT, contextAttribs);
   if (c->eglCtx == EGL_NO_CONTEXT) {
