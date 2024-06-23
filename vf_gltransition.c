@@ -127,13 +127,13 @@ FRAMESYNC_DEFINE_CLASS(gltransition, GLTransitionContext, fs);
 
 static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GLenum type)
 {
+  GLint status;
   GLuint shader = glCreateShader(type);
   if (!shader || !glIsShader(shader)) {
     return 0;
   }
   glShaderSource(shader, 1, &shader_source, 0);
   glCompileShader(shader);
-  GLint status;
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
   return (status == GL_TRUE ? shader : 0);
 }
