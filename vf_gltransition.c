@@ -7,6 +7,7 @@
 #include "internal.h"
 #include "framesync.h"
 #include "libavfilter/formats.h"
+#include "libavfilter/avfilter.h"
 
 #define GL_TRANSITION_USING_EGL
 
