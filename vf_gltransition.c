@@ -334,7 +334,6 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 static int filter_frame_event(FFFrameSync *fs)
 {
   AVFilterContext *ctx = fs->parent;
-  GLTransitionContext *c = ctx->priv;
   AVFrame *out;
   int ret = filter_frame(fs, &out, 0);
   if (ret < 0)
