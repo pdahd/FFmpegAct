@@ -26,6 +26,15 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     
+    - name: Configure FFmpeg for Android with OpenGL
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        sed -i '/enabled opengl && {/a \
+        check_lib opengl GLES2/gl2.h glGetError "-lGLESv2" || \
+        check_lib opengl GLES3/gl3.h glGetError "-lGLESv3" || \
+        die "ERROR: opengl not found." \
+        ' configure
+    
     - name: Show context around target lines in Makefile and allfilters.c
       if: false
       run: |
@@ -40,12 +49,12 @@ jobs:
         
     
     - name: Modify configure script for OpenGL ES
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         sed -i '/enabled opengl            && { check_lib opengl GL\/glx.h glXGetProcAddress "-lGL" ||/,/^                             }/c\enabled opengl            && { check_lib opengl "GLES2\/gl2.h" glGetError "-lGLESv2" || die "ERROR: opengl not found."; }' configure
     
     - name: Print FFmpeg configure script content
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cat configure
@@ -124,6 +133,7 @@ jobs:
         sudo make install
 
     - name: Copy filter and apply patch
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
@@ -176,12 +186,14 @@ jobs:
           --sysroot="$SYSROOT" 
 
     - name: Build FFmpeg for armv7a
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
         make install
     
     - name: Upload FFmpeg Build Artifact for armv7a
+      if: false
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
