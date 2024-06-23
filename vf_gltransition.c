@@ -146,6 +146,7 @@ static int build_program(AVFilterContext *ctx)
   GLint status;
   const char *transition_source;
   int len;
+  unsigned long fsize;
 
   if (!(v_shader = build_shader(ctx, v_shader_source, GL_VERTEX_SHADER))) {
     av_log(ctx, AV_LOG_ERROR, "invalid vertex shader\n");
@@ -159,7 +160,7 @@ static int build_program(AVFilterContext *ctx)
       return -1;
     }
     fseek(f, 0, SEEK_END);
-    unsigned long fsize = ftell(f);
+    fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
     source = malloc(fsize + 1);
     fread(source, fsize, 1, f);
