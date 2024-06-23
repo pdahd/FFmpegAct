@@ -381,7 +381,7 @@ static const AVFilterPad gltransition_outputs[] = {
   { NULL }
 };
 
-static int input_formats(AVFilterContext *ctx)
+static int query_formats(AVFilterContext *ctx)
 {
   static const enum AVPixelFormat formats[] = {
     AV_PIX_FMT_RGB24,
@@ -402,7 +402,7 @@ AVFilter ff_vf_gltransition = {
   .priv_size     = sizeof(GLTransitionContext),
   .init          = init,
   .uninit        = uninit,
-  .input_formats = input_formats,
+  .query_func    = query_formats,
   .activate      = activate,
   .inputs        = gltransition_inputs,
   .outputs       = gltransition_outputs,
