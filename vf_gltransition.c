@@ -387,13 +387,22 @@ static int activate(AVFilterContext *ctx)
   return ff_framesync_activate(&c->fs);
 }
 
+static int query_formats(AVFilterContext *ctx)
+{
+  static const enum AVPixelFormat formats[] = {
+    AV_PIX_FMT_RGB24,
+    AV_PIX_FMT_NONE
+  };
+  return ff_set_common_formats(ctx, ff_make_format_list(formats));
+}
+
 AVFilter ff_vf_gltransition = {
   .name          = "gltransition",
   .description   = NULL_IF_CONFIG_SMALL("Apply GLSL transitions between video streams."),
   .priv_size     = sizeof(GLTransitionContext),
   .init          = init,
   .uninit        = uninit,
-  .query_formats = ff_default_query_formats,
+  .query_formats = query_formats,
   .activate      = activate,
   .inputs        = gltransition_inputs,
   .outputs       = gltransition_outputs,
