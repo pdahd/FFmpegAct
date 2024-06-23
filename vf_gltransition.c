@@ -6,6 +6,7 @@
 #include "libavutil/opt.h"
 #include "internal.h"
 #include "framesync.h"
+#include "libavfilter/formats.h"
 
 #define GL_TRANSITION_USING_EGL
 
@@ -143,6 +144,8 @@ static int build_program(AVFilterContext *ctx)
   GLTransitionContext *c = ctx->priv;
   char *source = NULL;
   GLint status;
+  const char *transition_source;
+  int len;
 
   if (!(v_shader = build_shader(ctx, v_shader_source, GL_VERTEX_SHADER))) {
     av_log(ctx, AV_LOG_ERROR, "invalid vertex shader\n");
@@ -164,8 +167,8 @@ static int build_program(AVFilterContext *ctx)
     source[fsize] = 0;
   }
 
-  const char *transition_source = source ? source : f_default_transition_source;
-  int len = strlen(f_shader_template) + strlen(transition_source);
+  transition_source = source ? source : f_default_transition_source;
+  len = strlen(f_shader_template) + strlen(transition_source);
   c->f_shader_source = av_calloc(len, sizeof(*c->f_shader_source));
   if (!c->f_shader_source) {
     return AVERROR(ENOMEM);
@@ -301,9 +304,10 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 {
   AVFilterContext *ctx = fs->parent;
   GLTransitionContext *c = ctx->priv;
-  AVFrame *in = ff_framesync_get_frame(fs, index, out, 0);
-  if (!in)
-    return AVERROR(EINVAL);
+  AVFrame *in;
+  int ret = ff_framesync_get_frame(fs, index, &in, 0);
+  if (ret < 0)
+    return ret;
 
   glUseProgram(c->program);
 
@@ -327,17 +331,22 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
   return ff_filter_frame(ctx->outputs[0], *out);
 }
 
-static int activate(AVFilterContext *ctx)
+static int filter_frame_event(FFFrameSync *fs)
 {
+  AVFilterContext *ctx = fs->parent;
   GLTransitionContext *c = ctx->priv;
-  return ff_framesync_activate(&c->fs);
+  AVFrame *out;
+  int ret = filter_frame(fs, &out, 0);
+  if (ret < 0)
+    return ret;
+  return ff_filter_frame(ctx->outputs[0], out);
 }
 
 static av_cold int init(AVFilterContext *ctx)
 {
   GLTransitionContext *c = ctx->priv;
   ff_framesync_init(&c->fs, ctx, 2);
-  c->fs.on_event = filter_frame;
+  c->fs.on_event = filter_frame_event;
   return 0;
 }
 
