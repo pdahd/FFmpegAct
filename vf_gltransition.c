@@ -388,9 +388,11 @@ AVFilter ff_vf_gltransition = {
   .init          = init,
   .uninit        = uninit,
   .query_formats = ff_default_query_formats,
-  .activate      = activate,
+  .activate      = filter_frame_event,
   .inputs        = gltransition_inputs,
   .outputs       = gltransition_outputs,
   .priv_class    = &gltransition_class,
   .flags         = AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC,
 };
+
+ 
