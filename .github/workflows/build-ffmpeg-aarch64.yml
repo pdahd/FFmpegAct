@@ -118,6 +118,14 @@ jobs:
         av_log(NULL, AV_LOG_INFO, "FFmpeg %s - arm static build © 2000-2024 FFmpeg Team.\\nBuilt by pdahd (https://github.com/pdahd) on %s.\\n", FFMPEG_VERSION, "'$BUILD_DATE'");\n\
         }' fftools/opt_common.c
     
+    - name: Upload blend and xfade filter source files
+      uses: actions/upload-artifact@v3
+      with:
+        name: blend-and-xfade-source
+        path: |
+          $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_blend.c
+          $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_xfade.c
+    
     - name: Compile and install x264 for armv7a
       if: false
       run: |
@@ -145,6 +153,7 @@ jobs:
         sudo make install
 
     - name: Copy filter and apply patch
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
@@ -159,6 +168,7 @@ jobs:
         grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
     - name: Configure FFmpeg for armv7a with x264
+      if: false
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
@@ -196,12 +206,14 @@ jobs:
           --sysroot="$SYSROOT" 
 
     - name: Build FFmpeg for armv7a
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
         make install
     
     - name: Upload FFmpeg Build Artifact for armv7a
+      if: false
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
