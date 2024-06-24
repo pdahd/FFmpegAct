@@ -119,12 +119,12 @@ jobs:
         }' fftools/opt_common.c
     
     - name: Upload blend and xfade filter source files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: blend-and-xfade-source
         path: |
-          $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_blend.c
-          $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/vf_xfade.c
+          ffmpeg-7.0.1/libavfilter/vf_blend.c
+          ffmpeg-7.0.1/libavfilter/vf_xfade.c
     
     - name: Compile and install x264 for armv7a
       if: false
