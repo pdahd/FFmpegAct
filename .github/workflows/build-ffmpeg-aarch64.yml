@@ -26,6 +26,11 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     
+    - name: Check framesync.c line 91
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        sed -n '91p' libavfilter/framesync.c
+    
     - name: Find AVFilter struct definition
       if: false
       run: |
@@ -112,6 +117,7 @@ jobs:
         }' fftools/opt_common.c
     
     - name: Compile and install x264 for armv7a
+      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
