@@ -121,6 +121,15 @@ jobs:
     - name: Upload blend and xfade filter source files
       uses: actions/upload-artifact@v4
       with:
+        name: avfilter.h-and-formats.h
+        path: |
+          ffmpeg-7.0.1/libavfilter/avfilter.h
+          ffmpeg-7.0.1/libavfilter/formats.h
+    
+    - name: Upload blend and xfade filter source files
+      if: false
+      uses: actions/upload-artifact@v4
+      with:
         name: blend-and-xfade-source
         path: |
           ffmpeg-7.0.1/libavfilter/vf_blend.c
