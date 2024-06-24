@@ -29,6 +29,8 @@ jobs:
     - name: Check framesync.c line 91
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        find . -name vf_blend.c
+        find . -name vf_xfade.c
         sed -n '91p' libavfilter/framesync.c
     
     - name: Find AVFilter struct definition
