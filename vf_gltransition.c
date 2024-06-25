@@ -128,15 +128,26 @@ FRAMESYNC_DEFINE_CLASS(gltransition, GLTransitionContext, fs);
 
 static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GLenum type)
 {
-  GLint status;
-  GLuint shader = glCreateShader(type);
-  if (!shader || !glIsShader(shader)) {
-    return 0;
-  }
-  glShaderSource(shader, 1, &shader_source, 0);
-  glCompileShader(shader);
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-  return (status == GL_TRUE ? shader : 0);
+    GLuint shader = glCreateShader(type);
+    if (!shader || !glIsShader(shader)) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to create shader.\n");
+        return 0;
+    }
+
+    glShaderSource(shader, 1, &shader_source, NULL);
+    glCompileShader(shader);
+
+    GLint status;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if (status != GL_TRUE) {
+        char buffer[512];
+        glGetShaderInfoLog(shader, 512, NULL, buffer);
+        av_log(ctx, AV_LOG_ERROR, "Shader compile error: %s\n", buffer);
+        glDeleteShader(shader); // Don't forget to delete the shader if it failed to compile
+        return 0;
+    }
+
+    return shader;
 }
 
 static int build_program(AVFilterContext *ctx)
@@ -236,54 +247,62 @@ static void setup_tex(AVFilterLink *fromLink)
 
 static int init_gl(AVFilterContext *ctx)
 {
-  GLTransitionContext *c = ctx->priv;
-  EGLint numConfigs;
+    GLTransitionContext *c = ctx->priv;
+    EGLint numConfigs;
 
-  static const EGLint contextAttribs[] = {
-    EGL_CONTEXT_CLIENT_VERSION, 2,
-    EGL_NONE
-  };
-    
-  c->eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  if (c->eglDpy == EGL_NO_DISPLAY) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to get EGL display\n");
-    return -1;
-  }
+    static const EGLint contextAttribs[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+        EGL_NONE
+    };
 
-  if (!eglInitialize(c->eglDpy, NULL, NULL)) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to initialize EGL\n");
-    return -1;
-  }
+    // 获取 EGL 显示
+    c->eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (c->eglDpy == EGL_NO_DISPLAY) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to get EGL display\n");
+        return -1;
+    }
 
-  if (!eglChooseConfig(c->eglDpy, configAttribs, &c->eglCfg, 1, &numConfigs)) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to choose EGL config\n");
-    return -1;
-  }
+    // 初始化 EGL
+    if (!eglInitialize(c->eglDpy, NULL, NULL)) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to initialize EGL\n");
+        return -1;
+    }
 
-  c->eglSurf = eglCreatePbufferSurface(c->eglDpy, c->eglCfg, pbufferAttribs);
-  if (c->eglSurf == EGL_NO_SURFACE) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to create EGL surface\n");
-    return -1;
-  }
+    // 选择 EGL 配置
+    if (!eglChooseConfig(c->eglDpy, configAttribs, &c->eglCfg, 1, &numConfigs)) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to choose EGL config\n");
+        return -1;
+    }
 
-  c->eglCtx = eglCreateContext(c->eglDpy, c->eglCfg, EGL_NO_CONTEXT, contextAttribs);
-  if (c->eglCtx == EGL_NO_CONTEXT) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to create EGL context\n");
-    return -1;
-  }
+    // 创建 EGL 表面
+    c->eglSurf = eglCreatePbufferSurface(c->eglDpy, c->eglCfg, pbufferAttribs);
+    if (c->eglSurf == EGL_NO_SURFACE) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to create EGL surface\n");
+        return -1;
+    }
 
-  if (!eglMakeCurrent(c->eglDpy, c->eglSurf, c->eglSurf, c->eglCtx)) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to make EGL context current\n");
-    return -1;
-  }
+    // 创建 EGL 上下文
+    c->eglCtx = eglCreateContext(c->eglDpy, c->eglCfg, EGL_NO_CONTEXT, contextAttribs);
+    if (c->eglCtx == EGL_NO_CONTEXT) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to create EGL context\n");
+        return -1;
+    }
 
-  if (build_program(ctx) < 0) {
-    av_log(ctx, AV_LOG_ERROR, "Failed to build GL program\n");
-    return -1;
-  }
+    // 激活 EGL 上下文
+    if (!eglMakeCurrent(c->eglDpy, c->eglSurf, c->eglSurf, c->eglCtx)) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to make EGL context current\n");
+        return -1;
+    }
 
-  setup_vbo(c);
-  return 0;
+    // 构建 GL 程序
+    if (build_program(ctx) < 0) {
+        av_log(ctx, AV_LOG_ERROR, "Failed to build GL program\n");
+        return -1;
+    }
+
+    // 设置 VBO
+    setup_vbo(c);
+    return 0;
 }
 
 static int config_input(AVFilterLink *inlink)
@@ -304,33 +323,51 @@ static int config_input(AVFilterLink *inlink)
 
 static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 {
-  AVFilterContext *ctx = fs->parent;
-  GLTransitionContext *c = ctx->priv;
-  AVFrame *in;
-  int ret = ff_framesync_get_frame(fs, index, &in, 0);
-  if (ret < 0)
+    AVFilterContext *ctx = fs->parent;
+    GLTransitionContext *c = ctx->priv;
+    AVFrame *in;
+    int ret = ff_framesync_get_frame(fs, index, &in, 0);
+    if (ret < 0)
+        return ret;
+
+    // 确保 out 指向的 AVFrame 已经分配
+    if (!*out) {
+        *out = ff_get_video_buffer(ctx->outputs[0], ctx->outputs[0]->w, ctx->outputs[0]->h);
+        if (!*out)
+            return AVERROR(ENOMEM);
+        av_frame_copy_props(*out, in);
+    }
+
+    // 激活着色器程序
+    glUseProgram(c->program);
+
+    // 更新 uniform 变量
+    float progress = ff_framesync_get_progress(&c->fs);
+    glUniform1f(c->progress, progress);
+    glUniform1f(c->ratio, (float)(*out)->width / (float)(*out)->height);
+    glUniform1f(c->_fromR, 1.0f); // 这里可能需要根据实际情况调整
+    glUniform1f(c->_toR, 1.0f); // 这里可能需要根据实际情况调整
+
+    // 更新纹理数据
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, c->from);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in->width, in->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in->data[0]);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, c->to);
+    // 注意：这里假设 "to" 纹理已经在之前的某个步骤中设置好了
+
+    // 执行绘制命令
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // 从 OpenGL ES 读取渲染结果到输出帧
+    glReadPixels(0, 0, (*out)->width, (*out)->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, (*out)->data[0]);
+
+    // 将渲染好的帧发送到下一个滤镜
+    ret = ff_filter_frame(ctx->outputs[0], *out);
+    *out = NULL; // 确保 *out 被重置，避免重复使用
+
     return ret;
-
-  glUseProgram(c->program);
-
-  glUniform1f(c->progress, (float)(*out)->pts / (float)(c->duration * AV_TIME_BASE));
-  glUniform1f(c->ratio, (float)(*out)->width / (float)(*out)->height);
-  glUniform1f(c->_fromR, 1.0f);
-  glUniform1f(c->_toR, 1.0f);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, c->from);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in->width, in->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in->data[0]);
-
-  glActiveTexture(GL_TEXTURE0 + 1);
-  glBindTexture(GL_TEXTURE_2D, c->to);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in->width, in->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in->data[0]);
-
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-
-  eglSwapBuffers(c->eglDpy, c->eglSurf);
-
-  return ff_filter_frame(ctx->outputs[0], *out);
 }
 
 static int filter_frame_event(FFFrameSync *fs)
