@@ -119,6 +119,7 @@ jobs:
         }' fftools/opt_common.c
     
     - name: Upload blend and xfade filter source files
+      if: false
       uses: actions/upload-artifact@v4
       with:
         name: avfilter.h-and-formats.h
@@ -136,7 +137,6 @@ jobs:
           ffmpeg-7.0.1/libavfilter/vf_xfade.c
     
     - name: Compile and install x264 for armv7a
-      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
@@ -162,7 +162,6 @@ jobs:
         sudo make install
 
     - name: Copy filter and apply patch
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
@@ -177,7 +176,6 @@ jobs:
         grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
     - name: Configure FFmpeg for armv7a with x264
-      if: false
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
@@ -215,7 +213,6 @@ jobs:
           --sysroot="$SYSROOT" 
 
     - name: Build FFmpeg for armv7a
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
