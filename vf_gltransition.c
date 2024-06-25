@@ -330,7 +330,6 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
     if (ret < 0)
         return ret;
 
-    // 确保 out 指向的 AVFrame 已经分配
     if (!*out) {
         *out = ff_get_video_buffer(ctx->outputs[0], ctx->outputs[0]->w, ctx->outputs[0]->h);
         if (!*out)
@@ -338,13 +337,20 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
         av_frame_copy_props(*out, in);
     }
 
+    // 确保变量声明在代码块的开始处
+    GLint loc;
+    float progress;
+    float ratio;
+
     // 激活着色器程序
     glUseProgram(c->program);
 
     // 更新 uniform 变量
-    float progress = ff_framesync_get_progress(&c->fs);
+    // 注意：这里需要您根据实际情况计算 progress
+    progress = /* 计算进度 */;
     glUniform1f(c->progress, progress);
-    glUniform1f(c->ratio, (float)(*out)->width / (float)(*out)->height);
+    ratio = (float)(*out)->width / (float)(*out)->height;
+    glUniform1f(c->ratio, ratio);
     glUniform1f(c->_fromR, 1.0f); // 这里可能需要根据实际情况调整
     glUniform1f(c->_toR, 1.0f); // 这里可能需要根据实际情况调整
 
@@ -388,16 +394,7 @@ static av_cold int init(AVFilterContext *ctx)
   return 0;
 }
 
-static av_cold void uninit(AVFilterContext *ctx)
-{
-  GLTransitionContext *c = ctx->priv;
-  eglDestroyContext(c->eglDpy, c->eglCtx);
-  eglDestroySurface(c->eglDpy, c->eglSurf);
-  eglTerminate(c->eglDpy);
-  av_freep(&c->f_shader_source);
-}
-
-static const AVFilterPad gltransition_inputs[] = {
+static c const AVFilterPad gltransition_inputs[] = {
   {
     .name         = "from",
     .type         = AVMEDIA_TYPE_VIDEO,
