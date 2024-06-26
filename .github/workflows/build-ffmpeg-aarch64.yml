@@ -198,6 +198,7 @@ jobs:
           --pkg-config="$PKG_CONFIG" \
           --enable-filter=gltransition \
           --enable-shared \
+          --enable-debug \
           --enable-libx264 \
           --enable-opengl \
           --enable-mediacodec \
