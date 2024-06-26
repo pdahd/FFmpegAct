@@ -1,0 +1,48 @@
+name: Check Android Tools
+
+on: [push]
+
+jobs:
+  check-tools:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.5
+
+    - name: Check JDK installation
+      run: |
+        java -version
+        javac -version
+
+    - name: Check Android SDK installation
+      run: |
+        if [ -d "$ANDROID_HOME" ]; then
+          echo "Android SDK is installed at $ANDROID_HOME"
+        else
+          echo "Android SDK is not installed"
+        fi
+
+    - name: Check Android Emulator installation
+      run: |
+        if [ -x "$(command -v emulator)" ]; then
+          echo "Android Emulator is installed"
+        else
+          echo "Android Emulator is not installed"
+        fi
+
+    - name: List available SDK packages
+      run: |
+        if [ -x "$(command -v sdkmanager)" ]; then
+          sdkmanager --list
+        else
+          echo "sdkmanager is not available"
+        fi
+
+    - name: Check adb installation
+      run: |
+        if [ -x "$(command -v adb)" ]; then
+          adb version
+        else
+          echo "adb is not installed"
+        fi
