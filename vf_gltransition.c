@@ -8,6 +8,7 @@
 #include "framesync.h"
 #include "libavfilter/formats.h"
 #include "libavfilter/avfilter.h"
+#include "libavutil/log.h"
 
 #define GL_TRANSITION_USING_EGL
 
@@ -304,51 +305,93 @@ static int config_input(AVFilterLink *inlink)
 
 static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 {
-  AVFilterContext *ctx = fs->parent;
-  GLTransitionContext *c = ctx->priv;
-  AVFrame *in;
-  int ret = ff_framesync_get_frame(fs, index, &in, 0);
-  if (ret < 0)
-    return ret;
+    AVFilterContext *ctx = fs->parent;
+    GLTransitionContext *c = ctx->priv;
+    AVFrame *in[2];
+    int ret;
 
-  glUseProgram(c->program);
+    av_log(ctx, AV_LOG_INFO, "Entering filter_frame\n");
 
-  glUniform1f(c->progress, (float)(*out)->pts / (float)(c->duration * AV_TIME_BASE));
-  glUniform1f(c->ratio, (float)(*out)->width / (float)(*out)->height);
-  glUniform1f(c->_fromR, 1.0f);
-  glUniform1f(c->_toR, 1.0f);
+    // 获取两个输入帧
+    if ((ret = ff_framesync_get_frame(fs, 0, &in[FROM], 0)) < 0 ||
+        (ret = ff_framesync_get_frame(fs, 1, &in[TO], 0)) < 0) {
+        av_log(ctx, AV_LOG_ERROR, "Error getting input frames\n");
+        return ret;
+    }
 
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, c->from);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in->width, in->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in->data[0]);
+    // 获取输出视频缓冲区
+    *out = ff_get_video_buffer(ctx->outputs[0], in[FROM]->width, in[FROM]->height);
+    if (!*out) {
+        av_log(ctx, AV_LOG_ERROR, "Error allocating output frame\n");
+        return AVERROR(ENOMEM);
+    }
+    av_frame_copy_props(*out, in[FROM]);
 
-  glActiveTexture(GL_TEXTURE0 + 1);
-  glBindTexture(GL_TEXTURE_2D, c->to);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in->width, in->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in->data[0]);
+    // 设置 OpenGL 程序
+    glUseProgram(c->program);
 
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+    // 设置 uniform 变量
+    glUniform1f(c->progress, (float)(*out)->pts / (float)(c->duration * AV_TIME_BASE));
+    glUniform1f(c->ratio, (float)(*out)->width / (float)(*out)->height);
+    glUniform1f(c->_fromR, 1.0f);
+    glUniform1f(c->_toR, 1.0f);
 
-  eglSwapBuffers(c->eglDpy, c->eglSurf);
+    // 绑定并更新 "from" 纹理
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, c->from);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in[FROM]->width, in[FROM]->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in[FROM]->data[0]);
 
-  return ff_filter_frame(ctx->outputs[0], *out);
+    // 绑定并更新 "to" 纹理
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, c->to);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, in[TO]->width, in[TO]->height, PIXEL_FORMAT, GL_UNSIGNED_BYTE, in[TO]->data[0]);
+
+    // 绘制
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // 交换缓冲区
+    eglSwapBuffers(c->eglDpy, c->eglSurf);
+
+    // 释放输入帧
+    av_frame_free(&in[FROM]);
+    av_frame_free(&in[TO]);
+
+    av_log(ctx, AV_LOG_INFO, "Exiting filter_frame\n");
+
+    return ff_filter_frame(ctx->outputs[0], *out);
 }
 
-static int filter_frame_event(FFFrameSync *fs)
-{
-  AVFilterContext *ctx = fs->parent;
-  AVFrame *out;
-  int ret = filter_frame(fs, &out, 0);
-  if (ret < 0)
-    return ret;
-  return ff_filter_frame(ctx->outputs[0], out);
+static int filter_frame_event(FFFrameSync *fs) {
+    AVFilterContext *ctx = fs->parent;
+    AVFrame *out;
+    int ret;
+
+    av_log(ctx, AV_LOG_INFO, "Entering filter_frame_event\n");
+
+    // 调用filter_frame函数处理帧
+    ret = filter_frame(fs, &out, 0);
+    if (ret < 0) {
+        av_log(ctx, AV_LOG_ERROR, "Error in filter_frame: %d\n", ret);
+        return ret;
+    }
+
+    av_log(ctx, AV_LOG_INFO, "Filter frame event succeeded\n");
+
+    // 将输出帧发送到下一个滤镜
+    return ff_filter_frame(ctx->outputs[0], out);
 }
 
-static av_cold int init(AVFilterContext *ctx)
-{
-  GLTransitionContext *c = ctx->priv;
-  ff_framesync_init(&c->fs, ctx, 2);
-  c->fs.on_event = filter_frame_event;
-  return 0;
+static av_cold int init(AVFilterContext *ctx) {
+    GLTransitionContext *c = ctx->priv;
+
+    // 添加调试日志以确认初始化过程
+    av_log(ctx, AV_LOG_INFO, "Initializing framesync with 2 inputs\n");
+
+    // 初始化framesync并设置输入数量为2
+    ff_framesync_init(&c->fs, ctx, 2);
+    c->fs.on_event = filter_frame_event;
+
+    return 0;
 }
 
 static av_cold void uninit(AVFilterContext *ctx)
