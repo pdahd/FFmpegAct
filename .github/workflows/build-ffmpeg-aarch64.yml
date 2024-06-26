@@ -26,6 +26,12 @@ jobs:
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
     
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+    
     - name: Install QEMU
       run: |
         sudo apt-get update
