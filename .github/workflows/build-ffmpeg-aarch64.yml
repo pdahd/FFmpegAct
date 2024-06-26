@@ -25,12 +25,6 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
-    - name: Install QEMU
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y qemu qemu-user-static
-        ls -l /usr/bin/qemu-*
-    
     - name: Check framesync.c line 91
       if: false
       run: |
@@ -223,11 +217,6 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
         make install
-    
-    - name: Run FFmpeg with QEMU
-      run: |
-        export QEMU_LD_PREFIX=/path/to/android/root
-        /usr/bin/qemu-arm-static -L /usr/arm-linux-gnueabihf $QEMU_LD_PREFIX $GITHUB_WORKSPACE/2024/bin/ffmpeg -version
     
     - name: Upload FFmpeg Build Artifact for armv7a
       if: false
