@@ -8,6 +8,7 @@
 #include "framesync.h"
 #include "libavfilter/formats.h"
 #include "libavfilter/avfilter.h"
+#include "libavutil/log.h"
 
 #define GL_TRANSITION_USING_EGL
 
@@ -131,12 +132,28 @@ static GLuint build_shader(AVFilterContext *ctx, const GLchar *shader_source, GL
   GLint status;
   GLuint shader = glCreateShader(type);
   if (!shader || !glIsShader(shader)) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to create shader (type: %d)\n", type);
     return 0;
   }
+
   glShaderSource(shader, 1, &shader_source, 0);
   glCompileShader(shader);
+
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-  return (status == GL_TRUE ? shader : 0);
+  if (status != GL_TRUE) {
+    GLint logLength;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0) {
+      GLchar *log = (GLchar *)malloc(logLength);
+      glGetShaderInfoLog(shader, logLength, &logLength, log);
+      av_log(ctx, AV_LOG_ERROR, "Shader compilation failed:\n%s\n", log);
+      free(log);
+    }
+    return 0;
+  }
+
+  av_log(ctx, AV_LOG_DEBUG, "Shader compilation successful (type: %d)\n", type);
+  return shader;
 }
 
 static int build_program(AVFilterContext *ctx)
@@ -149,21 +166,28 @@ static int build_program(AVFilterContext *ctx)
   int len;
   unsigned long fsize;
 
+  av_log(ctx, AV_LOG_DEBUG, "Building GL program...\n");
+
   if (!(v_shader = build_shader(ctx, v_shader_source, GL_VERTEX_SHADER))) {
-    av_log(ctx, AV_LOG_ERROR, "invalid vertex shader\n");
+    av_log(ctx, AV_LOG_ERROR, "Invalid vertex shader\n");
     return -1;
   }
 
   if (c->source) {
     FILE *f = fopen(c->source, "rb");
     if (!f) {
-      av_log(ctx, AV_LOG_ERROR, "invalid transition source file \"%s\"\n", c->source);
+      av_log(ctx, AV_LOG_ERROR, "Invalid transition source file \"%s\"\n", c->source);
       return -1;
     }
     fseek(f, 0, SEEK_END);
     fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
     source = malloc(fsize + 1);
+    if (!source) {
+      av_log(ctx, AV_LOG_ERROR, "Failed to allocate memory for transition source\n");
+      fclose(f);
+      return AVERROR(ENOMEM);
+    }
     fread(source, fsize, 1, f);
     fclose(f);
     source[fsize] = 0;
@@ -173,27 +197,46 @@ static int build_program(AVFilterContext *ctx)
   len = strlen(f_shader_template) + strlen(transition_source);
   c->f_shader_source = av_calloc(len, sizeof(*c->f_shader_source));
   if (!c->f_shader_source) {
+    free(source);
     return AVERROR(ENOMEM);
   }
   snprintf(c->f_shader_source, len * sizeof(*c->f_shader_source), f_shader_template, transition_source);
-  av_log(ctx, AV_LOG_DEBUG, "\n%s\n", c->f_shader_source);
+  av_log(ctx, AV_LOG_DEBUG, "Fragment shader source:\n%s\n", c->f_shader_source);
 
   if (source) {
     free(source);
-    source = NULL;
   }
 
   if (!(f_shader = build_shader(ctx, c->f_shader_source, GL_FRAGMENT_SHADER))) {
-    av_log(ctx, AV_LOG_ERROR, "invalid fragment shader\n");
+    av_log(ctx, AV_LOG_ERROR, "Invalid fragment shader\n");
     return -1;
   }
 
   c->program = glCreateProgram();
+  if (!c->program) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to create GL program\n");
+    return -1;
+  }
+
   glAttachShader(c->program, v_shader);
   glAttachShader(c->program, f_shader);
   glLinkProgram(c->program);
+
   glGetProgramiv(c->program, GL_LINK_STATUS, &status);
-  return status == GL_TRUE ? 0 : -1;
+  if (status != GL_TRUE) {
+    GLint logLength;
+    glGetProgramiv(c->program, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0) {
+      GLchar *log = (GLchar *)malloc(logLength);
+      glGetProgramInfoLog(c->program, logLength, &logLength, log);
+      av_log(ctx, AV_LOG_ERROR, "Program linking failed:\n%s\n", log);
+      free(log);
+    }
+    return -1;
+  }
+
+  av_log(ctx, AV_LOG_DEBUG, "GL program built successfully\n");
+  return 0;
 }
 
 static void setup_vbo(GLTransitionContext *c)
@@ -204,6 +247,7 @@ static void setup_vbo(GLTransitionContext *c)
   glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STATIC_DRAW);
   glEnableVertexAttribArray(loc);
   glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  av_log(c, AV_LOG_DEBUG, "VBO setup complete\n");
 }
 
 static void setup_tex(AVFilterLink *fromLink)
@@ -220,6 +264,7 @@ static void setup_tex(AVFilterLink *fromLink)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fromLink->w, fromLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, NULL);
     glUniform1i(glGetUniformLocation(c->program, "from"), 0);
+    av_log(ctx, AV_LOG_DEBUG, "Texture 'from' setup complete\n");
   }
   { // to
     glGenTextures(1, &c->to);
@@ -231,6 +276,7 @@ static void setup_tex(AVFilterLink *fromLink)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fromLink->w, fromLink->h, 0, PIXEL_FORMAT, GL_UNSIGNED_BYTE, NULL);
     glUniform1i(glGetUniformLocation(c->program, "to"), 1);
+    av_log(ctx, AV_LOG_DEBUG, "Texture 'to' setup complete\n");
   }
 }
 
@@ -244,6 +290,8 @@ static int init_gl(AVFilterContext *ctx)
     EGL_NONE
   };
     
+  av_log(ctx, AV_LOG_DEBUG, "Initializing GL...\n");
+
   c->eglDpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
   if (c->eglDpy == EGL_NO_DISPLAY) {
     av_log(ctx, AV_LOG_ERROR, "Failed to get EGL display\n");
@@ -277,6 +325,8 @@ static int init_gl(AVFilterContext *ctx)
     return -1;
   }
 
+  av_log(ctx, AV_LOG_DEBUG, "GL initialized successfully\n");
+
   if (build_program(ctx) < 0) {
     av_log(ctx, AV_LOG_ERROR, "Failed to build GL program\n");
     return -1;
@@ -292,13 +342,21 @@ static int config_input(AVFilterLink *inlink)
   GLTransitionContext *c = ctx->priv;
   int ret;
 
-  if ((ret = ff_framesync_configure(&c->fs)) < 0)
-    return ret;
+  av_log(ctx, AV_LOG_DEBUG, "Configuring input...\n");
 
-  if (init_gl(ctx) < 0)
+  if ((ret = ff_framesync_configure(&c->fs)) < 0) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to configure frame sync: %s\n", av_err2str(ret));
+    return ret;
+  }
+
+  if (init_gl(ctx) < 0) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to initialize GL\n");
     return AVERROR(EINVAL);
+  }
 
   setup_tex(inlink);
+
+  av_log(ctx, AV_LOG_DEBUG, "Input configured successfully\n");
   return 0;
 }
 
@@ -307,9 +365,14 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
   AVFilterContext *ctx = fs->parent;
   GLTransitionContext *c = ctx->priv;
   AVFrame *in;
-  int i, ret = ff_framesync_get_frame(fs, index, &in, 0);
-  if (ret < 0)
+  int ret = ff_framesync_get_frame(fs, index, &in, 0);
+
+  av_log(ctx, AV_LOG_DEBUG, "Filtering frame...\n");
+
+  if (ret < 0) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to get frame: %s\n", av_err2str(ret));
     return ret;
+  }
 
   glUseProgram(c->program);
 
@@ -330,49 +393,54 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 
   eglSwapBuffers(c->eglDpy, c->eglSurf);
 
-  // 将过滤后的帧发送到所有输出
-  for (i = 0; i < ctx->nb_outputs; i++) {
-    ret = ff_filter_frame(ctx->outputs[i], *out);
-    if (ret < 0)
-      return ret;
-  }
+  av_log(ctx, AV_LOG_DEBUG, "Frame filtered successfully\n");
 
-  return 0;
+  return ff_filter_frame(ctx->outputs[0], *out);
 }
 
 static int filter_frame_event(FFFrameSync *fs)
 {
   AVFilterContext *ctx = fs->parent;
   AVFrame *out;
-  int i, ret = filter_frame(fs, &out, 0);
-  if (ret < 0)
-    return ret;
+  int ret = filter_frame(fs, &out, 0);
 
-  // 将过滤后的帧发送到所有输出
-  for (i = 0; i < ctx->nb_outputs; i++) {
-    ret = ff_filter_frame(ctx->outputs[i], out);
-    if (ret < 0)
-      return ret;
+  av_log(ctx, AV_LOG_DEBUG, "Filtering frame event...\n");
+
+  if (ret < 0) {
+    av_log(ctx, AV_LOG_ERROR, "Failed to filter frame: %s\n", av_err2str(ret));
+    return ret;
   }
 
-  return 0;
+  av_log(ctx, AV_LOG_DEBUG, "Frame event filtered successfully\n");
+
+  return ff_filter_frame(ctx->outputs[0], out);
 }
 
 static av_cold int init(AVFilterContext *ctx)
 {
   GLTransitionContext *c = ctx->priv;
+
+  av_log(ctx, AV_LOG_DEBUG, "Initializing filter...\n");
+
   ff_framesync_init(&c->fs, ctx, 2);
   c->fs.on_event = filter_frame_event;
+
+  av_log(ctx, AV_LOG_DEBUG, "Filter initialized successfully\n");
   return 0;
 }
 
 static av_cold void uninit(AVFilterContext *ctx)
 {
   GLTransitionContext *c = ctx->priv;
+
+  av_log(ctx, AV_LOG_DEBUG, "Uninitializing filter...\n");
+
   eglDestroyContext(c->eglDpy, c->eglCtx);
   eglDestroySurface(c->eglDpy, c->eglSurf);
   eglTerminate(c->eglDpy);
   av_freep(&c->f_shader_source);
+
+  av_log(ctx, AV_LOG_DEBUG, "Filter uninitialized\n");
 }
 
 static const AVFilterPad gltransition_inputs[] = {
@@ -409,7 +477,14 @@ static int query_formats(AVFilterContext *ctx)
 static int activate(AVFilterContext *ctx)
 {
   GLTransitionContext *c = ctx->priv;
-  return ff_framesync_activate(&c->fs);
+  av_log(ctx, AV_LOG_DEBUG, "Activating filter...\n");
+  int ret = ff_framesync_activate(&c->fs);
+  if (ret >= 0) {
+    av_log(ctx, AV_LOG_DEBUG, "Filter activated successfully\n");
+  } else {
+    av_log(ctx, AV_LOG_ERROR, "Failed to activate filter: %s\n", av_err2str(ret));
+  }
+  return ret;
 }
 
 AVFilter ff_vf_gltransition = {
