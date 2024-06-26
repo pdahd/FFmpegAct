@@ -225,7 +225,9 @@ jobs:
         make install
     
     - name: Run FFmpeg with QEMU
-      run: /usr/bin/qemu-arm-static -L /usr/arm-linux-gnueabihf --root /path/to/android/root $GITHUB_WORKSPACE/2024/bin/ffmpeg -version
+      run: |
+        export QEMU_LD_PREFIX=/path/to/android/root
+        /usr/bin/qemu-arm-static -L /usr/arm-linux-gnueabihf $QEMU_LD_PREFIX $GITHUB_WORKSPACE/2024/bin/ffmpeg -version
     
     - name: Upload FFmpeg Build Artifact for armv7a
       if: false
