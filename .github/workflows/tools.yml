@@ -1,19 +1,31 @@
-name: Check Android Tools
+name: Setup Android Environment
 
 on: [push]
 
 jobs:
-  check-tools:
+  setup-android:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
 
-    - name: Check JDK installation
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: Install Android SDK
       run: |
-        java -version
-        javac -version
+        sudo apt-get update
+        sudo apt-get install -y wget tar unzip lib32stdc++6 lib32z1
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+        unzip commandlinetools-linux-7583922_latest.zip
+        mkdir -p $ANDROID_HOME/cmdline-tools
+        mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "system-images;android-30;google_apis;x86_64" "emulator"
 
     - name: Check Android SDK installation
       run: |
@@ -31,7 +43,7 @@ jobs:
           echo "Android Emulator is not installed"
         fi
 
-    - name: List available SDK packages
+    - name: Check sdkmanager installation
       run: |
         if [ -x "$(command -v sdkmanager)" ]; then
           sdkmanager --list
@@ -46,3 +58,9 @@ jobs:
         else
           echo "adb is not installed"
         fi
+
+    - name: Start emulator
+      run: |
+        $ANDROID_HOME/emulator/emulator -avd test -no-window -no-audio -no-boot-anim -accel off &
+        adb wait-for-device
+        adb shell input keyevent 82
