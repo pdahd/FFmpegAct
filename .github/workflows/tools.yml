@@ -1,9 +1,9 @@
-name: Setup Android Environment
+name: Run FFmpeg with QEMU
 
 on: [push]
 
 jobs:
-  setup-android:
+  run-ffmpeg:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,55 +16,101 @@ jobs:
         distribution: 'zulu'
         java-version: '11'
 
-    - name: Install Android SDK
+    - name: Install QEMU
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget tar unzip lib32stdc++6 lib32z1
-        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-        unzip commandlinetools-linux-7583922_latest.zip
-        mkdir -p $ANDROID_HOME/cmdline-tools
-        mv cmdline-tools $ANDROID_HOME/cmdline-tools/latest
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "system-images;android-30;google_apis;x86_64" "emulator"
+        sudo apt-get install -y qemu qemu-user-static
 
-    - name: Check Android SDK installation
+    - name: Build FFmpeg with x264 for Android
       run: |
-        if [ -d "$ANDROID_HOME" ]; then
-          echo "Android SDK is installed at $ANDROID_HOME"
-        else
-          echo "Android SDK is not installed"
-        fi
+        # 设置环境变量
+        echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
+        echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
 
-    - name: Check Android Emulator installation
-      run: |
-        if [ -x "$(command -v emulator)" ]; then
-          echo "Android Emulator is installed"
-        else
-          echo "Android Emulator is not installed"
-        fi
+        # 下载FFmpeg源码
+        wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
 
-    - name: Check sdkmanager installation
-      run: |
-        if [ -x "$(command -v sdkmanager)" ]; then
-          sdkmanager --list
-        else
-          echo "sdkmanager is not available"
-        fi
+        # 修改配置脚本以支持OpenGL ES
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        sed -i '/enabled opengl            && { check_lib opengl GL\/glx.h glXGetProcAddress "-lGL" ||/,/^                             }/c\enabled opengl            && { check_lib opengl "GLES2\/gl2.h" glGetError "-lGLESv2" || check_lib opengl "EGL/egl.h" eglGetDisplay "-lEGL" || die "ERROR: opengl not found."; }' configure
 
-    - name: Check adb installation
-      run: |
-        if [ -x "$(command -v adb)" ]; then
-          adb version
-        else
-          echo "adb is not installed"
-        fi
+        # 自定义FFmpeg横幅
+        BUILD_DATE=$(date +"%Y-%m-%d")
+        sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
+        void show_banner(int argc, char **argv, const OptionDef *options) {\n\
+        av_log(NULL, AV_LOG_INFO, "FFmpeg %s - arm static build © 2000-2024 FFmpeg Team.\\nBuilt by pdahd (https://github.com/pdahd) on %s.\\n", FFMPEG_VERSION, "'$BUILD_DATE'");\n\
+        }' fftools/opt_common.c
 
-    - name: Create AVD
-      run: |
-        echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
+        # 编译并安装x264
+        git clone https://code.videolan.org/videolan/x264.git
+        cd x264
+        patch -p0 < ../x264_fixes.patch
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot 
+        export CC=$TOOLCHAIN/bin/${TT}24-clang
+        export CXX=$TOOLCHAIN/bin/${TT}24-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
+        export CFLAGS="-DANDROID -Wall -fPIC" 
+        export PREFIX=/usr/local
+        export HOST=$TT
+        
+        ./configure --prefix="$PREFIX" \
+                    --enable-static \
+                    --enable-pic \
+                    --disable-asm \
+                    --host="$HOST" \
+                    --cross-prefix="$CROSS_PREFIX" \
+                    --sysroot="$SYSROOT" \
+                    --extra-cflags="$CFLAGS"
+        make -j$(nproc)
+        sudo make install
 
-    - name: Start emulator
+        # 复制过滤器并应用补丁
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        cp $GITHUB_WORKSPACE/vf_gltransition.c libavfilter/
+        echo "vf_gltransition.c copied to: $(pwd)/libavfilter/vf_gltransition.c"
+        patch -p0 < ../ff.patch
+
+        # 配置FFmpeg
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT=$TOOLCHAIN/sysroot 
+        export CC=$TOOLCHAIN/bin/${TT}24-clang
+        export CXX=$TOOLCHAIN/bin/${TT}24-clang++
+        export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
+        export PKG_CONFIG=/usr/bin/pkg-config
+        export PREFIX=$GITHUB_WORKSPACE/2024
+      
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        ./configure \
+          --arch=arm \
+          --cc="$CC" \
+          --cxx="$CXX" \
+          --cross-prefix="$CROSS_PREFIX" \
+          --disable-indevs \
+          --disable-outdevs \
+          --disable-static \
+          --disable-symver \
+          --pkg-config="$PKG_CONFIG" \
+          --enable-filter=gltransition \
+          --enable-shared \
+          --enable-libx264 \
+          --enable-opengl \
+          --enable-mediacodec \
+          --enable-version3 \
+          --enable-jni \
+          --enable-indev=lavfi \
+          --enable-cross-compile \
+          --enable-neon \
+          --enable-gpl \
+          --prefix="$PREFIX" \
+          --target-os=android \
+          --disable-vulkan \
+          --sysroot="$SYSROOT" 
+
+        # 构建FFmpeg
+        make -j$(nproc)
+        make install
+
+    - name: Run FFmpeg with QEMU
       run: |
-        $ANDROID_HOME/emulator/emulator -avd test -no-window -no-audio -no-boot-anim -accel off &
-        adb wait-for-device
-        adb shell input keyevent 82
+        qemu-arm -L /usr/arm-linux-gnueabihf $GITHUB_WORKSPACE/2024/bin/ffmpeg -version
