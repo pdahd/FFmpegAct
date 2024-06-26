@@ -307,7 +307,7 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
   AVFilterContext *ctx = fs->parent;
   GLTransitionContext *c = ctx->priv;
   AVFrame *in;
-  int ret = ff_framesync_get_frame(fs, index, &in, 0);
+  int i, ret = ff_framesync_get_frame(fs, index, &in, 0);
   if (ret < 0)
     return ret;
 
@@ -330,17 +330,32 @@ static int filter_frame(FFFrameSync *fs, AVFrame **out, int index)
 
   eglSwapBuffers(c->eglDpy, c->eglSurf);
 
-  return ff_filter_frame(ctx->outputs[0], *out);
+  // 将过滤后的帧发送到所有输出
+  for (i = 0; i < ctx->nb_outputs; i++) {
+    ret = ff_filter_frame(ctx->outputs[i], *out);
+    if (ret < 0)
+      return ret;
+  }
+
+  return 0;
 }
 
 static int filter_frame_event(FFFrameSync *fs)
 {
   AVFilterContext *ctx = fs->parent;
   AVFrame *out;
-  int ret = filter_frame(fs, &out, 0);
+  int i, ret = filter_frame(fs, &out, 0);
   if (ret < 0)
     return ret;
-  return ff_filter_frame(ctx->outputs[0], out);
+
+  // 将过滤后的帧发送到所有输出
+  for (i = 0; i < ctx->nb_outputs; i++) {
+    ret = ff_filter_frame(ctx->outputs[i], out);
+    if (ret < 0)
+      return ret;
+  }
+
+  return 0;
 }
 
 static av_cold int init(AVFilterContext *ctx)
