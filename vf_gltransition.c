@@ -419,10 +419,17 @@ static int filter_frame_event(FFFrameSync *fs)
 static av_cold int init(AVFilterContext *ctx)
 {
   GLTransitionContext *c = ctx->priv;
+  int ret; // 添加返回值变量
 
   av_log(ctx, AV_LOG_DEBUG, "Initializing filter...\n");
 
-  ff_framesync_init(&c->fs, ctx, 2);
+  ret = ff_framesync_init(&c->fs, ctx, 2); // 调用 ff_framesync_init
+  if (ret < 0) { // 检查返回值
+    av_log(ctx, AV_LOG_ERROR, "ff_framesync_init failed: %s\n", av_err2str(ret));
+    return ret;
+  }
+  av_log(ctx, AV_LOG_DEBUG, "framesync initialized, nb_outputs: %d\n", c->fs.nb_outputs); // 打印调试信息
+
   c->fs.on_event = filter_frame_event;
 
   av_log(ctx, AV_LOG_DEBUG, "Filter initialized successfully\n");
