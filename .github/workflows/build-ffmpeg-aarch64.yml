@@ -159,7 +159,7 @@ jobs:
         export HOST=$TT
         
         ./configure --prefix="$PREFIX" \
-                    --enable-static \
+                    --enable-shared \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
