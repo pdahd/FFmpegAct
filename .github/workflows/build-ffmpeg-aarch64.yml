@@ -29,8 +29,8 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/xfade-easing.h libavfilter/
-        echo "xfade-easing.h copied to: $(pwd)/libavfilter/xfade-easing.h"
-        patch -p1 < ../vf_xfade.patch
+        cp $GITHUB_WORKSPACE/vf_xfade.c libavfilter/vf_xfade.c
+        diff $GITHUB_WORKSPACE/vf_xfade.c libavfilter/vf_xfade.c
     
     - name: Check framesync.c line 91
       if: false
