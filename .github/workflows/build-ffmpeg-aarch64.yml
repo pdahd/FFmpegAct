@@ -202,7 +202,7 @@ jobs:
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
-          --disable-static
+          --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
           --enable-shared \
