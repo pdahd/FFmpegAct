@@ -1,4 +1,4 @@
---- a/libavfilter/vf_xfade.c
+--- a/libavfilter/vf_xfade.c.orig
 +++ b/libavfilter/vf_xfade.c
 @@ -127,6 +127,10 @@ typedef struct XFadeContext {
      void (*transitionf)(AVFilterContext *ctx, const AVFrame *a, const AVFrame *b, AVFrame *out, float progress,
