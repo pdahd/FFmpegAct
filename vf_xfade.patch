@@ -1,5 +1,3 @@
-diff --git a/libavfilter/vf_xfade.c b/libavfilter/vf_xfade.c
-index 890995a..b1c1383 100644
 --- a/libavfilter/vf_xfade.c
 +++ b/libavfilter/vf_xfade.c
 @@ -127,6 +127,10 @@ typedef struct XFadeContext {
