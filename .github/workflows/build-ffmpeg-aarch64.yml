@@ -117,6 +117,7 @@ jobs:
         ./configure --help
     
     - name: Check ARCH option definition in configure script
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         grep -i "cpu" configure
@@ -223,8 +224,7 @@ jobs:
       
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
-          --arch=arm \
-          --cpu=cortex-a53 \
+          --arch=armeabi-v7a \
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
