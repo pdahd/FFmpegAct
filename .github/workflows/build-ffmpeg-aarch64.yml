@@ -170,7 +170,7 @@ jobs:
         sudo make install
 
         echo "Listing files for x264:"
-        find $PREFIX -type f
+        find /usr/local/lib -type f
 
     - name: Copy filter and apply patch
       if: false
