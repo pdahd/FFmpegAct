@@ -11,30 +11,13 @@
      AVExpr *e;
  } XFadeContext;
 
-@@ -163,18 +167,21 @@ static const enum AVPixelFormat pix_fmts[] = {
-     AV_PIX_FMT_NONE
- };
-
-+static void xe_data_free(struct XFadeEasingContext *k);
- static av_cold void uninit(AVFilterContext *ctx)
- {
-     XFadeContext *s = ctx->priv;
-
-     av_expr_free(s->e);
-+    xe_data_free(s->k);
- }
-
- #define OFFSET(x) offsetof(XFadeContext, x)
- #define FLAGS (AV_OPT_FLAG_FILTERING_PARAM | AV_OPT_FLAG_VIDEO_PARAM)
-
- static const AVOption xfade_options[] = {
--    { "transition", "set cross fade transition", OFFSET(transition), AV_OPT_TYPE_INT, {.i64=FADE}, -1, NB_TRANSITIONS-1, FLAGS, "transition" },
-+    { "easing", "set cross fade easing", OFFSET(easing_str), AV_OPT_TYPE_STRING, {.str=NULL}, 0, 0, FLAGS },
-+    { "transition", "set cross fade transition", OFFSET(transition_str), AV_OPT_TYPE_STRING, {.str=NULL}, 0, 0, FLAGS, "transition" },
+@@ -167,10 +171,13 @@ static const AVOption xfade_options[] = {
+     { "easing", "set cross fade easing", OFFSET(easing_str), AV_OPT_TYPE_STRING, {.str=NULL}, 0, 0, FLAGS },
+     { "transition", "set cross fade transition", OFFSET(transition_str), AV_OPT_TYPE_STRING, {.str=NULL}, 0, 0, FLAGS, "transition" },
      {   "custom",    "custom transition",     0, AV_OPT_TYPE_CONST, {.i64=CUSTOM},    0, 0, FLAGS, "transition" },
      {   "fade",      "fade transition",       0, AV_OPT_TYPE_CONST, {.i64=FADE},      0, 0, FLAGS, "transition" },
      {   "wipeleft",  "wipe left transition",  0, AV_OPT_TYPE_CONST, {.i64=WIPELEFT},  0, 0, FLAGS, "transition" },
-@@ -2111,6 +2118,8 @@ static double b1(void *priv, double x, double y) { return getpix(priv, x, y, 1,
+@@ -2106,6 +2113,8 @@ static double b1(void *priv, double x, double y) { return getpix(priv, x, y, 1,
  static double b2(void *priv, double x, double y) { return getpix(priv, x, y, 2, 1); }
  static double b3(void *priv, double x, double y) { return getpix(priv, x, y, 3, 1); }
 
@@ -57,8 +40,7 @@
      int slice_start = (outlink->h *  jobnr   ) / nb_jobs;
      int slice_end   = (outlink->h * (jobnr+1)) / nb_jobs;
 
--    s->transitionf(ctx, td->xf[0], td->xf[1], td->out, td->progress, slice_start, slice_end, jobnr);
-+    s->transitionf(ctx, td->xf[0], td->xf[1], td->out, ease(s, td->progress), slice_start, slice_end, jobnr);
+     s->transitionf(ctx, td->xf[0], td->xf[1], td->out, ease(s, td->progress), slice_start, slice_end, jobnr);
 
      return 0;
  }
