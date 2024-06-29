@@ -171,7 +171,7 @@ jobs:
 
     - name: 查询 x264 安装目录结构
       run: |
-        tree /usr/local/lib
+        find / -name "*x264*" 2>/dev/null
     
     - name: Copy filter and apply patch
       if: false
