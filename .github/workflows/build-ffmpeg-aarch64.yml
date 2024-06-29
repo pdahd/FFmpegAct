@@ -19,9 +19,7 @@ jobs:
       run: |
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/exlibs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
         
-
     - name: Download FFmpeg source
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
@@ -156,11 +154,11 @@ jobs:
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export CFLAGS="-DANDROID -Wall -fPIC" 
-        export PREFIX=$GITHUB_WORKSPACE/exlibs
+        export PREFIX=/usr/local
         export HOST=$TT
         
         ./configure --prefix="$PREFIX" \
-                    --enable-shared \
+                    --enable-static \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
@@ -168,13 +166,8 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        make install
+        sudo make install
 
-        echo "Listing files for x264:"
-        find $PREFIX -type f
-        file /home/runner/work/HD/HD/exlibs/lib/libx264.so.164
-
-    
     - name: Copy filter and apply patch
       if: false
       run: |
@@ -191,6 +184,7 @@ jobs:
         grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
     - name: Check x264 configuration
+      if: false
       run: pkg-config --cflags --libs x264
       
     
@@ -203,7 +197,6 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-        export LDFLAGS="-L$GITHUB_WORKSPACE/exlibs/lib -Wl,-rpath,$GITHUB_WORKSPACE/exlibs/lib"
       
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
@@ -226,7 +219,6 @@ jobs:
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
-          --extra-ldflags="$LDFLAGS -lx264" \
           --target-os=android \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
@@ -242,6 +234,7 @@ jobs:
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
     
     - name: List files in lib directory
+      if: false
       run: ls -l ${{ github.workspace }}/2024/lib
     
     - name: Upload FFmpeg Build Artifact for armv7a
