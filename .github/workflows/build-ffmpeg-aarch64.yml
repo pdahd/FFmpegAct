@@ -203,9 +203,9 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
+        export LDFLAGS="-L$GITHUB_WORKSPACE/exlibs/lib"
       
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        PKG_CONFIG_PATH=$PKG_CONFIG_PATH
         ./configure \
           --arch=arm \
           --cc="$CC" \
@@ -227,6 +227,7 @@ jobs:
           --enable-gpl \
           --prefix="$PREFIX" \
           --target-os=android \
+          --extra-ldflags="$LDFLAGS" \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
 
