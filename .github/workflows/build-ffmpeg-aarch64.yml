@@ -225,6 +225,7 @@ jobs:
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
+          --extra-ldflags="-lx264" \
           --target-os=android \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
@@ -236,6 +237,7 @@ jobs:
         make install
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
+      if: false
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
     
     - name: List files in lib directory
