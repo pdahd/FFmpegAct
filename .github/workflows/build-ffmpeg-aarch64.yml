@@ -28,8 +28,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/xfade-easing.h libavfilter/
-        cp $GITHUB_WORKSPACE/vf_xfade.c libavfilter/vf_xfade.c
-        diff $GITHUB_WORKSPACE/vf_xfade.c libavfilter/vf_xfade.c
+        patch -p0 < ../vf_xfade.patch
     
     - name: Check framesync.c line 91
       if: false
@@ -224,7 +223,8 @@ jobs:
       
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
-          --arch=armeabi-v7a \
+          --arch=arm \
+          --cpu=armv7-a \
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
