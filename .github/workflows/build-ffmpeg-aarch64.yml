@@ -224,7 +224,7 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
           --arch=arm \
-          --cpu=armv7-a \
+          --cpu=cortex-a53 \
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
