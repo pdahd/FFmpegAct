@@ -203,6 +203,7 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
+        export LDFLAGS="-L$GITHUB_WORKSPACE/exlibs/lib -Wl,-rpath,$GITHUB_WORKSPACE/exlibs/lib"
       
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
@@ -225,7 +226,7 @@ jobs:
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
-          --extra-ldflags="-lx264" \
+          --extra-ldflags="$LDFLAGS -lx264" \
           --target-os=android \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
