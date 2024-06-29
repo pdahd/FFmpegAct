@@ -189,6 +189,9 @@ jobs:
         echo "----------------------------------------"
         grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
+    - name: Check x264 configuration
+      run: pkg-config --cflags --libs x264
+    
     - name: Configure FFmpeg for armv7a with x264
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
