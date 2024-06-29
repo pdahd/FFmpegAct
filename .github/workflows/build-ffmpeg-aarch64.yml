@@ -230,6 +230,9 @@ jobs:
         make -j$(nproc)
         make install
     
+    - name: List files in lib directory
+      run: ls -l ${{ github.workspace }}/2024/lib
+    
     - name: Upload FFmpeg Build Artifact for armv7a
       uses: actions/upload-artifact@v4
       with:
