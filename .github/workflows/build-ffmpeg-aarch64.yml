@@ -172,6 +172,7 @@ jobs:
 
         echo "Listing files for x264:"
         find $PREFIX -type f
+        file /home/runner/work/HD/HD/exlibs/lib/libx264.so.164
 
     
     - name: Copy filter and apply patch
@@ -191,6 +192,7 @@ jobs:
     
     - name: Check x264 configuration
       run: pkg-config --cflags --libs x264
+      
     
     - name: Configure FFmpeg for armv7a with x264
       run: |
