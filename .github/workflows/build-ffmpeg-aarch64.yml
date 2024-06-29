@@ -171,7 +171,7 @@ jobs:
 
     - name: 查询 x264 安装目录结构
       run: |
-        tree /usr/local  #  /usr/local 是你设置的 PREFIX，如果不同请修改
+        tree /usr/local/lib
     
     - name: Copy filter and apply patch
       if: false
