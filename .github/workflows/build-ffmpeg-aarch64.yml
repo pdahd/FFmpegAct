@@ -119,7 +119,7 @@ jobs:
     - name: Check ARCH option definition in configure script
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        grep -i "arch" configure
+        ./configure --arch=arm --help | grep -A 10 "Select CPU"
     
     - name: Customize FFmpeg banner in opt_common.c
       run: |
