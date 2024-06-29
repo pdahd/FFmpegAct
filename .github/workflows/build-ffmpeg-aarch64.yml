@@ -203,6 +203,7 @@ jobs:
         export PREFIX=$GITHUB_WORKSPACE/2024
       
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        PKG_CONFIG_PATH=$PKG_CONFIG_PATH
         ./configure \
           --arch=arm \
           --cc="$CC" \
