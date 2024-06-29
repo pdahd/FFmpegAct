@@ -19,7 +19,6 @@ jobs:
       run: |
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/exlibs/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
         
 
     - name: Download FFmpeg source
@@ -156,7 +155,7 @@ jobs:
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export CFLAGS="-DANDROID -Wall -fPIC" 
-        export PREFIX=$GITHUB_WORKSPACE/exlibs
+        export PREFIX=/usr/local
         export HOST=$TT
         
         ./configure --prefix="$PREFIX" \
@@ -168,7 +167,10 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        make install
+        sudo make install
+
+        echo "Listing files for x264:"
+        find $INSTALL_DIR -type f
 
     - name: Copy filter and apply patch
       if: false
