@@ -155,7 +155,7 @@ jobs:
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export CFLAGS="-DANDROID -Wall -fPIC" 
-        export PREFIX=/usr/local
+        export PREFIX=$GITHUB_WORKSPACE/2024/lib
         export HOST=$TT
         
         ./configure --prefix="$PREFIX" \
@@ -169,9 +169,6 @@ jobs:
         make -j$(nproc)
         sudo make install
 
-    - name: 查询 x264 安装目录结构
-      run: |
-        find / -name "*x264*" 2>/dev/null
     
     - name: Copy filter and apply patch
       if: false
@@ -193,7 +190,7 @@ jobs:
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
         export CC=$TOOLCHAIN/bin/${TT}24-clang
-        export CXX=$TOOLCHAIN/bin/${TT}24-clang++
+        export CXX=$TOOLCIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
