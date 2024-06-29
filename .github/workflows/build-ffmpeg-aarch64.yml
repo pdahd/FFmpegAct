@@ -116,20 +116,12 @@ jobs:
         ls libavfilter/vf_gltransition.c
         ./configure --help
     
-    - name: Customize FFmpeg banner in opt_common.c
+    - name: Check ARCH option definition in configure script
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        BUILD_DATE=$(date +"%Y-%m-%d")
-        sed -i '1,/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
-        void show_banner(int argc, char **argv, const OptionDef *options) {\
-           av_log(NULL, AV_LOG_INFO, "-------------------------------------------------\n");\
-           av_log(NULL, AV_LOG_INFO, "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\n", FFMPEG_VERSION);\
-           av_log(NULL, AV_LOG_INFO, "Built by pdahd (https://github.com/pdahd) on %s.\n", "'"$BUILD_DATE"'");\
-           av_log(NULL, AV_LOG_INFO, "----------------------------------------------\n");\
-           }' fftools/opt_common.c
+        grep -E '^ARCH=' configure  
     
     - name: Customize FFmpeg banner in opt_common.c
-      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
@@ -140,10 +132,10 @@ jobs:
            int banner_length;\
            snprintf(banner_text, sizeof(banner_text), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.", FFMPEG_VERSION);\
            banner_length = strlen(banner_text);\
-           av_log(NULL, AV_LOG_INFO, "%.*s\\n", banner_length, "----------------------------------------------------------");\
+           av_log(NULL, AV_LOG_INFO, "%.*s\\n", banner_length, "--------------------------------------------------------------");\
            av_log(NULL, AV_LOG_INFO, "%s\\n", banner_text);\
            av_log(NULL, AV_LOG_INFO, "Built by pdahd (https://github.com/pdahd) on %s.\\n", "'$BUILD_DATE'");\
-           av_log(NULL, AV_LOG_INFO, "%.*s\\n", banner_length, "----------------------------------------------------------");\
+           av_log(NULL, AV_LOG_INFO, "%.*s\\n", banner_length, "---------------------------------------------------------");\
            }' fftools/opt_common.c
     
     - name: Customize FFmpeg banner in opt_common.c with green color
