@@ -123,6 +123,27 @@ jobs:
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
         void show_banner(int argc, char **argv, const OptionDef *options) {\
+            char banner_text1[256], banner_text2[256];\
+            int banner_length1, banner_length2, max_length;\
+            snprintf(banner_text1, sizeof(banner_text1), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.", FFMPEG_VERSION); \
+            snprintf(banner_text2, sizeof(banner_text2), "Built by pdahd (https://github.com/pdahd) on %s.", "'$BUILD_DATE'"); \
+            banner_length1 = strlen(banner_text1);\
+            banner_length2 = strlen(banner_text2);\
+            max_length = banner_length1 > banner_length2 ? banner_length1 : banner_length2; \
+            av_log(NULL, AV_LOG_INFO, "%.*s\\n", max_length, "--------------------------------------------------------------------------------------------------");\
+            av_log(NULL, AV_LOG_INFO, "%s\\n", banner_text1);\
+            av_log(NULL, AV_LOG_INFO, "%s\\n", banner_text2);        
+            av_log(NULL, AV_LOG_INFO, "%.*s\\n", max_length, "--------------------------------------------------------------------------------------------------");\
+            }' fftools/opt_common.c
+    
+    - name: Customize FFmpeg banner in opt_common.c
+      if: false
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        BUILD_DATE=$(date +"%Y-%m-%d")
+        sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
+        #include <string.h>\
+        void show_banner(int argc, char **argv, const OptionDef *options) {\
            char banner_text[256];\
            int banner_length;\
            snprintf(banner_text, sizeof(banner_text), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.", FFMPEG_VERSION);\
