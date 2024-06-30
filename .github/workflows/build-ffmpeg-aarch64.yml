@@ -290,8 +290,18 @@ jobs:
       run: |
         cp /usr/local/lib/libx264.so.164 $GITHUB_WORKSPACE/2024/lib
         cp /usr/local/lib/libx264.so $GITHUB_WORKSPACE/2024/lib
+    
+    - name: Package Libraries
+      run: | 
         cd $GITHUB_WORKSPACE/2024/lib
-        $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/ld -rpath '$ORIGIN' --no-rosegment -shared -o libffmpeg_all.so *.so*
+        $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/ld \
+           -rpath '$ORIGIN'  \
+           -L$GITHUB_WORKSPACE/2024/lib \
+           -shared -nostdlib -Bsymbolic \
+           --whole-archive --no-undefined \
+           -o libffmpeg_all.so  \
+           *.so*  -lx264 \
+           --dynamic-linker=/system/bin/linker
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
