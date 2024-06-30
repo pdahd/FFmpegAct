@@ -24,7 +24,13 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
+    - name: Download filter
+      run: |
+        curl -H "Accept: application/vnd.github.v3.raw" -L -o libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
+        curl -H "Accept: application/vnd.github.v3.raw" -L -o libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
+    
     - name: Download filter and apply patch using curl
+      if: false
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         curl -L -o libavfilter/xfade-easing.h https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/xfade-easing.h
