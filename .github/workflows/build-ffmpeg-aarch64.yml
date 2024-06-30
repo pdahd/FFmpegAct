@@ -217,7 +217,8 @@ jobs:
         ./configure --help || true
    
         ./configure --prefix="$PREFIX" \
-                    --enable-static \
+                    --enable-shared \
+                    --disable-static \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
@@ -284,6 +285,11 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
         make install
+    
+    - name: 打包
+      run: |
+        cd $GITHUB_WORKSPACE/2024/lib
+        $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/ld -rpath '$ORIGIN' -shared -o libffmpeg_all.so *.so* -lx264
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
