@@ -287,6 +287,7 @@ jobs:
         make install
     
     - name: 打包
+      if: false
       run: |
         cp /usr/local/lib/libx264.so.164 $GITHUB_WORKSPACE/2024/lib
         cp /usr/local/lib/libx264.so $GITHUB_WORKSPACE/2024/lib
@@ -294,7 +295,8 @@ jobs:
     - name: Package Libraries
       run: | 
         cd $GITHUB_WORKSPACE/2024/lib
-        $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/${TT}24-clang -shared -o libffmpeg.so libavcodec.so libavformat.so libavutil.so -Wl,-soname,libffmpeg.so
+        pwd
+        ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${TT}24-clang -shared -o libffmpeg.so libavcodec.so libavformat.so libavutil.so -Wl,-soname,libffmpeg.so
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
