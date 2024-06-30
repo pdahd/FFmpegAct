@@ -200,6 +200,7 @@ jobs:
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
+        ./configure --help
         wget --header="Accept: application/vnd.github.v3.raw" -O x264_fixes.patch https://api.github.com/repos/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
@@ -210,8 +211,7 @@ jobs:
         export CFLAGS="-DANDROID -Wall -fPIC" 
         export PREFIX=/usr/local
         export HOST=$TT
-        ./configure --help
-        
+   
         ./configure --prefix="$PREFIX" \
                     --enable-static \
                     --enable-pic \
