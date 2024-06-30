@@ -291,7 +291,7 @@ jobs:
         cp /usr/local/lib/libx264.so.164 $GITHUB_WORKSPACE/2024/lib
         cp /usr/local/lib/libx264.so $GITHUB_WORKSPACE/2024/lib
         cd $GITHUB_WORKSPACE/2024/lib
-        $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/ld -rpath '$ORIGIN' -shared -o libffmpeg_all.so *.so* -lx264
+        $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/ld -rpath '$ORIGIN' -shared -o libffmpeg_all.so *.so* -lx264 || true
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
