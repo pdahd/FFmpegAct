@@ -24,6 +24,14 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
+    - name: Fix implicit conversion warnings in aeval.c
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1  
+        # 将  '.i64 = -1' 替换为 '.i64 = -1LL' 
+        sed -i 's/\(\.i64 = \)-1/\1-1LL/g' libavfilter/aeval.c 
+        # 将 '-1,' 替换为 '-1LL,'
+        sed -i 's/\(-1\),/\1LL,/g' libavfilter/aeval.c
+    
     - name: 下载
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
