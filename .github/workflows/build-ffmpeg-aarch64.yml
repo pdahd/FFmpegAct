@@ -237,11 +237,6 @@ jobs:
         echo "----------------------------------------"
         grep -C 5 "ff_vf_zscale" $GITHUB_WORKSPACE/ffmpeg-7.0.1/libavfilter/allfilters.c
     
-    - name: Check x264 configuration
-      if: false
-      run: pkg-config --cflags --libs x264
-      
-    
     - name: Configure FFmpeg for armv7a with x264
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
@@ -255,7 +250,7 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure \
           --arch=arm \
-          --cpu=cortex-av53 \
+          --cpu=cortex-a53 \
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
