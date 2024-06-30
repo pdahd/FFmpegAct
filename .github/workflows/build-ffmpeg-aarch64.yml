@@ -31,6 +31,7 @@ jobs:
         sed -i 's/\(\.i64 = \)-1/\1-1LL/g' libavfilter/aeval.c 
         # 将 '-1,' 替换为 '-1LL,'
         sed -i 's/\(-1\),/\1LL,/g' libavfilter/aeval.c
+        # 去掉 '.i64 = (int64_t)'  前面的强制类型转换
         sed -i 's/\(\.i64 = \)(int64_t)\(-1LL\)/\1\3/g' libavfilter/aeval.c
     
     - name: 下载
