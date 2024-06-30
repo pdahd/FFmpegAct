@@ -285,6 +285,11 @@ jobs:
         make -j$(nproc)
         make install
     
+    - name: Count warnings
+      run: |
+        WARNINGS=$(grep "warning:" $GITHUB_WORKSPACE/ffmpeg-7.0.1/build/ffbuild/config.log | wc -l) 
+        echo "Total warnings: $WARNINGS"
+    
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
