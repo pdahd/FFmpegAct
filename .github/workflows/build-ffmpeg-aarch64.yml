@@ -30,6 +30,11 @@ jobs:
         wget --header="Accept: application/vnd.github.v3.raw" -O libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
         wget --header="Accept: application/vnd.github.v3.raw" -O libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
     
+    - name: Fix implicit conversion warnings in af_afade.c
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1 # 进入 ffmpeg 目录
+        sed -i 's/INT64_MAX/(int64_t)INT64_MAX/g' libavfilter/af_afade.c  
+    
     - name: Download filter
       if: false
       run: |
@@ -214,7 +219,6 @@ jobs:
    
         ./configure --prefix="$PREFIX" \
                     --enable-static \
-                    --chroma-format=420 \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
