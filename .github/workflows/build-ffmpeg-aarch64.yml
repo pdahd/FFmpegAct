@@ -298,7 +298,6 @@ jobs:
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
     
     - name: List files in lib directory
-      if: false
       run: ls -l ${{ github.workspace }}/2024/lib
     
     - name: Upload FFmpeg Build Artifact for armv7a
