@@ -30,6 +30,11 @@ jobs:
         wget --header="Accept: application/vnd.github.v3.raw" -O libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
         wget --header="Accept: application/vnd.github.v3.raw" -O libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
     
+    - name: Fix implicit conversion warnings in aeval.c
+      run: |
+        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1  
+        sed -i 's/\(\.i64 = \)\([-0-9]\+\)/\1(int64_t)\2/g' libavfilter/aeval.c
+    
     - name: Fix implicit conversion warnings in af_afade.c
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1 # 进入 ffmpeg 目录
@@ -284,11 +289,6 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
         make install
-    
-    - name: Count warnings
-      run: |
-        WARNINGS=$(grep "warning:" $GITHUB_WORKSPACE/ffmpeg-7.0.1/build/ffbuild/config.log | wc -l) 
-        echo "Total warnings: $WARNINGS"
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
