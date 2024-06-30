@@ -24,33 +24,11 @@ jobs:
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
     
-    - name: Fix implicit conversion warnings in aeval.c
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1  
-        # 将  '.i64 = -1' 替换为 '.i64 = -1LL' 
-        sed -i 's/\(\.i64 = \)-1/\1-1LL/g' libavfilter/aeval.c 
-        # 将 '-1,' 替换为 '-1LL,'
-        sed -i 's/\(-1\),/\1LL,/g' libavfilter/aeval.c
-        # 去掉 '.i64 = (int64_t)'  前面的强制类型转换
-        sed -i 's/\(\.i64 = \)(int64_t)\(-1LL\)/\1\2/g' libavfilter/aeval.c
-        # 去掉 '.i64 = (int64_t)' 前面的强制类型转换
-        sed -i 's/\(\.i64 = \)(int64_t)*\([-0-9]\+LL\)/\1\2/g' libavfilter/aeval.c
-    
     - name: 下载
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         wget --header="Accept: application/vnd.github.v3.raw" -O libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
         wget --header="Accept: application/vnd.github.v3.raw" -O libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
-    
-    - name: Fix implicit conversion warnings in aeval.c
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1  
-        sed -i 's/\(\.i64 = \)\([-0-9]\+\)/\1(int64_t)\2/g' libavfilter/aeval.c
-    
-    - name: Fix implicit conversion warnings in af_afade.c
-      run: |
-        cd $GITHUB_WORKSPACE/ffmpeg-7.0.1 # 进入 ffmpeg 目录
-        sed -i 's/INT64_MAX/(int64_t)INT64_MAX/g' libavfilter/af_afade.c  
     
     - name: Download filter
       if: false
@@ -269,8 +247,9 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
-      
+        
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+        ./configure --help || true
         ./configure \
           --arch=arm \
           --cpu=cortex-a53 \
