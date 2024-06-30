@@ -20,6 +20,10 @@ jobs:
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
         
+    - name: ndk
+      run: |
+        ls -R $NDK/toolchains/llvm/prebuilt/linux-x86_64/bin
+    
     - name: Download FFmpeg source
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
