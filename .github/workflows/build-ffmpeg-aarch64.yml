@@ -184,7 +184,7 @@ jobs:
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         cd x264
-        wget -O ../x264_fixes.patch https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch
+        curl -L -o ../x264_fixes.patch https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch
         patch -p0 < ../x264_fixes.patch
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT=$TOOLCHAIN/sysroot 
