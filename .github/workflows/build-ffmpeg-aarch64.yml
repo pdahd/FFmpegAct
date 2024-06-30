@@ -43,6 +43,8 @@ jobs:
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         cp $GITHUB_WORKSPACE/xfade-easing.h libavfilter/
         cp $GITHUB_WORKSPACE/vf_xfade.c libavfilter/vf_xfade.c
+       # wget --header="Accept: application/vnd.github.v3.raw" -O x264_fixes.patch https://api.github.com/repos/pdahd/pda/contents/ggg/kkk/x264_fixes.patch
+       # patch -p0 < x264_fixes.patch
     
     - name: Check framesync.c line 91
       if: false
