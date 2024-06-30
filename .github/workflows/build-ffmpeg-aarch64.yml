@@ -27,8 +27,8 @@ jobs:
     - name: Download filter and apply patch using wget
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
-        wget -O libavfilter/xfade-easing.h https://github.com/scriptituk/xfade-easing/blob/01cb9ff7f0d8a5c628227725d7a6822934c1d839/src/xfade-easing.h
-        wget -O libavfilter/vf_xfade.c https://github.com/scriptituk/xfade-easing/blob/01cb9ff7f0d8a5c628227725d7a6822934c1d839/src/vf_xfade.c
+        wget -O libavfilter/xfade-easing.h https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/xfade-easing.h
+        wget -O libavfilter/vf_xfade.c https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/vf_xfade.c
     
     - name: Copy filter and apply patch
       if: false
