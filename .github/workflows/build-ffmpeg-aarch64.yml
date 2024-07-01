@@ -294,7 +294,7 @@ jobs:
     - name: Package Libraries
       run: | 
         cd $GITHUB_WORKSPACE/2024/lib
-        ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${TT}24-ld \
+        ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/ld \
         -L$GITHUB_WORKSPACE/2024/lib \
         -rpath-link=$SYSROOT/usr/lib/$TT \
         -L$SYSROOT/usr/lib/$TT \
