@@ -309,10 +309,9 @@ jobs:
         -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $PREFIX/lib/libffmpeg.so \
         -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
         -lc -ldl -lm -lz -llog \
-        --dynamic-linker=/system/bin/linker -v 2>&1 | tee build.log
-        cat build.log
+        -Wl,--no-blx \
+        --dynamic-linker=/system/bin/linker 
         
-    
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
