@@ -253,7 +253,7 @@ jobs:
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
         export CPU=armv7-a
-        expotr PRE_CFLAGS="-march=$CPU -mcpu=cortex-a53 -mfpu=vfpv3-d16 -mfloat-abi=softfp -mthumb"
+        export PRE_CFLAGS="-march=$CPU -mcpu=cortex-a53 -mfpu=vfpv3-d16 -mfloat-abi=softfp -mthumb"
         export EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$PREFIX/include"
         export EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$PREFIX/lib"
         
