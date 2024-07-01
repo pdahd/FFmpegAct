@@ -302,6 +302,7 @@ jobs:
         -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $GITHUB_WORKSPACE/2024/lib/libffmpeg.so \
         -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
         --dynamic-linker=/system/bin/linker
+        ---march=armv7-a
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
