@@ -218,8 +218,8 @@ jobs:
         ./configure --help || true
    
         ./configure --prefix="$PREFIX" \
-                    --enable-shared \
-                    --disable-static \
+                    --enable-static \
+                    --disable-shared \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
