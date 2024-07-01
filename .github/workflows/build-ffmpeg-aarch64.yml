@@ -283,10 +283,17 @@ jobs:
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
-          --disable-static \
+          --disable-shared \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
-          --enable-shared \
+          --enable-avcodec \
+          --enable-avformat \
+          --enable-avutil \
+          --enable-swresample \
+          --enable-swscale \
+          --enable-avfilter \
+          --enable-postproc \
+          --enable-static \
           --enable-mediacodec \
           --enable-version3 \
           --enable-jni \
