@@ -296,7 +296,9 @@ jobs:
       run: | 
         cd $GITHUB_WORKSPACE/2024/lib
         pwd
-        ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${TT}24-clang -shared -o libffmpeg.so libavcodec.so libavformat.so libavutil.so -Wl,-soname,libffmpeg.so  -v 2>&1 | tee build.log
+        ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/${TT}24-clang -shared -o libffmpeg.so \
+        libavcodec.so libavformat.so libavutil.so libswresample.so libswscale.so libavfilter.so libavdevice.so libpostproc.so \
+        -Wl,-soname,libffmpeg.so  -v 2>&1 | tee build.log
         cat build.log
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
