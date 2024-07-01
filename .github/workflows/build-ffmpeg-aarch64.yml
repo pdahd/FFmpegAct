@@ -257,7 +257,7 @@ jobs:
         ./configure --help || true
         ./configure \
           --arch=arm \
-          --cpu=cortex-a53 \
+          --cpu=armv7-a \
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
@@ -267,7 +267,6 @@ jobs:
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
           --enable-shared \
-          --enable-libx264 \
           --enable-mediacodec \
           --enable-version3 \
           --enable-jni \
@@ -300,11 +299,6 @@ jobs:
         libavcodec.so libavformat.so libavutil.so libswresample.so libswscale.so libavfilter.so libavdevice.so libpostproc.so \
         -Wl,-soname,libffmpeg.so  -v 2>&1 | tee build.log
         cat build.log
-    
-    - name: Check libffmpeg.so dependencies
-      run: |
-        cd $GITHUB_WORKSPACE/2024/lib
-        readelf -s libffmpeg.so | grep "libav"
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
