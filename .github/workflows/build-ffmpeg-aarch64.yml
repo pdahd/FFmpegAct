@@ -301,6 +301,11 @@ jobs:
         -Wl,-soname,libffmpeg.so  -v 2>&1 | tee build.log
         cat build.log
     
+    - name: Check libffmpeg.so dependencies
+      run: |
+        cd $GITHUB_WORKSPACE/2024/lib
+        ldd libffmpeg.so
+    
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
