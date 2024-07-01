@@ -275,6 +275,8 @@ jobs:
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
+          --extra-cflags="-DANDROID" \
+          --extra-ldflags="-Wl,-soname,libffmpeg-all.so -Wl,--whole-archive -lavcodec -lavformat -lavutil -lswresample -lswscale -lavfilter -lavdevice -lpostproc -Wl,--no-whole-archive" \
           --target-os=android \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
@@ -292,6 +294,7 @@ jobs:
         cp /usr/local/lib/libx264.so $GITHUB_WORKSPACE/2024/lib
     
     - name: Package Libraries
+      if: false
       run: | 
         cd $GITHUB_WORKSPACE/2024/lib
         ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/ld \
