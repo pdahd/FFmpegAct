@@ -310,7 +310,7 @@ jobs:
         export PREFIX=$GITHUB_WORKSPACE/2024
         export API=24
 
-        $TOOLCHAIN/bin/arm-linux-android-ld -L$PREFIX/lib \
+        $TOOLCHAIN/bin/ld -L$PREFIX/lib \
         -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
         -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $PREFIX/lib/libffmpeg.so \
         -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
