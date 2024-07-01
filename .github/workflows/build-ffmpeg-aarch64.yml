@@ -252,12 +252,16 @@ jobs:
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export PKG_CONFIG=/usr/bin/pkg-config
         export PREFIX=$GITHUB_WORKSPACE/2024
+        export CPU=armv7-a
+        expotr PRE_CFLAGS="-march=$CPU -mcpu=cortex-a53 -mfpu=vfpv3-d16 -mfloat-abi=softfp -mthumb"
+        export EXTRA_CFLAGS="-Os -fpic $PRE_CFLAGS -I$PREFIX/include"
+        export EXTRA_LDFLAGS="-lc -ldl -lm -lz -llog -L$PREFIX/lib"
         
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure --help || true
         ./configure \
           --arch=arm \
-          --cpu=armv7-a \
+          --cpu="$CPU" \
           --cc="$CC" \
           --cxx="$CXX" \
           --cross-prefix="$CROSS_PREFIX" \
@@ -275,8 +279,8 @@ jobs:
           --enable-neon \
           --enable-gpl \
           --prefix="$PREFIX" \
-          --extra-cflags="-DANDROID" \
-          --extra-ldflags="-Wl,-soname,libffmpeg-all.so -Wl,--whole-archive -lavcodec -lavformat -lavutil -lswresample -lswscale -lavfilter -lavdevice -lpostproc -Wl,--no-whole-archive" \
+          --extra-cflags="$EXTRA_CFLAGS" \
+          --extra-ldflags="$EXTRA_LDFLAGS" \
           --target-os=android \
           --disable-vulkan \
           --sysroot="$SYSROOT" 
@@ -293,19 +297,20 @@ jobs:
         cp /usr/local/lib/libx264.so.164 $GITHUB_WORKSPACE/2024/lib
         cp /usr/local/lib/libx264.so $GITHUB_WORKSPACE/2024/lib
     
-    - name: Package Libraries
-      if: false
+    - name: Package Librarie
       run: | 
-        cd $GITHUB_WORKSPACE/2024/lib
-        ${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/ld \
-        -L$GITHUB_WORKSPACE/2024/lib \
-        -rpath-link=$SYSROOT/usr/lib/$TT \
-        -L$SYSROOT/usr/lib/$TT \
-        -soname libffmpeg.so \
-        -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $GITHUB_WORKSPACE/2024/lib/libffmpeg.so \
+        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/arm-linux-androideabi
+        export PREFIX=$GITHUB_WORKSPACE/2024
+        export API=24
+
+        $TOOLCHAIN/bin/ld -L$PREFIX/lib \
+        -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
+        -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $PREFIX/lib/libffmpeg.so \
         -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
+        -lc -ldl -lm -lz -llog \
         --dynamic-linker=/system/bin/linker
-        ---march=armv7-a
+        
     
     - name: Copy libx264.so.164 to ffmpeg lib directory
       if: false
