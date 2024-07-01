@@ -297,19 +297,24 @@ jobs:
         cp /usr/local/lib/libx264.so.164 $GITHUB_WORKSPACE/2024/lib
         cp /usr/local/lib/libx264.so $GITHUB_WORKSPACE/2024/lib
     
+    - name: Download and install NDK 21e
+      run: |
+        wget -q https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip -P $GITHUB_WORKSPACE
+        unzip -q $GITHUB_WORKSPACE/android-ndk-r21e-linux-x86_64.zip -d $GITHUB_WORKSPACE
+        echo "NDK21E=$GITHUB_WORKSPACE/android-ndk-r21e" >> $GITHUB_ENV
+    
     - name: Package Librarie
       run: | 
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
+        export TOOLCHAIN=$NDK21E/toolchains/llvm/prebuilt/linux-x86_64
         export SYSROOT_L=$TOOLCHAIN/sysroot/usr/lib/arm-linux-androideabi
         export PREFIX=$GITHUB_WORKSPACE/2024
         export API=24
 
-        $TOOLCHAIN/bin/ld -L$PREFIX/lib \
+        $TOOLCHAIN/bin/arm-linux-android-ld -L$PREFIX/lib \
         -rpath-link=$SYSROOT_L/$API -L$SYSROOT_L/$API -soname libffmpeg.so \
         -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o $PREFIX/lib/libffmpeg.so \
         -lavcodec -lpostproc -lavfilter -lswresample -lavformat -lavutil -lswscale \
         -lc -ldl -lm -lz -llog \
-        -Wl,--no-blx \
         --dynamic-linker=/system/bin/linker 
         
     - name: Copy libx264.so.164 to ffmpeg lib directory
