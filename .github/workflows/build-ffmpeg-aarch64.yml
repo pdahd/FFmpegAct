@@ -13,15 +13,15 @@ env:
   TT: armv7a-linux-androideabi
   TOOLCHAIN: $NDK/toolchains/llvm/prebuilt/linux-x86_64
   SYSROOT: $TOOLCHAIN/sysroot
-  CC: $TOOLCHAIN/bin/$TT24-clang
-  CXX: $TOOLCHAIN/bin/$TT24-clang++
+  CC: $TOOLCHAIN/bin/${TT}24-clang
+  CXX: $TOOLCHAIN/bin/${TT}24-clang++
   CROSS_PREFIX: $TOOLCHAIN/bin/llvm-
   PKG_CONFIG: /usr/bin/pkg-config
   PREFIX: ${{ github.workspace }}/2024
   PKG_CONFIG_PATH: ${{ github.workspace }}/2024/lib:${PKG_CONFIG_PATH}
   CFLAGS: "-DANDROID -Wall -fPIC"
   DIR: ${{ github.workspace }}/2024/lib
-  HOST: $TT
+  HOST: ${TT}
 
 jobs:
   build:
