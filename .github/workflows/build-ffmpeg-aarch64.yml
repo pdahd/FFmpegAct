@@ -233,7 +233,6 @@ jobs:
                     --extra-cflags=$CFLAGS
         make -j$(nproc)
         sudo make install
-        cp $LOCLIB/libx264.so.164 $FFLIB
 
     - name: Copy filter and apply patch
       if: false
@@ -303,7 +302,9 @@ jobs:
       run: cp $GITHUB_WORKSPACE/exlibs/lib/libx264.so.164 ${{ github.workspace }}/2024/lib
     
     - name: List files in lib directory
-      run: ls -l ${{ github.workspace }}/2024/lib
+      run: |
+        cp $LOCLIB/libx264.so.164 $FFLIB
+        ls -l $FFLIB
     
     - name: Upload FFmpeg Build Artifact for armv7a
       uses: actions/upload-artifact@v4
