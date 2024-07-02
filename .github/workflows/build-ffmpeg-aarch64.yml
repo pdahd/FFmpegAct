@@ -19,7 +19,7 @@ jobs:
       run: |
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/2024/lib/pkgconfig:\$PKG_CONFIG_PATH" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE/pkgconfig:\$PKG_CONFIG_PATH" >> $GITHUB_ENV
         
     - name: ndk
       if: false
@@ -228,7 +228,7 @@ jobs:
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
         sudo make install
-        find $DIR -name "*.so" -type f -delete
+        rm -f $DIR/libx264.so
 
     - name: Copy filter and apply patch
       if: false
