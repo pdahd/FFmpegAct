@@ -292,7 +292,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         make -j$(nproc)
-        make install
+        sudo make install
     
     - name: 打包
       if: false
