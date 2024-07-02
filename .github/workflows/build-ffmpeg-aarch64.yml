@@ -228,7 +228,7 @@ jobs:
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
         sudo make install
-        rm -f $DIR/libx264.so
+        sudo rm -f $DIR/libx264.so
 
     - name: Copy filter and apply patch
       if: false
