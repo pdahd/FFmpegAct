@@ -17,6 +17,7 @@ env:
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
+  U: "https://api.github.com/repos"
   PKG_CONFIG: /usr/bin/pkg-config
   CFLAGS: "-DANDROID -Wall -fPIC"
   HOST: armv7a-linux-androideabi
@@ -37,7 +38,7 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        ${{ env.H }} -O x264_fixes.patch https://api.github.com/repos/pdahd/pda/contents/x264_fixes.patch
+        ${{ env.H }} -O x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
         ./configure --enable-shared \
                     --enable-pic \
@@ -53,8 +54,8 @@ jobs:
       run: |
         cd $FFMPEG
         BUILD_DATE=$(date +"%Y-%m-%d")
-        ${{ env.H }} -O libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
-        ${{ env.H }} -O libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
+        ${{ env.H }} -O libavfilter/xfade-easing.h ${{ env.U }}/scriptituk/xfade-easing/contents/src/xfade-easing.h
+        ${{ env.H }} -O libavfilter/vf_xfade.c ${{ env.U }}/scriptituk/xfade-easing/contents/src/vf_xfade.c
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
         void show_banner(int argc, char **argv, const OptionDef *options) {\
