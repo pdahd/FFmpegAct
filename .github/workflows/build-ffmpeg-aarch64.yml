@@ -260,14 +260,6 @@ jobs:
     
     - name: Configure FFmpeg for armv7a with x264
       run: |
-        export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export SYSROOT=$TOOLCHAIN/sysroot 
-        export CC=$TOOLCHAIN/bin/${TT}24-clang
-        export CXX=$TOOLCIN/bin/${TT}24-clang++
-        export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
-        export PKG_CONFIG=/usr/bin/pkg-config
-        export PREFIX=$GITHUB_WORKSPACE/2024
-        
         cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
         ./configure --help || true
         ./configure \
