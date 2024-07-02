@@ -38,7 +38,7 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        ${H} -O x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
+        ${{ H }} -O x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
         ./configure --enable-shared \
                     --enable-pic \
