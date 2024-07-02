@@ -13,7 +13,7 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  H: "wget --header=\"Accept: application/vnd.github.v3.raw\""
+  H: "wget --header=\"Accept: application/vnd.github.v3.raw\" -O "
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
@@ -38,15 +38,15 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        ${{ env.H }} -O x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
+        ${{ env.H }}x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
-        ./configure --enable-shared \
-                    --enable-pic \
-                    --disable-asm \
-                    --host=$HOST \
-                    --cross-prefix=$CROSS_PREFIX \
-                    --sysroot=$SYSROOT \
+        ./configure --cross-prefix=$CROSS_PREFIX \
                     --extra-cflags=$CFLAGS
+                    --sysroot=$SYSROOT \
+                    --host=$HOST \
+                    --enable-shared \
+                    --enable-pic \
+                    --disable-asm 
         make -j$(nproc)
         sudo make install
 
@@ -54,8 +54,8 @@ jobs:
       run: |
         cd $FFMPEG
         BUILD_DATE=$(date +"%Y-%m-%d")
-        ${{ env.H }} -O libavfilter/xfade-easing.h ${{ env.U }}/scriptituk/xfade-easing/contents/src/xfade-easing.h
-        ${{ env.H }} -O libavfilter/vf_xfade.c ${{ env.U }}/scriptituk/xfade-easing/contents/src/vf_xfade.c
+        ${{ env.H }}libavfilter/xfade-easing.h ${{ env.U }}/scriptituk/xfade-easing/contents/src/xfade-easing.h
+        ${{ env.H }}libavfilter/vf_xfade.c ${{ env.U }}/scriptituk/xfade-easing/contents/src/vf_xfade.c
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
         void show_banner(int argc, char **argv, const OptionDef *options) {\
@@ -69,29 +69,29 @@ jobs:
            av_log(NULL, AV_LOG_INFO, "%.*s\\n", banner_length, "---------------------------------------------------------");\
            }' fftools/opt_common.c
         
-        ./configure --arch=arm \
-                    --cpu=armv7-a \
-                    --cc=$CC \
-                    --cxx=$CXX \
-                    --cross-prefix=$CROSS_PREFIX \
-                    --disable-indevs \
-                    --disable-outdevs \
-                    --disable-static \
-                    --disable-symver \
+        ./configure --cross-prefix=$CROSS_PREFIX \
                     --pkg-config=$PKG_CONFIG \
-                    --enable-libx264 \
-                    --enable-shared \
+                    --enable-indev=lavfi \
+                    --target-os=android \
+                    --sysroot=$SYSROOT \
+                    --prefix=$PREFIX \
+                    --cpu=armv7-a \
+                    --arch=arm \
+                    --cxx=$CXX \
+                    --cc=$CC \
+                    --enable-cross-compile \
                     --enable-mediacodec \
                     --enable-version3 \
-                    --enable-jni \
-                    --enable-indev=lavfi \
-                    --enable-cross-compile \
+                    --enable-libx264 \
+                    --enable-shared \
                     --enable-neon \
+                    --enable-jni \
                     --enable-gpl \
-                    --prefix=$PREFIX \
-                    --target-os=android \
+                    --disable-outdevs \
                     --disable-vulkan \
-                    --sysroot=$SYSROOT
+                    --disable-indevs \
+                    --disable-static \
+                    --disable-symver 
 
     - name: Build and Install FFmpeg
       run: |
