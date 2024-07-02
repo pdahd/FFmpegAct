@@ -226,13 +226,13 @@ jobs:
         ./configure --help || true
    
         ./configure --enable-shared \
-                    --libdir=DIR \
+                    --libdir=$DIR \
                     --enable-pic \
                     --disable-asm \
-                    --host=HOST \
-                    --cross-prefix=CROSS_PREFIX \
-                    --sysroot=SYSROOT \
-                    --extra-cflags=CFLAGS
+                    --host=$HOST \
+                    --cross-prefix=$CROSS_PREFIX \
+                    --sysroot=$SYSROOT \
+                    --extra-cflags=$CFLAGS
         make -j$(nproc)
         sudo sh -c 'make install && rm -f $DIR/libx264.so'
 
@@ -265,14 +265,14 @@ jobs:
         ./configure \
           --arch=arm \
           --cpu=armv7-a \
-          --cc="$CC" \
-          --cxx="$CXX" \
-          --cross-prefix="$CROSS_PREFIX" \
+          --cc=$CC \
+          --cxx=$CXX \
+          --cross-prefix=$CROSS_PREFIX \
           --disable-indevs \
           --disable-outdevs \
           --disable-static \
           --disable-symver \
-          --pkg-config="$PKG_CONFIG" \
+          --pkg-config=$PKG_CONFIG \
           --enable-libx264 \
           --enable-shared \
           --enable-mediacodec \
@@ -282,10 +282,10 @@ jobs:
           --enable-cross-compile \
           --enable-neon \
           --enable-gpl \
-          --prefix="$PREFIX" \
+          --prefix=$PREFIX \
           --target-os=android \
           --disable-vulkan \
-          --sysroot="$SYSROOT" 
+          --sysroot=$SYSROOT
 
     - name: Build FFmpeg for armv7a
       run: |
