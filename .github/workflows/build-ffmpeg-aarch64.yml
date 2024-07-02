@@ -15,10 +15,10 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   PKG_CONFIG: /usr/bin/pkg-config
-  PREFIX: $github.workspace/2024
-  PKG_CONFIG_PATH: $github.workspace/2024/lib/pkgconfig:${PKG_CONFIG_PATH}
+  PREFIX: ${github.workspace}/2024
+  PKG_CONFIG_PATH: ${github.workspace}/2024/lib/pkgconfig:${PKG_CONFIG_PATH}
   CFLAGS: "-DANDROID -Wall -fPIC"
-  DIR: $github.workspace/2024/lib
+  DIR: ${github.workspace}/2024/lib
   HOST: armv7a-linux-androideabi
 
 jobs:
