@@ -19,6 +19,7 @@ jobs:
       run: |
         echo "TT=armv7a-linux-androideabi" >> $GITHUB_ENV
         echo "NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$GITHUB_WORKSPACE:\$PKG_CONFIG_PATH" >> $GITHUB_ENV
         
     - name: ndk
       if: false
@@ -253,7 +254,6 @@ jobs:
     - name: Configure FFmpeg for armv7a with x264
       run: |
         export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/linux-x86_64
-        export PKG_CONFIG_PATH=$GITHUB_WORKSPACE/2024/lib/pkgconfig
         export SYSROOT=$TOOLCHAIN/sysroot 
         export CC=$TOOLCHAIN/bin/${TT}24-clang
         export CXX=$TOOLCIN/bin/${TT}24-clang++
