@@ -13,7 +13,7 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  H: "--header=\"Accept: application/vnd.github.v3.raw\""
+  H: "wget --header=\"Accept: application/vnd.github.v3.raw\""
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
@@ -37,7 +37,7 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        wget ${{ env.H }} -O x264_fixes.patch https://api.github.com/repos/pdahd/pda/contents/x264_fixes.patch
+        ${{ env.H }} -O x264_fixes.patch https://api.github.com/repos/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
         ./configure --enable-shared \
                     --enable-pic \
@@ -53,8 +53,8 @@ jobs:
       run: |
         cd $FFMPEG
         BUILD_DATE=$(date +"%Y-%m-%d")
-        wget ${{ env.H }} -O libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
-        wget ${{ env.H }} -O libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
+        ${{ env.H }} -O libavfilter/xfade-easing.h "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/xfade-easing.h"
+        ${{ env.H }} -O libavfilter/vf_xfade.c "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/vf_xfade.c"
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
         void show_banner(int argc, char **argv, const OptionDef *options) {\
