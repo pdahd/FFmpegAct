@@ -217,7 +217,6 @@ jobs:
         ./configure --help || true
    
         ./configure --enable-static \
-                    --disable-shared \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
@@ -225,7 +224,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        sudo make install
+        make install
 
     - name: Copy filter and apply patch
       if: false
