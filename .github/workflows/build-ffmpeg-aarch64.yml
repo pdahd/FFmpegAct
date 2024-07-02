@@ -9,15 +9,16 @@ on:
       - main
 
 env:
-  SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
   CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
-  PKG_CONFIG: /usr/bin/pkg-config
+  SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+  FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
+  PKG_CONFIG: /usr/bin/pkg-config
   CFLAGS: "-DANDROID -Wall -fPIC"
-  DIR: ${{ github.workspace }}/2024/lib
   HOST: armv7a-linux-androideabi
+  LOCLIB: /usr/local/lib
 
 jobs:
   build:
@@ -232,7 +233,7 @@ jobs:
                     --extra-cflags=$CFLAGS
         make -j$(nproc)
         sudo make install
-        cp usr/local/lib/libx264.so.164 $DIR
+        cp $LOCLIB/libx264.so.164 $FFLIB
 
     - name: Copy filter and apply patch
       if: false
