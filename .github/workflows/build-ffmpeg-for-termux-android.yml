@@ -106,4 +106,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
-        path: ${{ PREFIX }}/**
+        path: ${{ env.PREFIX }}/**
