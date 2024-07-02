@@ -21,7 +21,7 @@ env:
   PKG_CONFIG_PATH: ${{ github.workspace }}/2024/lib:${PKG_CONFIG_PATH}
   CFLAGS: "-DANDROID -Wall -fPIC"
   DIR: ${{ github.workspace }}/2024/lib
-  HOST: ${TT}
+  HOST: armv7a-linux-androideabi
 
 jobs:
   build:
