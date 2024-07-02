@@ -9,13 +9,11 @@ on:
       - main
 
 env:
-  NDK: /usr/local/lib/android/sdk/ndk/25.2.9519653
-  TT: armv7a-linux-androideabi
-  TOOLCHAIN: ${{ NDK }}/toolchains/llvm/prebuilt/linux-x86_64
-  SYSROOT: $TOOLCHAIN/sysroot
-  CC: ${{ TOOLCHAIN }}/bin/armv7a-linux-androideabi24-clang
-  CXX: ${{ TOOLCHAIN }}/bin/armv7a-linux-androideabi24-clang++
-  CROSS_PREFIX: $TOOLCHAIN/bin/llvm-
+  TOOLCHAIN: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64
+  SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+  CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
+  CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
+  CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   PKG_CONFIG: /usr/bin/pkg-config
   PREFIX: ${{ github.workspace }}/2024
   PKG_CONFIG_PATH: ${{ github.workspace }}/2024/lib:${PKG_CONFIG_PATH}
