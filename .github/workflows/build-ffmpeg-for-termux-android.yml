@@ -41,7 +41,7 @@ jobs:
         ${{ env.H }}x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
         ./configure --cross-prefix=$CROSS_PREFIX \
-                    --extra-cflags=$CFLAGS
+                    --extra-cflags=$CFLAGS \
                     --sysroot=$SYSROOT \
                     --host=$HOST \
                     --enable-shared \
@@ -71,7 +71,6 @@ jobs:
         
         ./configure --cross-prefix=$CROSS_PREFIX \
                     --pkg-config=$PKG_CONFIG \
-                    --enable-indev=lavfi \
                     --target-os=android \
                     --sysroot=$SYSROOT \
                     --prefix=$PREFIX \
@@ -80,6 +79,7 @@ jobs:
                     --cxx=$CXX \
                     --cc=$CC \
                     --enable-cross-compile \
+                    --enable-indev=lavfi \
                     --enable-mediacodec \
                     --enable-version3 \
                     --enable-libx264 \
