@@ -9,18 +9,17 @@ on:
       - main
 
 env:
-  TT: armv7a-linux-androideabi
   TOOLCHAIN: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/${{ TT }}24-clang
-  CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/${{ TT }}24-clang++
+  CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
+  CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   PKG_CONFIG: /usr/bin/pkg-config
   PREFIX: ${{ github.workspace }}/2024
   PKG_CONFIG_PATH: ${{ github.workspace }}/2024/lib/pkgconfig:${PKG_CONFIG_PATH}
   CFLAGS: "-DANDROID -Wall -fPIC"
   DIR: ${{ github.workspace }}/2024/lib
-  HOST: ${{ TT }}
+  HOST: armv7a-linux-androideabi
 
 jobs:
   build:
@@ -227,13 +226,13 @@ jobs:
         ./configure --help || true
    
         ./configure --enable-shared \
-                    --libdir="$DIR" \
+                    --libdir=DIR \
                     --enable-pic \
                     --disable-asm \
-                    --host="$HOST" \
-                    --cross-prefix="$CROSS_PREFIX" \
-                    --sysroot="$SYSROOT" \
-                    --extra-cflags="$CFLAGS"
+                    --host=HOST \
+                    --cross-prefix=CROSS_PREFIX \
+                    --sysroot=SYSROOT \
+                    --extra-cflags=CFLAGS
         make -j$(nproc)
         sudo sh -c 'make install && rm -f $DIR/libx264.so'
 
