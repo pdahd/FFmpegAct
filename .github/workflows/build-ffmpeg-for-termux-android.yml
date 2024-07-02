@@ -13,7 +13,7 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  H: "wget --header="Accept: application/vnd.github.v3.raw""
+  H: "wget --header=\"Accept: application/vnd.github.v3.raw\""
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
@@ -38,7 +38,7 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        ${{ env.H }} -O x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
+        $H -O x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
         ./configure --enable-shared \
                     --enable-pic \
