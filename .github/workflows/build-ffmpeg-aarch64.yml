@@ -213,10 +213,12 @@ jobs:
         export CXX=$TOOLCHAIN/bin/${TT}24-clang++
         export CROSS_PREFIX=$TOOLCHAIN/bin/llvm-
         export CFLAGS="-DANDROID -Wall -fPIC" 
+        export DIR=$GITHUB_WORKSPACE/2024/lib
         export HOST=$TT
         ./configure --help || true
    
-        ./configure --enable-static \
+        ./configure --enable-shared \
+                    --libdir="$DIR" \
                     --enable-pic \
                     --disable-asm \
                     --host="$HOST" \
@@ -224,7 +226,7 @@ jobs:
                     --sysroot="$SYSROOT" \
                     --extra-cflags="$CFLAGS"
         make -j$(nproc)
-        make install
+        sudo make install
 
     - name: Copy filter and apply patch
       if: false
@@ -268,11 +270,11 @@ jobs:
           --cross-prefix="$CROSS_PREFIX" \
           --disable-indevs \
           --disable-outdevs \
-          --disable-shared \
+          --disable-static \
           --disable-symver \
           --pkg-config="$PKG_CONFIG" \
           --enable-libx264 \
-          --enable-static \
+          --enable-shared \
           --enable-mediacodec \
           --enable-version3 \
           --enable-jni \
