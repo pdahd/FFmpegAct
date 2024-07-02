@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'build-ff.yml'
   pull_request:
     branches:
       - main
+    paths:
+      - 'build-ff.yml'
 
 env:
   CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
