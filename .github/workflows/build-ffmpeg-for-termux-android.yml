@@ -13,7 +13,7 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  H: "wget --header=\"Accept: application/vnd.github.v3.raw\""
+  H: "wget --header="Accept: application/vnd.github.v3.raw""
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
@@ -108,4 +108,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
-        path: ${{ env.PREFIX }}/**
+        path: 2024/**
