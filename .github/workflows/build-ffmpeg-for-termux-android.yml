@@ -19,7 +19,7 @@ env:
   PREFIX: ${{ github.workspace }}/2024
   U: "https://api.github.com/repos"
   PKG_CONFIG: /usr/bin/pkg-config
-  CFLAGS: "-DANDROID -Wall -fPIC"
+  CFLAGS: "-DANDROID\ -Wall\ -fPIC"
   HOST: armv7a-linux-androideabi
   LOCLIB: /usr/local/lib
 
