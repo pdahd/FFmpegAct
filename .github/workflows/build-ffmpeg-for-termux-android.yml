@@ -37,7 +37,7 @@ jobs:
     - name: Print av_log function
       run: |
         cd $FFMPEG
-        cat libavutil/log.c | grep -A 20 -B 20 'void av_log\(void \*avcl, int level, const char \*fmt, ...\)'
+        cat libavutil/log.c 
         
     
     - name: Apply Patches and Compile x264
