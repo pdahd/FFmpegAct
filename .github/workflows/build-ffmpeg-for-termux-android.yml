@@ -55,6 +55,8 @@ jobs:
         BUILD_DATE=$(date +"%Y-%m-%d")
         ${{ env.H }}libavfilter/xfade-easing.h ${{ env.U }}/scriptituk/xfade-easing/contents/src/xfade-easing.h
         ${{ env.H }}libavfilter/vf_xfade.c ${{ env.U }}/scriptituk/xfade-easing/contents/src/vf_xfade.c
+        find . -type f -name "*.c" -exec sed -i 's/INT64_MAX/INT64_C(9223372036854775807)/g' {} +
+        
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
         void show_banner(int argc, char **argv, const OptionDef *options) {\
