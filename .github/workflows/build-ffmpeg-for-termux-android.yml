@@ -21,9 +21,6 @@ env:
   PKG_CONFIG: /usr/bin/pkg-config
   HOST: armv7a-linux-androideabi
   LOCLIB: /usr/local/lib
-  CFLAGS: -DANDROID
-          -Wall
-          -fPIC
 
 jobs:
   build:
@@ -42,8 +39,8 @@ jobs:
         cd x264
         ${{ env.H }}x264_fixes.patch ${{ env.U }}/pdahd/pda/contents/x264_fixes.patch
         patch -p0 < x264_fixes.patch
-        ./configure --cross-prefix=$CROSS_PREFIX \
-                    --extra-cflags=$CFLAGS \
+        ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
+                    --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
                     --host=$HOST \
                     --enable-shared \
