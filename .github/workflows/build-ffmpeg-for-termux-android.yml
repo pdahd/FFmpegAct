@@ -56,18 +56,12 @@ jobs:
         ${{ env.H }}libavfilter/xfade-easing.h ${{ env.U }}/scriptituk/xfade-easing/contents/src/xfade-easing.h
         ${{ env.H }}libavfilter/vf_xfade.c ${{ env.U }}/scriptituk/xfade-easing/contents/src/vf_xfade.c
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
-           void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-           av_log(NULL, AV_LOG_INFO, "\\n-------------------------------------------------------------\\nFFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\\nBuilt by pdahd (https://github.com/pdahd) on %s.\\n-------------------------------------------------------------\\n", FFMPEG_VERSION, "'$BUILD_DATE'");\n\
-           }' fftools/opt_common.c
-        sed -i '/#include <stdarg.h>/a\
-           #define ANSI_COLOR_GREEN  "\x1b[32m" \
-           #define ANSI_COLOR_RESET   "\x1b[0m" \
-           ' libavutil/log.c
-        sed -i '/vfprintf(stderr, fmt, ap);/i\
-           if (level == AV_LOG_INFO && strstr(fmt, "FFmpeg")) {\
-           fprintf(stderr, ANSI_COLOR_GREEN);\
-           }\
-           fprintf(stderr, ANSI_COLOR_RESET);' libavutil/log.c
+            void show_banner(int argc, char **argv, const OptionDef *options) {
+            av_log(NULL, AV_LOG_INFO, "\n-------------------------------------------------------------\n");
+            av_log(NULL, AV_LOG_INFO, "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\n", FFMPEG_VERSION);
+            av_log(NULL, AV_LOG_INFO, "Built by pdahd (https://github.com/pdahd) on %s.\n", "$BUILD_DATE");
+            av_log(NULL, AV_LOG_INFO, "-------------------------------------------------------------\n");
+            }' fftools/opt_common.c
         
         ./configure --cross-prefix=$CROSS_PREFIX \
                     --pkg-config=$PKG_CONFIG \
