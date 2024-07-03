@@ -58,6 +58,7 @@ jobs:
         find . -type f -name "*.c" -exec sed -i 's/INT64_MAX/INT64_C(9223372036854775807)/g' {} +
         find . -type f -name "*.c" -exec sed -i 's/\(.*\)\([<>]\) INT64_C\(.*\)/\1\2 (double)INT64_C\3/g' {} +
         find . -type f -name "*.c" -exec sed -i 's/\(.*\)\([<>]\) INT64_MIN/\1\2 (double)INT64_MIN/g' {} +
+        sed -i 's/#if INT_MAX > (double)INT64_C(9223372036854775807) \/ INT_MAX - 1/#if INT_MAX > (INT64_C(9223372036854775807) \/ INT_MAX) - 1\n#else\n    double max_val = (double)INT64_C(9223372036854775807) \/ INT_MAX - 1;\n    if \(INT_MAX > max_val\) \{\n#endif/g' libavcodec/libx264.c
         
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
