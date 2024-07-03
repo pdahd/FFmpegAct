@@ -61,7 +61,7 @@ jobs:
         sed -n '165,175p' libavcodec/libx264.c
         sed -i 's/#if INT_MAX > (double)INT64_C(9223372036854775807) \/ INT_MAX - 1/#if SIZE_MAX > INT_MAX/g' libavcodec/libx264.c
         sed -n '108,118p' libavfilter/vsrc_testsrc.c
-        sed -i 's/\(.*\)INT64_C(9223372036854775807)\(.*\)/\1(int64_t)INT64_C(9223372036854775807)\2/g' libavformat/fifo.c
+        sed -i 's/\(.*\)INT64_C(9223372036854775807)\(.*\)/\1(double)INT64_C(9223372036854775807)\2/g' libavformat/fifo.c
         
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         #include <string.h>\
