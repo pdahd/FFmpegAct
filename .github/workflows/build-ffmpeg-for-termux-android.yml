@@ -49,7 +49,7 @@ jobs:
         make -j$(nproc)
         sudo make install
 
-    - name: Patch, Configure and Prepare FFmpeg
+    - name: Configure FFmpeg and Enhance Filters
       run: |
         cd $FFMPEG
         BUILD_DATE=$(date +"%Y-%m-%d")
