@@ -59,7 +59,7 @@ jobs:
         void show_banner(int argc, char **argv, const OptionDef *options) {
             av_log(NULL, AV_LOG_INFO, "\n-------------------------------------------------------------\\n");
             av_log(NULL, AV_LOG_INFO, "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\\n", FFMPEG_VERSION);
-            av_log(NULL, AV_LOG_INFO, "Built by pdahd (https://github.com/pdahd) on %s.\\n", '$BUILD_DATE');
+            av_log(NULL, AV_LOG_INFO, "Built by pdahd (https://github.com/pdahd) on %s.\\n", "'$BUILD_DATE'");
             av_log(NULL, AV_LOG_INFO, "-------------------------------------------------------------\\n");
             }' fftools/opt_common.c
         
