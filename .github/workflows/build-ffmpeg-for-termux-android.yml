@@ -13,11 +13,9 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  H: "wget --header=\"Accept: application/vnd.github.v3.raw\" -O "
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
-  U: "https://api.github.com/repos"
   PKG_CONFIG: /usr/bin/pkg-config
   HOST: armv7a-linux-androideabi
   LOCLIB: /usr/local/lib
@@ -37,8 +35,7 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        curl -L -o x264_fixes.patch https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch
-        patch -p0 < x264_fixes.patch
+        curl -L https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch | patch -p0
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
