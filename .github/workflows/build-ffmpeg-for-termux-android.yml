@@ -53,7 +53,7 @@ jobs:
         cd $FFMPEG
         BUILD_DATE=$(date +"%Y-%m-%d")
         for file in xfade-easing.h vf_xfade.c; do
-        curl -H "Accept: application/vnd.github.v3.raw" -L -o "libavfilter/${file}" "https://api.github.com/repos/scriptituk/xfade-easing/contents/src/${file}"
+        curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
         done
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
