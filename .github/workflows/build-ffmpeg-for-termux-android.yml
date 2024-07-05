@@ -49,6 +49,7 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
+        find $GITHUB_WORKSPACE/fdk-aac-2.0.2 -name log.h
         ./autogen.sh
         ./configure --help || true
         export CPPFLAGS="-I$GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/include"
