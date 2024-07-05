@@ -53,7 +53,6 @@ jobs:
         ./configure --help || true
         ./configure --enable-shared \
                     --disable-static \
-                    --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
                     --host=$HOST \
                     --with-pic
