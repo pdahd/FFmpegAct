@@ -29,18 +29,10 @@ jobs:
     - name: Prepare Source Code
       run: |
         wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
-        wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.2.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
+        wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
         git clone https://code.videolan.org/videolan/x264.git
-
-    - name: 搜索
-      run: |
-        cd $GITHUB_WORKSPACE/fdk-aac-2.0.2
-        LOG_FILE=$(grep -rnw "$GITHUB_WORKSPACE/fdk-aac-2.0.2" -e "log.h" | cut -d: -f1)
-        ls -l "$LOG_FILE"
-        cat $GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/src/lpp_tran.cpp | sed -n '117,127p'
     
     - name: Apply Patches and Compile x264
-      if: false
       run: |
         cd x264
         curl -L https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch | patch -p0
@@ -52,16 +44,14 @@ jobs:
                     --enable-pic \
                     --disable-asm 
         make -j$(nproc)
-        sudo make install
-        
+        sudo make install    
     
     - name: Compile libfdk-aac
       run: |
-        cd fdk-aac-2.0.2
+        cd fdk-aac-2.0.3
         ./autogen.sh
         ./configure --help || true
-        printf "inline void android_errorWriteLog(int, const char*){}" > libSBRdec/include/log/log.h 
-        mkdir -p libSBRdec/include/log
+        mkdir -p libSBRdec/include/log && printf "inline void android_errorWriteLog(int, const char*){}" > libSBRdec/include/log/log.h
         
         ./configure --enable-shared \
                     --disable-static \
@@ -73,7 +63,7 @@ jobs:
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd ffmpeg-7.0.5
+        cd ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
         for file in xfade-easing.h vf_xfade.c; do
         curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
@@ -97,6 +87,7 @@ jobs:
                     --cc=$CC \
                     --enable-cross-compile \
                     --enable-indev=lavfi \
+                    --enable-libfdk-aac \
                     --enable-mediacodec \
                     --enable-version3 \
                     --enable-libx264 \
