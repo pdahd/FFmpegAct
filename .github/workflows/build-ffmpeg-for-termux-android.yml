@@ -32,6 +32,12 @@ jobs:
         wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.2.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
         git clone https://code.videolan.org/videolan/x264.git
 
+    - name: 搜索
+      run: |
+        cd $GITHUB_WORKSPACE/fdk-aac-2.0.2
+        LOG_FILE=$(grep -rnw "$GITHUB_WORKSPACE/fdk-aac-2.0.2" -e "log.h" | cut -d: -f1)
+        ls -l "$LOG_FILE"
+    
     - name: Apply Patches and Compile x264
       if: false
       run: |
@@ -46,11 +52,6 @@ jobs:
                     --disable-asm 
         make -j$(nproc)
         sudo make install
-
-    - name: Compile libfdk-aac
-      run: |
-        cd $GITHUB_WORKSPACE/fdk-aac-2.0.2
-        grep -rnw "$GITHUB_WORKSPACE/fdk-aac-2.0.2" -e "log.h"
         
     
     - name: Compile libfdk-aac
