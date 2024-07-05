@@ -46,6 +46,12 @@ jobs:
         make -j$(nproc)
         sudo make install
 
+    - name: Compile libfdk-aac
+      run: |
+        wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.2.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE/fdk-aac-2.0.2
+        ./configure --help
+    
     - name: Configure FFmpeg and Enhance Filters
       run: |
         cd $FFMPEG
