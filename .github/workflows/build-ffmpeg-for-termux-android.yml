@@ -10,10 +10,10 @@ on:
 
 env:
   NDK_PATH: /usr/local/lib/android/sdk/ndk/25.2.9519653
-  CC: ${{ env.NDK_PATH }}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
-  CXX: ${{ env.NDK_PATH }}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
-  CROSS_PREFIX: ${{ env.NDK_PATH }}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
-  SYSROOT: ${{ env.NDK_PATH }}/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+  CC: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
+  CXX: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
+  CROSS_PREFIX: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
+  SYSROOT: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/sysroot
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
