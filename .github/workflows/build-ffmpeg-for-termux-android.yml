@@ -44,17 +44,13 @@ jobs:
         unsigned int i_sign = 1; \
         printf("i_sign: %u\\n", i_sign); \
         }' encoder/cavlc.c \
-        -e '/for( int iterations = 0; iterations < 1000 && terminate != 3; iterations++ )/a\
+        -e '/for\( int iterations = 0; iterations < 1000 && terminate != 3; iterations++ \)/a\
         \
-        { \
-        printf("iterations: %d\\n", iterations); \
-        }' encoder/ratecontrol.c \
-        -e '/double qscale_min = qp2qscale( h->param.rc.i_qp_min );/a\
+        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c \
+        -e '/int iterations = 0;/a\
         \
-        { \
-        iterations++; \
-        printf("iterations: %d\\n", iterations); \
-        }' encoder/ratecontrol.c
+        iterations++;\
+        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
