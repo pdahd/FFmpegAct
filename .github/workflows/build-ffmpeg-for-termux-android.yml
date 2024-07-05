@@ -58,7 +58,7 @@ jobs:
         cd fdk-aac-2.0.2
         ./autogen.sh
         ./configure --help || true
-        export CPPFLAGS="-I$GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/src"
+        export CPPFLAGS="-I$GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/src/log"
         
         ./configure --enable-shared \
                     --disable-static \
