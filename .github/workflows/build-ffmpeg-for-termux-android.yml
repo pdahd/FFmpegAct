@@ -55,10 +55,10 @@ jobs:
         done
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-        av_log(NULL, AV_LOG_ERROR, "-----------------------------------------------------------------------\\n");\n\
+        av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Developers.\\n", FFMPEG_VERSION);\n\
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd/FFmpegAct) on %s.\\n", "'$BUILD_DATE'");\n\
-        av_log(NULL, AV_LOG_ERROR, "-----------------------------------------------------------------------\\n");\n\
+        av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
         
         ./configure --cross-prefix=$CROSS_PREFIX \
