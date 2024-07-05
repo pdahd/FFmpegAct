@@ -59,7 +59,7 @@ jobs:
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "-------------------------------------------------------------\\n");\n\
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\\n", FFMPEG_VERSION);\n\
-        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "Built by pdahd (https://github.com/pdahd) on %s.\\n", "'$BUILD_DATE'");\n\
+        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "Built by pdahd (https://github.com/pdahd) on %s.\\n", $BUILD_DATE);\n\
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "-------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
         
