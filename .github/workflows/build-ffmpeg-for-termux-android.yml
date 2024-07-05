@@ -37,23 +37,10 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        sed -i \
-        -e '/int i_total, i_trailing, i_total_zero, i_suffix_length;/a\
+        sed -i '/int i_total, i_trailing, i_total_zero, i_suffix_length;/a\
         \
-        { \
         unsigned int i_sign = 1; \
-        printf("i_sign: %u\\n", i_sign); \
-        i_total += i_sign; \
-        }' encoder/cavlc.c \
-        -e '/for\( int iterations = 0; iterations < 1000 && terminate != 3; iterations++ \)/i\
-        \
-                {\
-                    printf("iterations: %d\\n", iterations);\
-                }' encoder/ratecontrol.c \
-        -e '/int iterations = 0;/a\
-        \
-        iterations++;\
-        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
+        printf("i_sign: %u\\n", i_sign);' encoder/cavlc.c
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
