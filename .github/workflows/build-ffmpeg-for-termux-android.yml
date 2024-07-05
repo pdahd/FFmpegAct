@@ -47,6 +47,7 @@ jobs:
         sudo make install
 
     - name: Compile libfdk-aac
+      if: false
       run: |
         wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.2.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
         cd fdk-aac-2.0.2
@@ -54,7 +55,7 @@ jobs:
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd $FFMPEG
+        cd ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
         for file in xfade-easing.h vf_xfade.c; do
         curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
