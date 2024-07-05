@@ -48,7 +48,7 @@ jobs:
 
     - name: Compile libfdk-aac
       run: |
-        cd fdk-aac-2.0.2
+        cd fdk-aac-2.0.3
         ./autogen.sh
         ./configure --help || true
         ./configure --enable-shared \
