@@ -37,6 +37,8 @@ jobs:
         cd $GITHUB_WORKSPACE/fdk-aac-2.0.2
         LOG_FILE=$(grep -rnw "$GITHUB_WORKSPACE/fdk-aac-2.0.2" -e "log.h" | cut -d: -f1)
         ls -l "$LOG_FILE"
+        sed -i 's/#ifdef ANDROID/#if 0/g' $GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/src/lpp_tran.cpp
+        sed -i 's/#endif/#endif/g' $GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/src/lpp_tran.cpp
         cat $GITHUB_WORKSPACE/fdk-aac-2.0.2/libSBRdec/src/lpp_tran.cpp | sed -n '117,127p'
     
     - name: Apply Patches and Compile x264
