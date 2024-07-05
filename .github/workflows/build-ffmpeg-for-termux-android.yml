@@ -49,7 +49,8 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
-        find fdk-aac-2.0.3 -name log.h
+        find $GITHUB_WORKSPACE/fdk-aac-2.0.3 -name log.h
+        
     
     - name: Compile libfdk-aac
       run: |
