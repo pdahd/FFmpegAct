@@ -37,7 +37,7 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        sed -i '/int i_total, i_trailing, i_total_zero, i_suffix_length;/a\
+        sed -i '/int i_total, i_trailing, i_total_zero, i_suffix_length;/i\
         \
         unsigned int i_sign = 1; \
         printf("i_sign: %u\\n", i_sign);' encoder/cavlc.c
