@@ -60,8 +60,8 @@ jobs:
         cd fdk-aac-2.0.2
         ./autogen.sh
         ./configure --help || true
-        mkdir -p libSBRdec/include/log/
-        echo "void android_errorWriteLog(int i, const char *string){}" > libSBRdec/include/log/log.h
+        sed -i 's/#ifdef ANDROID/#if 0/g' libSBRdec/src/lpp_tran.cpp
+        sed -i 's/#endif/#endif/g' libSBRdec/src/lpp_tran.cpp
         
         ./configure --enable-shared \
                     --disable-static \
