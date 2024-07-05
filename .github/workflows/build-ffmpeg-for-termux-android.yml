@@ -62,8 +62,9 @@ jobs:
         cd fdk-aac-2.0.2
         ./autogen.sh
         ./configure --help || true
-        sed -i 's/#ifdef __ANDROID__/\/\* #ifdef __ANDROID__ \*\//g' libSBRdec/src/lpp_tran.cpp
-        sed -i 's/#endif/\/\* #endif \*\//g' libSBRdec/src/lpp_tran.cpp
+        sed -i '/#ifdef __ANDROID__/d' libSBRdec/src/lpp_tran.cpp
+        sed -i '/#include "log\/log.h"/d' libSBRdec/src/lpp_tran.cpp
+        sed -i '/#endif/d' libSBRdec/src/lpp_tran.cpp
         
         ./configure --enable-shared \
                     --disable-static \
