@@ -33,6 +33,7 @@ jobs:
         git clone https://code.videolan.org/videolan/x264.git
 
     - name: Apply Patches and Compile x264
+      if: false
       run: |
         cd x264
         curl -L https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch | patch -p0
@@ -49,7 +50,7 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd $GITHUB_WORKSPACE/fdk-aac-2.0.2
-        find $GITHUB_WORKSPACE/fdk-aac-2.0.2 -name log.h
+        grep -rnw "$GITHUB_WORKSPACE/fdk-aac-2.0.2" -e "log.h"
         
     
     - name: Compile libfdk-aac
