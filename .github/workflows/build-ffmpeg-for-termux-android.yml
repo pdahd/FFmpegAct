@@ -16,7 +16,7 @@ env:
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
   PKG_CONFIG: /usr/bin/pkg-config
-  HOST: armv7a-linux-androideabi
+  HOST: armv7a-linux-android
   LOCLIB: /usr/local/lib
 
 jobs:
@@ -55,7 +55,6 @@ jobs:
         
         ./configure --enable-shared \
                     --disable-static \
-                    --with-sysroot=$SYSROOT \
                     --host=$HOST \
                     --with-pic
          make -j$(nproc)
