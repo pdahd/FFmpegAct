@@ -9,11 +9,10 @@ on:
       - main
 
 env:
-  NDK_PATH: /usr/local/lib/android/sdk/ndk/25.2.9519653
-  CC: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
-  CXX: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
-  CROSS_PREFIX: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
-  SYSROOT: $NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+  CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
+  CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
+  CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
+  SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
   FFMPEG: ${{ github.workspace }}/ffmpeg-7.0.1
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
@@ -56,10 +55,10 @@ jobs:
         done
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
-        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "-------------------------------------------------------------\\n");\n\
-        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\\n", FFMPEG_VERSION);\n\
-        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "Built by pdahd (https://github.com/pdahd) on %s.\\n", "$BUILD_DATE");\n\
-        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_FILTER << 8), "-------------------------------------------------------------\\n");\n\
+        av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------\\n");\n\
+        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "FFmpeg %s (armv7-a custom build) © 2000-2024 FFmpeg Team.\\n", FFMPEG_VERSION);\n\
+        av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd) on %s.\\n", "$BUILD_DATE");\n\
+        av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
         
         ./configure --cross-prefix=$CROSS_PREFIX \
