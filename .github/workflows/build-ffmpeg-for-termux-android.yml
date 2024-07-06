@@ -56,6 +56,7 @@ jobs:
         ./autogen.sh
         ./configure --help || true
         sed -i '/#include "log\/log.h"/d' "$GITHUB_WORKSPACE/fdk-aac-2.0.3/libSBRdec/src/lpp_tran.cpp"
+        sed -i 's/android_errorWriteLog(0x534e4554, "112160868");/\/\/android_errorWriteLog(0x534e4554, "112160868");/g' "$GITHUB_WORKSPACE/fdk-aac-2.0.3/libSBRdec/src/lpp_tran.cpp"
         
         ./configure --enable-shared \
                     --disable-static \
