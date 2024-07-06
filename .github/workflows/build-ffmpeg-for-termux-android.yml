@@ -38,13 +38,6 @@ jobs:
         ./autogen.sh
         ./configure --help || true
     
-    - name: 上传 configure 脚本
-      if: false
-      uses: actions/upload-artifact@v3
-      with:
-        name: configure-script
-        path: fdk-aac-2.0.3/configure
-    
     - name: Apply Patches and Compile x264
       run: |
         cd x264
@@ -62,7 +55,7 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
-       
+        curl -L https://raw.githubusercontent.com/pdahd/pda/main/configure.patch | patch -p0
         cat configure | sed -n '3166,3176p'
         echo "----------------------------------------"
         cat configure | sed -n '3764,3774p'
