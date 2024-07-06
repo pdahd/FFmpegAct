@@ -12,7 +12,12 @@ env:
   CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
+  RANLIB: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
+  STRIP: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+  AR: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
+  AS: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-as
+  LD: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/ld
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
   PKG_CONFIG: /usr/bin/pkg-config
@@ -57,7 +62,8 @@ jobs:
         cd fdk-aac-2.0.3
         ./autogen.sh
         ./configure --help || true
-        mkdir -p libSBRdec/include/log && printf "inline void android_errorWriteLog(int, const char*){}" > libSBRdec/include/log/log.h
+        mkdir -p libSBRdec/include/log/
+        echo "void android_errorWriteLog(int i, const char *string){}" > libSBRdec/include/log/log.h
         
         ./configure --enable-shared \
                     --disable-static \
@@ -95,7 +101,6 @@ jobs:
                     --enable-libfdk-aac \
                     --enable-mediacodec \
                     --enable-version3 \
-                    --enable-nonfree \
                     --enable-libx264 \
                     --enable-shared \
                     --enable-neon \
