@@ -55,7 +55,7 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
-        curl -L https://raw.githubusercontent.com/pdahd/pda/main/configure.patch | patch -p0
+        curl -L https://raw.githubusercontent.com/pdahd/pda/main/configure.patch | patch -p1
         cat configure | sed -n '3166,3176p'
         echo "----------------------------------------"
         cat configure | sed -n '3764,3774p'
