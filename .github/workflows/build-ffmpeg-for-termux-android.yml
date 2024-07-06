@@ -41,7 +41,19 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        curl -L https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch | patch -p0
+        sed -i '127i\
+        // 添加使用变量的代码\
+        i_sign = 1; // 示例赋值\
+        printf("i_sign: %u\\n", i_sign); // 示例使用' encoder/cavlc.c
+
+        sed -i '2284i\
+        // 添加使用变量的代码\
+        printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
+
+        sed -i '2881i\
+        // 添加使用变量的代码\
+        iterations++;\
+        printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
