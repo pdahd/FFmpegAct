@@ -42,12 +42,10 @@ jobs:
       run: |
         cd x264
         sed -i '127i\
-        unsigned int i_sign;\
         i_sign = 1;\
         printf("i_sign: %u\\n", i_sign);' encoder/cavlc.c
 
         sed -i '2284i\
-        int iterations;\
         printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
 
         sed -i '2881i\
