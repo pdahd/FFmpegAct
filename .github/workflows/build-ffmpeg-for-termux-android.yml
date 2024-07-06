@@ -32,17 +32,17 @@ jobs:
         wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
         git clone https://code.videolan.org/videolan/x264.git
     
-    - name: Upload FFmpeg Build as Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: faac
-        path: fdk-aac-2.0.3/configure
-    
     - name: sou
       run: |
         cd fdk-aac-2.0.3
         ./autogen.sh
         ./configure --help || true
+    
+    - name: 上传 configure 脚本
+      uses: actions/upload-artifact@v3
+      with:
+        name: configure-script
+        path: fdk-aac-2.0.3/configure
     
     - name: Apply Patches and Compile x264
       run: |
