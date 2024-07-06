@@ -12,19 +12,12 @@ env:
   CC: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
-  RANLIB: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
-  STRIP: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  AR: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
-  AS: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-as
-  LD: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/ld
   FFLIB: ${{ github.workspace }}/2024/lib
   PREFIX: ${{ github.workspace }}/2024
   PKG_CONFIG: /usr/bin/pkg-config
-  HOST: arm-linux-android
+  HOST: armv7a-linux-androideabi
   LOCLIB: /usr/local/lib
-  CPU: armv7-a
-  ARCH: arm
 
 jobs:
   build:
@@ -62,8 +55,7 @@ jobs:
         cd fdk-aac-2.0.3
         ./autogen.sh
         ./configure --help || true
-        mkdir -p libSBRdec/include/log/
-        echo "void android_errorWriteLog(int i, const char *string){}" > libSBRdec/include/log/log.h
+        sed -i '/#include "log\/log.h"/d' fdk-aac-2.0.3/libSBRdec/src/lpp_tran.cpp
         
         ./configure --enable-shared \
                     --disable-static \
@@ -92,8 +84,8 @@ jobs:
                     --target-os=android \
                     --sysroot=$SYSROOT \
                     --prefix=$PREFIX \
-                    --cpu=$CPU \
-                    --arch=$ARCH \
+                    --cpu=armv7-a \
+                    --arch=arm \
                     --cxx=$CXX \
                     --cc=$CC \
                     --enable-cross-compile \
@@ -101,6 +93,7 @@ jobs:
                     --enable-libfdk-aac \
                     --enable-mediacodec \
                     --enable-version3 \
+                    --enable-nonfree \
                     --enable-libx264 \
                     --enable-shared \
                     --enable-neon \
