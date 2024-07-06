@@ -56,6 +56,7 @@ jobs:
       run: |
         cd fdk-aac-2.0.3
         sed -i '/case $cross_compiling:$ac_tool_warned in/a\
+        yes:)\
         if ! echo "$CC" | grep -q "^llvm-"; then\
         { printf "%s\\n" "$as_me:${as_lineno-\$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5\
         printf "%s\\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}\
