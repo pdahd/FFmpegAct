@@ -42,7 +42,7 @@ jobs:
       run: |
         cd x264
         # 修改 encoder/cavlc.c 文件
-        sed -i '127a\    // 添加使用变量的代码\n    i_sign = 1; // 示例赋值\n    printf("i_sign: %u\\n", i_sign); // 示例使用' encoder/cavlc.c
+        sed -i '127a\    // 添加使用变量的代码\n    unsigned int i_sign = 1; // 示例赋值\n    printf("i_sign: %u\\n", i_sign); // 示例使用' encoder/cavlc.c
 
         # 修改 encoder/ratecontrol.c 文件
         sed -i '2284a\                // 添加使用变量的代码\n                printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
