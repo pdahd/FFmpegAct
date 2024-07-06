@@ -55,7 +55,7 @@ jobs:
         cd fdk-aac-2.0.3
         ./autogen.sh
         ./configure --help || true
-        sed -i '/#include "log\/log.h"/d' fdk-aac-2.0.3/libSBRdec/src/lpp_tran.cpp
+        sed -i '/#include "log\/log.h"/d' "$GITHUB_WORKSPACE/fdk-aac-2.0.3/libSBRdec/src/lpp_tran.cpp"
         
         ./configure --enable-shared \
                     --disable-static \
