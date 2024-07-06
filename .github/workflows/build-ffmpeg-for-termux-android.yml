@@ -55,6 +55,12 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
+        sed -i '/case $cross_compiling:$ac_tool_warned in/a\
+        if ! echo "$CC" | grep -q "^llvm-"; then\
+        { printf "%s\\n" "$as_me:${as_lineno-\$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5\
+        printf "%s\\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}\
+        ac_tool_warned=yes\
+        fi' configure
         cat configure | sed -n '3166,3176p'
         echo "----------------------------------------"
         cat configure | sed -n '3764,3774p'
