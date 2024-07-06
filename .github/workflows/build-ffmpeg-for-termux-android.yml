@@ -41,16 +41,12 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
-        sed -i '127i\
-        i_sign = 1;\
-        printf("i_sign: %u\\n", i_sign);' encoder/cavlc.c
+        # 修改 encoder/cavlc.c 文件
+        sed -i '127a\    // 添加使用变量的代码\n    i_sign = 1; // 示例赋值\n    printf("i_sign: %u\\n", i_sign); // 示例使用' encoder/cavlc.c
 
-        sed -i '2284i\
-        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
-
-        sed -i '2881i\
-        iterations++;\
-        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
+        # 修改 encoder/ratecontrol.c 文件
+        sed -i '2284a\                // 添加使用变量的代码\n                printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
+        sed -i '2884a\    // 添加使用变量的代码\n    iterations++;\n    printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
