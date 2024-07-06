@@ -36,7 +36,7 @@ jobs:
       run: |
         cd fdk-aac-2.0.3
         ./autogen.sh
-        ./configure --help || true
+        ./configure --help 
     
     - name: Apply Patches and Compile x264
       run: |
