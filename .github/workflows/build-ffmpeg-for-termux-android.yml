@@ -42,18 +42,17 @@ jobs:
       run: |
         cd x264
         sed -i '127i\
-        // 添加使用变量的代码\
-        i_sign = 1; // 示例赋值\
-        printf("i_sign: %u\\n", i_sign); // 示例使用' encoder/cavlc.c
+        unsigned int i_sign;\
+        i_sign = 1;\
+        printf("i_sign: %u\\n", i_sign);' encoder/cavlc.c
 
         sed -i '2284i\
-        // 添加使用变量的代码\
-        printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
+        int iterations;\
+        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
 
         sed -i '2881i\
-        // 添加使用变量的代码\
         iterations++;\
-        printf("iterations: %d\\n", iterations); // 示例使用' encoder/ratecontrol.c
+        printf("iterations: %d\\n", iterations);' encoder/ratecontrol.c
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
