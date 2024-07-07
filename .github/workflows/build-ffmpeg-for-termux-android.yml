@@ -42,7 +42,7 @@ jobs:
         done
         git clone https://code.videolan.org/videolan/x264.git
         echo "----------------------------------------"
-        ls -R android-ndk-r26d/shader-tools/linux-x86_64/bin
+        ls -R android-ndk-r26d/toolchains/llvm/prebuilt/linux-x86_64/bin
     
     - name: Apply Patches and Compile x264
       run: |
