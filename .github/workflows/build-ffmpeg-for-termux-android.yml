@@ -13,11 +13,7 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  FFLIB: 2024/lib
-  PREFIX: 2024/
-  PKG_CONFIG: /usr/bin/pkg-config
   HOST: armv7a-linux-androideabi
-  LOCLIB: /usr/local/lib
 
 jobs:
   build:
@@ -80,9 +76,10 @@ jobs:
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd/FFmpegAct) on %s.\\n", "'$BUILD_DATE'");\n\
         av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
-        ./configure --prefix="$GITHUB_WORKSPACE/2024" \
+        
+        ./configure --pkg-config="/usr/bin/pkg-config" \
+                    --prefix="$GITHUB_WORKSPACE/2024" \
                     --cross-prefix=$CROSS_PREFIX \
-                    --pkg-config=$PKG_CONFIG \
                     --target-os=android \
                     --sysroot=$SYSROOT \
                     --cpu=armv7-a \
