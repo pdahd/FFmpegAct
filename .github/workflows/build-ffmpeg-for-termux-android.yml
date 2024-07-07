@@ -84,7 +84,7 @@ jobs:
                     --pkg-config=$PKG_CONFIG \
                     --target-os=android \
                     --sysroot=$SYSROOT \
-                    --prefix="./2024" \
+                    --prefix=" . /2024 " \
                     --cpu=armv7-a \
                     --arch=arm \
                     --cxx=$CXX \
