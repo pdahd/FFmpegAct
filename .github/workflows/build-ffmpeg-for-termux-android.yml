@@ -39,6 +39,7 @@ jobs:
         done 
     
     - name: Apply Patches and Compile x264
+      if: false
       run: |
         cd x264
         curl -L https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch | patch -p0
