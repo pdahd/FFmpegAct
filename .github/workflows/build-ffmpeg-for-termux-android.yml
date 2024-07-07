@@ -13,8 +13,8 @@ env:
   CXX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
   CROSS_PREFIX: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-
   SYSROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
-  FFLIB: ${{ github.workspace }}/2024/lib
-  PREFIX: ${{ github.workspace }}/2024
+  FFLIB: ./2024/lib
+  PREFIX: ./2024
   PKG_CONFIG: /usr/bin/pkg-config
   HOST: armv7a-linux-androideabi
   LOCLIB: /usr/local/lib
