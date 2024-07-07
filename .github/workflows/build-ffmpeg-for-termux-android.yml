@@ -55,16 +55,14 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
-        cat configure | sed -n '1288,1291p'
-        echo "----------------------------------------"
         sed -i '/#include "log\/log.h"/d; s/android_errorWriteLog(0x534e4554, "112160868");/\/\/android_errorWriteLog(0x534e4554, "112160868");/g' libSBRdec/src/lpp_tran.cpp
-        ./configure --enable-shared --host=llvm --with-pic
+        ./configure --enable-shared --host=$HOST --with-pic
          make -j$(nproc)
          sudo make install
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd ffmpeg-7.0.13
+        cd ffmpeg-7.0.11
         BUILD_DATE=$(date +"%Y-%m-%d")
         for file in xfade-easing.h vf_xfade.c; do
         curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
