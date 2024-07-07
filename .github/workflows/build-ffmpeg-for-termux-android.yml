@@ -36,10 +36,10 @@ jobs:
         elif [[ "$url" == *.tar.gz ]]; then
         wget -O - "$url" | tar -xzv -C $GITHUB_WORKSPACE
         fi
-        done 
+        done
+        git clone https://code.videolan.org/videolan/x264.git
     
     - name: Apply Patches and Compile x264
-      if: false
       run: |
         cd x264
         curl -L https://raw.githubusercontent.com/pdahd/pda/main/x264_fixes.patch | patch -p0
@@ -56,6 +56,7 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
+        ./autogen.sh
         sed -i '/#include "log\/log.h"/d; s/android_errorWriteLog(0x534e4554, "112160868");/\/\/android_errorWriteLog(0x534e4554, "112160868");/g' libSBRdec/src/lpp_tran.cpp
         ./configure --enable-shared --host=$HOST --with-pic
         make -j$(nproc)
