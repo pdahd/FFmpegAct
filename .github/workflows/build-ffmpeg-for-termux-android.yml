@@ -36,8 +36,7 @@ jobs:
         elif [[ "$url" == *.tar.gz ]]; then
         wget -O - "$url" | tar -xzv -C $GITHUB_WORKSPACE
         fi
-        done
-        git clone https://code.videolan.org/videolan/x264.git
+        done 
     
     - name: Apply Patches and Compile x264
       run: |
