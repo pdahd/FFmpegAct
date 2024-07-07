@@ -55,7 +55,7 @@ jobs:
     - name: Compile libfdk-aac
       run: |
         cd fdk-aac-2.0.3
-        sed -i '/ac_tool_prefix=/ { N; d; 
+        sed -i '/ac_tool_prefix=/ { N; c\
         ac_tool_prefix="llvm-"
         }' configure
         cat configure | sed -n '1288,1291p'
