@@ -62,7 +62,7 @@ jobs:
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd ffmpeg-7.0.11
+        cd ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
         for file in xfade-easing.h vf_xfade.c; do
         curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
@@ -109,7 +109,12 @@ jobs:
 
     - name: List files in lib directory
       run: |
-        cp $LOCLIB/libx264.so.164 $FFLIB
+        LIBS=(libx264.so.164 \
+              libfdk-aac.so 
+        )
+        for lib in "${LIBS[@]}"; do
+          cp "$LOCLIB/$lib" "$FFLIB"
+        done
         ls -l $FFLIB
 
     - name: Upload FFmpeg Build as Artifact
