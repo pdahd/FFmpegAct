@@ -38,7 +38,7 @@ jobs:
         elif [[ "$url" == *.tar.bz2 ]]; then
         $WGET "$url" | tar -xjvf 
         elif [[ "$url" == *.zip ]]; then
-        $WGET "$url" | unzip -d $GITHUB_WORKSPACE
+        $WGET "$url" > archive.zip | unzip archive.zip
         fi
         done
         git clone https://code.videolan.org/videolan/x264.git
