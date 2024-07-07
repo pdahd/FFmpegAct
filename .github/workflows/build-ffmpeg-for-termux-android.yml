@@ -28,16 +28,16 @@ jobs:
 
     - name: Prepare Source Code
       run: |
-        📥="wget -O -"
+        ⇩="wget -O -"
         for url in https://dl.google.com/android/repository/android-ndk-r26d-linux.zip; do
         if [[ "$url" == *.tar.xz ]]; then
-        $📥 "$url" | tar -xJv 
+        $⇩ "$url" | tar -xJv 
         elif [[ "$url" == *.tar.gz ]]; then
-        $📥 "$url" | tar -xzv 
+        $⇩ "$url" | tar -xzv 
         elif [[ "$url" == *.tar.bz2 ]]; then
-        $📥 "$url" | tar -xjvf 
+        $⇩ "$url" | tar -xjvf 
         elif [[ "$url" == *.zip ]]; then
-        $📥 "$url" > archive.zip && unzip archive.zip
+        $⇩ "$url" > archive.zip && unzip archive.zip
         fi
         done
         git clone https://code.videolan.org/videolan/x264.git
