@@ -29,8 +29,7 @@ jobs:
     - name: Prepare Source Code
       run: |
         WGET="wget -O -"
-        for url in \
-        https://dl.google.com/android/repository/android-ndk-r26d-linux.zip; do
+        for url in https://dl.google.com/android/repository/android-ndk-r26d-linux.zip; do
         if [[ "$url" == *.tar.xz ]]; then
         $WGET "$url" | tar -xJv 
         elif [[ "$url" == *.tar.gz ]]; then
@@ -38,7 +37,7 @@ jobs:
         elif [[ "$url" == *.tar.bz2 ]]; then
         $WGET "$url" | tar -xjvf 
         elif [[ "$url" == *.zip ]]; then
-        $WGET "$url" unzip -C
+        $WGET "$url" > archive.zip && unzip archive.zip
         fi
         done
         git clone https://code.videolan.org/videolan/x264.git
