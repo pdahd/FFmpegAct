@@ -24,21 +24,20 @@ jobs:
 
     - name: Prepare Source Code
       run: |
-        W="wget -O -"
+        git clone https://code.videolan.org/videolan/x264.git
         for url in https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz \
         https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
         if [[ "$url" == *.tar.xz ]]; then
-        $W "$url" | tar -xJv 
+        wget -O - "$url" | tar -xJv 
         elif [[ "$url" == *.tar.gz ]]; then
-        $W "$url" | tar -xzv 
+        wget -O - "$url" | tar -xzv 
         elif [[ "$url" == *.tar.bz2 ]]; then
-        $W "$url" | tar -xjvf 
+        wget -O - "$url" | tar -xjvf 
         elif [[ "$url" == *.zip ]]; then
-        $W "$url" > Z.zip && unzip Z.zip && rm Z.zip
+        wget -O - "$url" > Z.zip && unzip Z.zip && rm Z.zip
         fi
         done
-        git clone https://code.videolan.org/videolan/x264.git
-    
+        
     - name: Apply Patches and Compile x264
       run: |
         cd x264
@@ -66,9 +65,6 @@ jobs:
       run: |
         cd ffmpeg-7.0.1
         BUILD_DATE=$(date +"%Y-%m-%d")
-        for file in xfade-easing.h vf_xfade.c; do
-        curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
-        done
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
         av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
@@ -76,7 +72,9 @@ jobs:
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd/FFmpegAct) on %s.\\n", "'$BUILD_DATE'");\n\
         av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
-        
+        for file in xfade-easing.h vf_xfade.c; do
+        curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
+        done
         ./configure --pkg-config="/usr/bin/pkg-config" \
                     --prefix="$GITHUB_WORKSPACE/2024" \
                     --cross-prefix=$CROSS_PREFIX \
