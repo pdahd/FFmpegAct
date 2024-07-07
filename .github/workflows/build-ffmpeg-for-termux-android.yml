@@ -110,10 +110,9 @@ jobs:
     - name: List files in lib directory
       run: |
         LIBS=(libx264.so.164 \
-              libfdk-aac.so 
-        )
+              libfdk-aac.so)
         for lib in "${LIBS[@]}"; do
-          cp "$LOCLIB/$lib" "$FFLIB"
+        cp "$LOCLIB/$lib" "$FFLIB"
         done
         ls -l $FFLIB
 
