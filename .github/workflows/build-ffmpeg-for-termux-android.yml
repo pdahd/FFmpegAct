@@ -28,15 +28,12 @@ jobs:
 
     - name: Prepare Source Code
       run: |
-        wget -O - https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz | tar -xJv -C $GITHUB_WORKSPACE
-        wget -O - https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz | tar -xzv -C $GITHUB_WORKSPACE
+        for url in \
+        https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz \
+        https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
+        wget -O - "$url" | tar -xv -C $GITHUB_WORKSPACE
+        done
         git clone https://code.videolan.org/videolan/x264.git
-    
-    - name: sou
-      run: |
-        cd fdk-aac-2.0.3
-        ./autogen.sh
-        ./configure --help 
     
     - name: Apply Patches and Compile x264
       run: |
@@ -57,8 +54,8 @@ jobs:
         cd fdk-aac-2.0.3
         sed -i '/#include "log\/log.h"/d; s/android_errorWriteLog(0x534e4554, "112160868");/\/\/android_errorWriteLog(0x534e4554, "112160868");/g' libSBRdec/src/lpp_tran.cpp
         ./configure --enable-shared --host=$HOST --with-pic
-         make -j$(nproc)
-         sudo make install
+        make -j$(nproc)
+        sudo make install
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
@@ -74,7 +71,6 @@ jobs:
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd/FFmpegAct) on %s.\\n", "'$BUILD_DATE'");\n\
         av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
-        
         ./configure --cross-prefix=$CROSS_PREFIX \
                     --pkg-config=$PKG_CONFIG \
                     --target-os=android \
