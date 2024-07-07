@@ -80,11 +80,11 @@ jobs:
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd/FFmpegAct) on %s.\\n", "'$BUILD_DATE'");\n\
         av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
-        ./configure --cross-prefix=$CROSS_PREFIX \
+        ./configure --prefix="$GITHUB_WORKSPACE/2024" \
+                    --cross-prefix=$CROSS_PREFIX \
                     --pkg-config=$PKG_CONFIG \
                     --target-os=android \
                     --sysroot=$SYSROOT \
-                    --prefix="~/2024" \
                     --cpu=armv7-a \
                     --arch=arm \
                     --cxx=$CXX \
@@ -113,17 +113,16 @@ jobs:
         make install
 
     - name: List files in lib directory
-      if: false
       run: |
         LIBS=(libx264.so.164 \
               libfdk-aac.so)
         for lib in "${LIBS[@]}"; do
-        cp "$LOCLIB/$lib" "$FFLIB"
+        cp "/usr/local/lib/$lib" "2024/lib"
         done
-        ls -l $FFLIB
+        ls -l 2024/lib
 
     - name: Upload FFmpeg Build as Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ffmpeg-armeabi-v7a
-        path: ~/2024/**
+        path: 2024/**
