@@ -41,6 +41,10 @@ jobs:
     - name: Apply Patches and Compile x264
       run: |
         cd x264
+        sed -i '/unsigned int i_sign;/a\
+        i_sign = 1;\
+        printf("i_sign: %u\\n", i_sign);
+        ' encoder/cavlc.c
         ./configure --extra-cflags="-DANDROID -Wall -fPIC" \
                     --cross-prefix=$CROSS_PREFIX \
                     --sysroot=$SYSROOT \
