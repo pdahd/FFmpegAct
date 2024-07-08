@@ -56,7 +56,7 @@ jobs:
       run: |
         cd fdk-aac-2.0.3
         ./autogen.sh
-        sed -i 's/ac_tool_prefix= \ test -n "$host_alias" && ac_tool_prefix=$host_alias-/ac_tool_prefix="llvm-"/g' configure
+        sed -i 's/ac_tool_prefix=/ac_tool_prefix="llvm-"/g; /test -n "\$host_alias" && ac_tool_prefix=\$host_alias-/d' configure
         sed -i 's/WARNING: using cross tools not prefixed with host triplet/NOTE: cross tools prefix has been updated to LLVM/g' configure
         sed -i '/#include "log\/log.h"/d; s/android_errorWriteLog(0x534e4554, "112160868");/\/\/android_errorWriteLog(0x534e4554, "112160868");/g' libSBRdec/src/lpp_tran.cpp
         ./configure --enable-shared --host=$HOST --with-pic
