@@ -38,7 +38,7 @@ jobs:
         fi
         done
         
-    - name: Apply Patches and Compile x264
+    - name: Compile x264
       run: |
         cd x264
         sed -i '/unsigned int i_sign;/a\
