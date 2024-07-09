@@ -24,7 +24,7 @@ jobs:
 
     - name: download
       run: |
-        wget https://dl.google.com/android/repository/android-ndk-r27-beta2-linux.zip ; tar xzvf
+        wget https://dl.google.com/android/repository/android-ndk-r27-beta2-linux.zip ; tar xzvf *.zip
     
     - name: Prepare Source Code
       if: false
