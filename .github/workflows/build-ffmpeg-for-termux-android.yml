@@ -37,7 +37,7 @@ jobs:
         elif [[ "$url" == *.tar.gz ]]; then
         wget -O - "$url" | tar -xzv 
         elif [[ "$url" == *.tar.bz2 ]]; then
-        wget -O - "$url" | tar xjvf
+        wget -O - "$url" | tar xjvf -
         elif [[ "$url" == *.zip ]]; then
         wget -O - "$url" > Z.zip && unzip Z.zip && rm Z.zip
         fi
