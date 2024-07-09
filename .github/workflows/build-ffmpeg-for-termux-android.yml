@@ -22,7 +22,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
     
+    - name: download
+      run: |
+        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+        tree -L 2 ffmpeg
+      
+    
     - name: Prepare Source Code
+      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         for url in https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz \
