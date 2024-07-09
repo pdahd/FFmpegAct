@@ -40,7 +40,7 @@ jobs:
         elif [[ "$url" == *.tar.bz2 ]]; then
         wget -O - "$url" | tar xjvf -
         elif [[ "$url" == *.zip ]]; then
-        wget -O - "$url" | tar xzvf -
+        wget -O - "$url" | -xzvf -
         fi
         done
         
