@@ -21,16 +21,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
-
-    - name: download
-      run: |
-        wget https://dl.google.com/android/repository/android-ndk-r27-beta2-linux.zip ; tar -xf
     
     - name: Prepare Source Code
-      if: false
       run: |
         git clone https://code.videolan.org/videolan/x264.git
-        for url in https://dl.google.com/android/repository/android-ndk-r27-beta2-linux.zip \
+        git clone https://git.ffmpeg.org/ffmpeg.git 
+        for url in https://dl.google.com/android/repository/android-ndk-r26d-linux.zip \
+        https://ffmpeg.org/releases/ffmpeg-7.0.1.tar.bz2 \
         https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
         if [[ "$url" == *.tar.xz ]]; then
         wget -O - "$url" | tar -xJv 
@@ -39,7 +36,7 @@ jobs:
         elif [[ "$url" == *.tar.bz2 ]]; then
         wget -O - "$url" | tar xjvf -
         elif [[ "$url" == *.zip ]]; then
-        wget -O - "$url" | bsdtar -xvf -
+        wget "$url" ; unzip *.zip
         fi
         done
         
@@ -75,7 +72,7 @@ jobs:
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd ffmpeg-7.0.12
+        cd ffmpeg
         BUILD_DATE=$(date +"%Y-%m-%d")
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
@@ -115,7 +112,7 @@ jobs:
 
     - name: Build and Install FFmpeg
       run: |
-        cd ffmpeg-7.0.1
+        cd ffmpeg4
         make -j$(nproc)
         make install
 
