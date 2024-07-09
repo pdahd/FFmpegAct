@@ -82,11 +82,10 @@ jobs:
         for file in xfade-easing.h vf_xfade.c; do
         curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
         done
-        ls -l libavfilter/vf_xfade.c
-        md5sum libavfilter/vf_xfade.c
         ./configure --pkg-config="/usr/bin/pkg-config" \
                     --prefix="$GITHUB_WORKSPACE/2024" \
                     --cross-prefix=$CROSS_PREFIX \
+                    --enable-encoder=libx264 \
                     --target-os=android \
                     --sysroot=$SYSROOT \
                     --cpu=armv7-a \
