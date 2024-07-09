@@ -25,7 +25,7 @@ jobs:
     - name: Prepare Source Code
       run: |
         git clone https://code.videolan.org/videolan/x264.git
-        git clone https://git.ffmpeg.org/ffmpeg.git 
+        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
         for url in https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
         if [[ "$url" == *.tar.xz ]]; then
         wget -O - "$url" | tar -xJv 
