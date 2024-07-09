@@ -71,16 +71,6 @@ jobs:
     - name: Configure FFmpeg and Enhance Filters
       run: |
         cd ffmpeg-7.0.1
-        wget -O libavfilter/xfade-easing.h https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/xfade-easing.h
-        echo "----------------------------------------"
-        curl -L -o vf_xfade.c "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/vf_xfade.c"
-        ls -l vf_xfade.c
-        md5sum vf_xfade.c
-        echo "----------------------------------------"
-        mv vf_xfade.c libavfilter/vf_xfade.c
-        ls -l libavfilter/vf_xfade.c
-        md5sum libavfilter/vf_xfade.c
-        echo "----------------------------------------"
         BUILD_DATE=$(date +"%Y-%m-%d")
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
@@ -89,7 +79,11 @@ jobs:
         av_log(NULL, AV_LOG_INFO | (AV_CLASS_CATEGORY_SWRESAMPLER << 8), "Built by pdahd (https://github.com/pdahd/FFmpegAct) on %s.\\n", "'$BUILD_DATE'");\n\
         av_log(NULL, AV_LOG_ERROR, "-------------------------------------------------------------------\\n");\n\
         }' fftools/opt_common.c
-        
+        for file in xfade-easing.h vf_xfade.c; do
+        curl -L -o "libavfilter/${file}" "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/${file}"
+        done
+        ls -l libavfilter/vf_xfade.c
+        md5sum libavfilter/vf_xfade.c
         ./configure --pkg-config="/usr/bin/pkg-config" \
                     --prefix="$GITHUB_WORKSPACE/2024" \
                     --cross-prefix=$CROSS_PREFIX \
