@@ -22,18 +22,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
     
-    - name: download
-      if: false
-      run: |
-        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-        tree -L 2 ffmpeg
-      
-    
     - name: Prepare Source Code
       run: |
         git clone https://code.videolan.org/videolan/x264.git
-        git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-        for url in https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
+        for url in https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz \
+        https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
         if [[ "$url" == *.tar.xz ]]; then
         wget -O - "$url" | tar -xJv 
         elif [[ "$url" == *.tar.gz ]]; then
@@ -77,7 +70,7 @@ jobs:
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd ffmpeg
+        cd ffmpeg-7.0.1
         wget -O libavfilter/xfade-easing.h https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/xfade-easing.h
         echo "----------------------------------------"
         curl -L -o vf_xfade.c "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/vf_xfade.c"
@@ -125,7 +118,7 @@ jobs:
 
     - name: Build and Install FFmpeg
       run: |
-        cd ffmpeg
+        cd ffmpeg-7.0.1
         make -j$(nproc)
         make install
 
