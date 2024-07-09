@@ -79,7 +79,15 @@ jobs:
       run: |
         cd ffmpeg
         wget -O libavfilter/xfade-easing.h https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/xfade-easing.h
-        wget -O libavfilter/vf_xfade.c https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/vf_xfade.c
+        echo "----------------------------------------"
+        curl -L -o vf_xfade.c "https://raw.githubusercontent.com/scriptituk/xfade-easing/main/src/vf_xfade.c"
+        ls -l vf_xfade.c
+        md5sum vf_xfade.c
+        echo "----------------------------------------"
+        mv vf_xfade.c libavfilter/vf_xfade.c
+        ls -l libavfilter/vf_xfade.c
+        md5sum libavfilter/vf_xfade.c
+        echo "----------------------------------------"
         BUILD_DATE=$(date +"%Y-%m-%d")
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
