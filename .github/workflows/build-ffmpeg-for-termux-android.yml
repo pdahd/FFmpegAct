@@ -60,7 +60,7 @@ jobs:
         cd fdk-aac-2.0.3
         ./autogen.sh
         sed -i '/#include "log\/log.h"/d; /android_errorWriteLog(0x534e4554, "112160868");/d' libSBRdec/src/lpp_tran.cpp
-        sed -i 's/WARNING: using cross tools not prefixed with host triplet/cross tools prefix has been updated to "llvm-"/g' configure
+        sed -i 's/WARNING: using cross tools not prefixed with host triplet/cross tools prefix has been updated to \"llvm-\"/g' configure
         sed -i '/ac_tool_prefix=/ { N; c\
         ac_tool_prefix="llvm-"
         }' configure
@@ -70,7 +70,7 @@ jobs:
     
     - name: Configure FFmpeg and Enhance Filters
       run: |
-        cd ffmpeg-7.0.1
+        cd ffmpeg-7.0.12
         BUILD_DATE=$(date +"%Y-%m-%d")
         sed -i '/void show_banner(int argc, char \*\*argv, const OptionDef \*options)/,/^}/c\
         void show_banner(int argc, char **argv, const OptionDef *options) {\n\
