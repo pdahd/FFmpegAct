@@ -36,6 +36,7 @@ jobs:
       run: |
         git clone https://code.videolan.org/videolan/x264.git
         for url in https://www.ffmpeg.org/releases/ffmpeg-7.0.1.tar.xz \
+        https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz \
         https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz; do
         if [[ "$url" == *.tar.xz ]]; then
         wget -O - "$url" | tar -xJv 
@@ -48,6 +49,11 @@ jobs:
         fi
         done
         
+    - name: 查询
+      run: |
+        ls -R $GITHUB_WORKSPACE/x265_3.5
+      
+    
     - name: Compile x264
       if: false
       run: |
