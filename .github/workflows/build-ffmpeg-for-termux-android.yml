@@ -30,7 +30,7 @@ jobs:
         else
           echo "CMake is not installed"
         fi
-        ls -R /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot
+        ls -R /usr/local/lib/android/sdk/ndk/25.2.9519653/build
     
     - name: Prepare Source Code
       run: |
