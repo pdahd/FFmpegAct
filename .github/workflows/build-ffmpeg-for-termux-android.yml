@@ -22,6 +22,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
     
+    - name: Check if CMake is installed
+      run: |
+        if which cmake; then
+          echo "CMake is installed"
+          cmake --version
+        else
+          echo "CMake is not installed"
+        fi
+    
     - name: Prepare Source Code
       run: |
         git clone https://code.videolan.org/videolan/x264.git
@@ -39,6 +48,7 @@ jobs:
         done
         
     - name: Compile x264
+      if: false
       run: |
         cd x264
         sed -i '/unsigned int i_sign;/a\
@@ -56,6 +66,7 @@ jobs:
         sudo make install  
     
     - name: Compile libfdk-aac
+      if: false
       run: |
         cd fdk-aac-2.0.3
         ./autogen.sh
