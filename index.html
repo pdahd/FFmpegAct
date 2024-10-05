@@ -52,7 +52,7 @@
             color: #8fd3f4; /* 悬停时颜色 */
         }
 
-        /* 主容器区域调整 */
+        /* 主容器区域 */
         .container {
             background-color: #444444;
             padding: 20px;
@@ -61,6 +61,7 @@
             width: 85%;
             max-width: 500px;
             text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* 添加阴影 */
         }
 
         input[type="number"] {
@@ -101,9 +102,10 @@
             background: linear-gradient(to right, #ff9a9e, #fecfef); /* 粉色到浅紫渐变 */
         }
 
-        /* UUID颜色 */
-        td.uuid-cell {
-            color: #84fab0; /* 设置UUID文本为绿色 */
+        /* UUID颜色和数字序号颜色设为深灰 */
+        td.uuid-cell,
+        td.index-cell {
+            color: #555555; /* 深灰色 */
             font-weight: bold;
         }
 
@@ -184,6 +186,7 @@
                 const cell3 = row.insertCell(2);
 
                 cell1.textContent = i;
+                cell1.className = 'index-cell'; // 数字序号单元格
                 cell2.textContent = uuid;
                 cell2.className = 'uuid-cell'; // 生成UUID的单元格
 
