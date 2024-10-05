@@ -21,7 +21,7 @@
         /* Logo区域 */
         .logo-container {
             width: 100%;
-            background-color: #333333; /* 保持与主背景相同的颜色 */
+            background-color: #333333;
             text-align: center;
             margin-top: 20px;
         }
@@ -29,7 +29,24 @@
         .logo-container img {
             max-width: 100%;
             height: auto;
-            width: 55%; /* 控制缩放比例，放大一点 */
+            width: 55%;
+        }
+
+        /* 描述区域 */
+        .description {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #ccc; /* 浅灰色 */
+        }
+
+        .description a {
+            color: #84fab0; /* 链接颜色 */
+            text-decoration: none;
+        }
+
+        .description a:hover {
+            color: #8fd3f4; /* 悬停时颜色 */
         }
 
         /* 主容器区域调整 */
@@ -38,8 +55,8 @@
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
-            width: 85%; /* 调整宽度 */
-            max-width: 500px; /* 限制最大宽度 */
+            width: 85%;
+            max-width: 500px;
             text-align: center;
         }
 
@@ -62,8 +79,12 @@
 
         th, td {
             padding: 12px;
-            border: 1px solid #ffffff; /* 白色边框 */
+            border: 1px solid #ffffff;
             text-align: center;
+        }
+
+        th {
+            background: linear-gradient(to right, #84fab0, #8fd3f4); /* 渐变背景 */
         }
 
         tr:nth-child(even) {
@@ -99,6 +120,12 @@
         <img src="https://raw.githubusercontent.com/pdahd/FFmpegAct/refs/heads/main/PDA99.png" alt="PDA Logo">
     </div>
 
+    <!-- 描述区域 -->
+    <div class="description">
+        <p>Input the number of UUIDs you want to generate and click the 'Generate' button. Each UUID can be copied by clicking the corresponding copy icon.</p>
+        <p>This project was created by <a href="https://github.com/pdahd">pdahd</a> on October 6, 2024. Find the source code on <a href="https://github.com/pdahd/FFmpegAct">GitHub</a>.</p>
+    </div>
+
     <!-- 主内容区域 -->
     <div class="container">
         <h1>UUID Generator</h1>
@@ -109,7 +136,7 @@
                 <tr>
                     <th>#</th>
                     <th>UUID</th>
-                    <th>Copy</th> <!-- 新增的拷贝按钮列 -->
+                    <th>Copy</th>
                 </tr>
             </thead>
             <tbody>
@@ -135,12 +162,11 @@
                 const row = tableBody.insertRow();
                 const cell1 = row.insertCell(0);
                 const cell2 = row.insertCell(1);
-                const cell3 = row.insertCell(2); // 拷贝按钮单独一列
+                const cell3 = row.insertCell(2);
 
                 cell1.textContent = i;
                 cell2.textContent = uuid;
 
-                // 添加复制图标
                 const copyIcon = document.createElement('img');
                 copyIcon.src = 'https://img.icons8.com/material-outlined/24/ffffff/copy.png'; // 复制图标链接
                 copyIcon.className = 'copy-icon';
