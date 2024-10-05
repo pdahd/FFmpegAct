@@ -1,88 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UUID Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #333333; /* Adobe风格深灰 */
-            color: #FFFFFF;
+            background-color: #333333;
+            color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden; /* 禁止溢出 */
+            justify-content: flex-start;
+            min-height: 100vh;
         }
-        .container {
-            background-color: #444444; /* Adobe风格浅灰 */
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-            width: 90%; /* 调整宽度 */
-            max-width: 350px; /* 最大宽度 */
-            text-align: center;
-            overflow-y: auto; /* 允许竖向滚动 */
-            max-height: 80vh; /* 限制最大高度 */
-            position: relative; /* 允许绝对定位 */
-        }
-        h1 {
-            margin: 0;
-            font-size: 1.5rem; /* 调整标题大小 */
-        }
-        input[type="number"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 16px;
-        }
-        button {
+
+        /* Logo区域 */
+        .logo-container {
             width: 100%;
+            background-color: #333333; /* 保持与主背景相同的颜色 */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            width: 50%; /* 控制缩放比例，保持合适的大小 */
+        }
+
+        .container {
+            background-color: #444444;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        input[type="number"] {
             padding: 10px;
-            background-color: #0078D7; /* Adobe风格的蓝色按钮 */
-            border: none;
-            border-radius: 5px;
-            color: #FFFFFF;
             font-size: 16px;
-            cursor: pointer;
+            border-radius: 4px;
+            border: none;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 150px;
         }
-        button:hover {
-            background-color: #005A9E;
-        }
+
         table {
             width: 100%;
-            margin-top: 10px;
             border-collapse: collapse;
+            margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid #555555; /* 卡其色 */
-        }
+
         th, td {
-            padding: 10px;
-            text-align: left;
-            position: relative; /* 为复制按钮设置位置 */
+            padding: 12px;
+            border: 1px solid #ffffff; /* 白色边框 */
+            text-align: center;
         }
+
+        tr:nth-child(even) {
+            background-color: #555555;
+        }
+
         .copy-icon {
-            width: 20px;
-            height: 20px;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            cursor: pointer;
+            margin-left: 10px;
+            width: 18px;
+            vertical-align: middle;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
+
+        button:hover {
+            background-color: #005f75;
+        }
+
     </style>
 </head>
 <body>
+
+    <!-- Logo区域 -->
+    <div class="logo-container">
+        <img src="https://raw.githubusercontent.com/pdahd/FFmpegAct/refs/heads/main/PDA99.png" alt="PDA Logo">
+    </div>
+
+    <!-- 主内容区域 -->
     <div class="container">
         <h1>UUID Generator</h1>
-        <input type="number" id="uuidCount" placeholder="Enter number of UUIDs" />
+        <input type="number" id="uuidCount" placeholder="Enter number of UUIDs" min="1">
         <button onclick="generateUUIDs()">Generate</button>
         <table id="uuidTable">
             <thead>
@@ -95,6 +114,7 @@
             </tbody>
         </table>
     </div>
+
     <script>
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
