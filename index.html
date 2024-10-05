@@ -38,6 +38,9 @@
             text-align: center;
             font-size: 14px;
             color: #ccc; /* 浅灰色 */
+            line-height: 1.5; /* 增加行距 */
+            max-width: 85%; /* 限制宽度以避免过长一行 */
+            word-wrap: break-word;
         }
 
         .description a {
@@ -83,8 +86,10 @@
             text-align: center;
         }
 
+        /* 表头渐变背景颜色修改为Adobe风格 */
         th {
-            background: linear-gradient(to right, #84fab0, #8fd3f4); /* 渐变背景 */
+            background: linear-gradient(to right, #434343, #747474); /* 深灰到淡灰的渐变 */
+            color: #ffffff; /* 白色字体，确保清晰 */
         }
 
         tr:nth-child(even) {
@@ -122,8 +127,10 @@
 
     <!-- 描述区域 -->
     <div class="description">
-        <p>Input the number of UUIDs you want to generate and click the 'Generate' button. Each UUID can be copied by clicking the corresponding copy icon.</p>
-        <p>This project was created by <a href="https://github.com/pdahd">pdahd</a> on October 6, 2024. Find the source code on <a href="https://github.com/pdahd/FFmpegAct">GitHub</a>.</p>
+        <p>Input the number of UUIDs you want to generate and click the 'Generate' button.
+        Each UUID can be copied by clicking the corresponding copy icon.</p>
+        <p>This project was created by <a href="https://github.com/pdahd">pdahd</a> on October 6, 2024.
+        Find the source code on <a href="https://github.com/pdahd/FFmpegAct">GitHub</a>.</p>
     </div>
 
     <!-- 主内容区域 -->
