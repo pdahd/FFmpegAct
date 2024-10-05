@@ -24,12 +24,24 @@
             background-color: #333333;
             text-align: center;
             margin-top: 10px; /* 减少顶部空隙 */
+            overflow: hidden; /* 隐藏超出部分 */
+            position: relative; /* 为定位提供参考 */
+            height: 200px; /* 设置高度以适应动画 */
         }
 
         .logo-container img {
-            max-width: 100%;
-            height: auto;
-            width: 50%; /* 缩小图片尺寸 */
+            max-width: none; /* 取消最大宽度 */
+            height: 100%;
+            animation: reveal 2s forwards; /* 应用动画 */
+        }
+
+        @keyframes reveal {
+            0% {
+                transform: translateX(-100%); /* 初始位置在左侧 */
+            }
+            100% {
+                transform: translateX(0); /* 最终位置正常 */
+            }
         }
 
         /* 描述区域 */
@@ -102,10 +114,10 @@
             background: linear-gradient(to right, #ff9a9e, #fecfef); /* 粉色到浅紫渐变 */
         }
 
-        /* UUID颜色和数字序号颜色设为深灰 */
+        /* UUID颜色和数字序号颜色设为黑色 */
         td.uuid-cell,
         td.index-cell {
-            color: #555555; /* 深灰色 */
+            color: #000000; /* 黑色 */
             font-weight: bold;
         }
 
