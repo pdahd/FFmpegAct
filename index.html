@@ -25,23 +25,11 @@
             text-align: center;
             margin-top: 10px; /* 减少顶部空隙 */
             overflow: hidden; /* 隐藏超出部分 */
-            position: relative; /* 为定位提供参考 */
-            height: 200px; /* 设置高度以适应动画 */
         }
 
         .logo-container img {
-            max-width: none; /* 取消最大宽度 */
-            height: 100%;
-            animation: reveal 2s forwards; /* 应用动画 */
-        }
-
-        @keyframes reveal {
-            0% {
-                transform: translateX(-100%); /* 初始位置在左侧 */
-            }
-            100% {
-                transform: translateX(0); /* 最终位置正常 */
-            }
+            max-width: 100%; /* 限制最大宽度为100% */
+            height: auto; /* 自适应高度 */
         }
 
         /* 描述区域 */
