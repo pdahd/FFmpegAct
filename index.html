@@ -29,16 +29,17 @@
         .logo-container img {
             max-width: 100%;
             height: auto;
-            width: 50%; /* 控制缩放比例，保持合适的大小 */
+            width: 55%; /* 控制缩放比例，放大一点 */
         }
 
+        /* 主容器区域调整 */
         .container {
             background-color: #444444;
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
-            width: 90%;
-            max-width: 600px;
+            width: 85%; /* 调整宽度 */
+            max-width: 500px; /* 限制最大宽度 */
             text-align: center;
         }
 
@@ -52,6 +53,7 @@
             max-width: 150px;
         }
 
+        /* 表格样式 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -70,7 +72,6 @@
 
         .copy-icon {
             cursor: pointer;
-            margin-left: 10px;
             width: 18px;
             vertical-align: middle;
         }
@@ -108,6 +109,7 @@
                 <tr>
                     <th>#</th>
                     <th>UUID</th>
+                    <th>Copy</th> <!-- 新增的拷贝按钮列 -->
                 </tr>
             </thead>
             <tbody>
@@ -133,9 +135,10 @@
                 const row = tableBody.insertRow();
                 const cell1 = row.insertCell(0);
                 const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2); // 拷贝按钮单独一列
+
                 cell1.textContent = i;
                 cell2.textContent = uuid;
-                cell2.style.cursor = "pointer";
 
                 // 添加复制图标
                 const copyIcon = document.createElement('img');
@@ -144,7 +147,7 @@
                 copyIcon.onclick = function() {
                     copyUUID(uuid);
                 };
-                cell2.appendChild(copyIcon);
+                cell3.appendChild(copyIcon);
             }
         }
 
