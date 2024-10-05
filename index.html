@@ -86,14 +86,19 @@
             text-align: center;
         }
 
-        /* 表头渐变背景颜色修改为Adobe风格 */
+        /* 表头渐变背景颜色 Adobe 风格 */
         th {
             background: linear-gradient(to right, #434343, #747474); /* 深灰到淡灰的渐变 */
             color: #ffffff; /* 白色字体，确保清晰 */
         }
 
+        /* 表体渐变背景颜色 */
         tr:nth-child(even) {
-            background-color: #555555;
+            background: linear-gradient(to right, #555555, #666666); /* 不同于表头的渐变颜色 */
+        }
+
+        tr:nth-child(odd) {
+            background-color: #444444; /* 默认深灰色 */
         }
 
         .copy-icon {
@@ -127,8 +132,9 @@
 
     <!-- 描述区域 -->
     <div class="description">
-        <p>Input the number of UUIDs you want to generate and click the 'Generate' button.
-        Each UUID can be copied by clicking the corresponding copy icon.</p>
+        <p>Generate any number of unique UUIDs by entering the desired amount in the input box below.
+        Click the 'Generate' button to create the UUIDs. You can copy each UUID individually by clicking
+        the corresponding copy icon.</p>
         <p>This project was created by <a href="https://github.com/pdahd">pdahd</a> on October 6, 2024.
         Find the source code on <a href="https://github.com/pdahd/FFmpegAct">GitHub</a>.</p>
     </div>
