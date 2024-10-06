@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UUID Generator</title>
     <style>
+        @font-face {
+            font-family: 'DodgerFont';
+            src: url('https://github.com/pdahd/FFmpegAct/raw/refs/heads/main/dodger3_1expand.ttf') format('truetype');
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #333333;
@@ -63,6 +68,14 @@
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* 添加阴影 */
             position: relative; /* 为按钮泡泡动画设置相对定位 */
+        }
+
+        h1 {
+            font-family: 'DodgerFont', Arial, sans-serif; /* 使用自定义字体 */
+            background: linear-gradient(to right, #ff0000, #ff7373); /* 红色渐变 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; /* 文字填充为透明 */
+            margin: 0; /* 去掉默认外边距 */
         }
 
         input[type="number"] {
@@ -234,27 +247,24 @@
             createBubbles();
         }
 
+        function copyUUID(uuid) {
+            navigator.clipboard.writeText(uuid).then(() => {
+                alert('UUID copied to clipboard: ' + uuid);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
         function createBubbles() {
             const button = document.getElementById('generateButton');
             for (let i = 0; i < 5; i++) {
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble';
                 button.appendChild(bubble);
-                // 动画结束后移除泡泡
-                bubble.addEventListener('animationend', () => {
-                    bubble.remove();
-                });
+                setTimeout(() => {
+                    bubble.remove(); // 动画结束后移除泡泡
+                }, 600);
             }
-        }
-
-        function copyUUID(uuid) {
-            const el = document.createElement('textarea');
-            el.value = uuid;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert('UUID copied to clipboard: ' + uuid);
         }
     </script>
 </body>
