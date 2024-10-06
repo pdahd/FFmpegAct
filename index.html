@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UUID Generator</title>
     <style>
+        @keyframes colorChange {
+            0% { color: #ff4e50; }
+            50% { color: #004d00; }
+            100% { color: #ff4e50; }
+        }
+        
         body {
             font-family: Arial, sans-serif;
             background-color: #333333;
@@ -65,17 +71,10 @@
             position: relative;
         }
 
-        @keyframes colorChange {
-            0% { color: #ff4e50; }
-            50% { color: #004d00; }
-            100% { color: #ff4e50; }
-        }
-
         h1 {
             background: linear-gradient(to right, #ff4e50, #fc913a); /* 红色渐变 */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 0.2px rgba(255, 255, 255, 0.5); /* 白色阴影 */
             margin-bottom: 20px;
             font-weight: bold;
             animation: colorChange 3s infinite; /* 动态颜色变化 */
