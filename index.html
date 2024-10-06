@@ -133,7 +133,6 @@
             border-radius: 4px;
             cursor: pointer;
             position: relative; /* 为泡泡动画设置相对定位 */
-           
             transition: background-color 0.3s;
         }
 
@@ -144,11 +143,11 @@
         /* 泡泡动画 */
         .bubble {
             position: absolute;
-            bottom: -10px; /* 从按钮顶部开始 */
+            bottom: 100%; /* 从按钮顶部开始 */
             left: 50%;
             transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
             background-color: rgba(255, 255, 255, 0.7);
             border-radius: 50%;
             opacity: 0;
@@ -157,12 +156,12 @@
 
         @keyframes bubble-animation {
             0% {
-                bottom: -10px;
+                bottom: 0;
                 opacity: 1;
                 transform: translateX(-50%) scale(1);
             }
             100% {
-                bottom: 100px; /* 泡泡向上移动 */
+                bottom: 120px; /* 泡泡向上移动 */
                 opacity: 0;
                 transform: translateX(-50%) scale(1.5);         
             }
