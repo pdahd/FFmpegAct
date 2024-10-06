@@ -143,11 +143,9 @@
         /* 泡泡动画 */
         .bubble {
             position: absolute;
-            left: 50%; /* 水平居中 */
-            bottom: 0; /* 从按钮底部开始 */
-            transform: translateX(-50%);
-            width: 13px;
-            height: 13px;
+            bottom: 0; /* 初始位置从底部开始 */
+            width: 12px; /* 增大泡泡大小 */
+            height: 12px; /* 增大泡泡大小 */
             background-color: rgba(255, 255, 255, 0.7);
             border-radius: 50%;
             opacity: 0;
@@ -155,15 +153,15 @@
          }
 
          @keyframes bubble-animation {
-             0% {
-             bottom: 0; /* 从按钮底部开始 */
-             opacity: 1;
-             transform: translateX(-50%) scale(1);
-           }
-           100% {
-             bottom: 80px; /* 泡泡向上移动 */
-             opacity: 0;
-             transform: translateX(-50%) scale(1.5); /* 放大 */
+            0% {
+            bottom: 0;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+         }
+            100% {
+            bottom: 80px; /* 泡泡向上移动 */
+            opacity: 0;
+            transform: translateY(-20px) scale(1.5);
            }
          }
 
@@ -242,19 +240,21 @@
         }
 
         function createBubbles() {
-            const button = document.getElementById('generateButton');
-            for (let i = 0; i < 5; i++) {
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-        
-                // 设置泡泡初始位置，靠近按钮右边
-                bubble.style.left = `${buttonRect.right + 5}px`; // 5像素间距
-                bubble.style.bottom = `${buttonRect.bottom - 20}px`; // 调整到按钮上方
+           const button = document.getElementById('generateButton');
+           const buttonRect = button.getBoundingClientRect();
 
-                document.body.appendChild(bubble); // 添加到 body 中
-                // 动画结束后移除泡泡
-                bubble.addEventListener('animationend', () => {
-                    bubble.remove();
+           for (let i = 0; i < 5; i++) {
+               const bubble = document.createElement('div');
+               bubble.className = 'bubble';
+
+               // 设置泡泡初始位置，靠近按钮右边
+               bubble.style.left = `${buttonRect.right + 5}px`; // 5像素间距
+               bubble.style.bottom = `${buttonRect.bottom - 20}px`; // 调整到按钮上方
+
+               document.body.appendChild(bubble); // 添加到 body 中
+               // 动画结束后移除泡泡
+               bubble.addEventListener('animationend', () => {
+                   bubble.remove();
                 });
             }
         }
