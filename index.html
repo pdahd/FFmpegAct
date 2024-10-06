@@ -144,7 +144,7 @@
         /* 泡泡动画 */
         .bubble {
             position: absolute;
-            bottom: 100%; /* 从按钮顶部开始 */
+            bottom: -10px; /* 从按钮顶部开始 */
             left: 50%;
             transform: translateX(-50%);
             width: 8px;
@@ -157,12 +157,12 @@
 
         @keyframes bubble-animation {
             0% {
-                bottom: 0;
+                bottom: -10px;
                 opacity: 1;
                 transform: translateX(-50%) scale(1);
             }
             100% {
-                bottom: 80px; /* 泡泡向上移动 */
+                bottom: 100px; /* 泡泡向上移动 */
                 opacity: 0;
                 transform: translateX(-50%) scale(1.5);         
             }
