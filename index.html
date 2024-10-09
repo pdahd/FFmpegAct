@@ -222,8 +222,10 @@
                 return;
             } 
             if (count > 100) {
-                alert("一次输入生成的数量最多为 100 个 UUID，将限制为 100。");
+                messageElement.textContent = "一次最多可生成 100 个 UUID，数量已限制为 100。";
                 count = 100; // 强制将 count 设置为 100
+            } else {
+                messageElement.textContent = ""; // 清空提示信息
             }
             
             for (let i = 1; i <= count; i++) {
