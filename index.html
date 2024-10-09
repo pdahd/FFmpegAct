@@ -216,6 +216,15 @@
             const tableBody = document.getElementById('uuidTable').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = ''; // 清空之前的UUID
 
+            // 输入数量限制逻辑
+            if (isNaN(count) || count < 1) {
+                alert("请输入一个有效的正整数。");
+                return;
+            } else if (count > 100) {
+                alert("一次输入生成的数量最多为 100 个 UUID，将限制为 100。");
+                count = 100;
+            }
+            
             for (let i = 1; i <= count; i++) {
                 const uuid = generateUUID();
                 const row = tableBody.insertRow();
