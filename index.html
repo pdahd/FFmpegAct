@@ -178,24 +178,21 @@
 
     <!-- 描述区域 -->
     <div class="description">
-        <p>Generate any number of unique UUIDs by entering the desired amount in the input box below.
-        Click the 'Generate' button to create the UUIDs. You can copy each UUID individually by clicking
-        the corresponding copy icon.</p>
-        <p>This project was created by <a href="https://github.com/pdahd">pdahd</a> on October 6, 2024.
-        Find the source code on <a href="https://github.com/pdahd/FFmpegAct">GitHub</a>.</p>
+        <p>请输入您希望生成的UUID数量，并点击“生成”按钮。每次最多生成100个UUID。</p>
+        <p>本项目由 <a href="https://github.com/pdahd">pdahd</a> 创建，源代码可在 <a href="https://github.com/pdahd/FFmpegAct">GitHub</a> 上查看。</p>
     </div>
 
     <!-- 主内容区域 -->
     <div class="container">
-        <h1>UUID Generator</h1>
-        <input type="number" id="uuidCount" placeholder="Enter number of UUIDs" min="1">
-        <button id="generateButton" onclick="generateUUIDs()">Generate</button>
+        <h1>UUID生成器</h1>
+        <input type="number" id="uuidCount" placeholder="输入UUID的数量" min="1">
+        <button id="generateButton" onclick="generateUUIDs()">生成</button>
         <table id="uuidTable">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>UUID</th>
-                    <th>Copy</th>
+                    <th>复制</th>
                 </tr>
             </thead>
             <tbody>
@@ -218,21 +215,13 @@
 
             // 输入数量限制逻辑
             if (isNaN(count) || count < 1) {
-                alert("请输入一个有效的正整数。");
+                alert("请输入有效的正整数。");
                 return;
-            } 
-            if (count > 100) {
-                alert("一次输入生成的数量最多为 100 个 UUID，将限制为 100。");
-                count = 100; // 强制将 count 设置为 100
+            } else if (count > 100) {
+                alert("一次最多生成100个UUID，请重新输入。");
+                return;
             }
-
-            // 在提示之后继续执行生成UUID的代码
-            generateUUIDTable(count);
-        }
-
-        // 创建UUID表的函数
-        function generateUUIDTable(count) {
-            const tableBody = document.getElementById('uuidTable').getElementsByTagName('tbody')[0];
+            
             for (let i = 1; i <= count; i++) {
                 const uuid = generateUUID();
                 const row = tableBody.insertRow();
