@@ -222,13 +222,8 @@
                 return;
             } 
             if (count > 100) {
-                const userConfirmed = confirm("一次输入生成的数量最多为 100 个 UUID，将限制为 100。确定继续吗？");
-                if (userConfirmed) {
-                    count = 100; // 强制将 count 设置为 100
-                    document.getElementById('uuidCount').value = 100; // 自动将输入框值设为100
-                } else {
-                    return; // 用户取消，退出函数
-                }
+                count = 100; // 自动将 count 设置为 100
+                document.getElementById('uuidCount').value = 100; // 更新输入框的值为100
             }
             
             for (let i = 1; i <= count; i++) {
