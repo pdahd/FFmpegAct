@@ -222,10 +222,17 @@
                 return;
             } 
             if (count > 100) {
-                count = 100; // 自动将 count 设置为 100
-                document.getElementById('uuidCount').value = 100; // 更新输入框的值为100
+                alert("一次输入生成的数量最多为 100 个 UUID，将限制为 100。");
+                count = 100; // 强制将 count 设置为 100
             }
-            
+
+            // 在提示之后继续执行生成UUID的代码
+            generateUUIDTable(count);
+        }
+
+        // 创建UUID表的函数
+        function generateUUIDTable(count) {
+            const tableBody = document.getElementById('uuidTable').getElementsByTagName('tbody')[0];
             for (let i = 1; i <= count; i++) {
                 const uuid = generateUUID();
                 const row = tableBody.insertRow();
