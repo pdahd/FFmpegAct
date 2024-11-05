@@ -35,6 +35,25 @@ jobs:
             libx265-dev \
             libssl-dev \
             libx264-dev
+      - name: Check installed libraries
+        run: |
+          echo "Checking installed libraries..."
+          for lib in \
+            libass-dev \
+            libfdk-aac-dev \
+            libmp3lame-dev \
+            libopus-dev \
+            libtheora-dev \
+            libtool \
+            libvorbis-dev \
+            libvpx-dev \
+            libx265-dev \
+            libssl-dev \
+            libx264-dev; do
+              echo "Information for $lib:"
+              apt-cache show $lib | grep -E 'Package|Version|Architecture|Description'
+              echo ""
+          done
       - name: Clone FFmpeg
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
@@ -44,6 +63,21 @@ jobs:
           sudo make install
           sudo ldconfig
           ldd /usr/local/ff2024/bin/ffmpeg
+          cp /lib/x86_64-linux-gnu/libvpx.so.7 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libssl.so.3 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libcrypto.so.3 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libx264.so.163 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libx265.so.199 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libfdk-aac.so.2 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libmp3lame.so.0 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libopus.so.0 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libtheoraenc.so.1 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libtheoradec.so.1 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libvorbis.so.0 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libbz2.so.1.0 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/libz.so.1 /usr/local/ff2024/bin/
+          cp /lib/x86_64-linux-gnu/liblzma.so.5 /usr/local/ff2024/bin/
       - name: Verify FFmpeg installation
         run: |
           /usr/local/ff2024/bin/ffmpeg -version
@@ -53,4 +87,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg
-          path: /usr/local/ff2024/bin/ffmpeg
+          path: /usr/local/ff2024/bin/
