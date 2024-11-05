@@ -39,10 +39,14 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          ./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-openssl --enable-nonfree --enable-static --disable-shared --prefix=/usr/local/ff2024
+          ./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libmp3lame \
+          --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-openssl --enable-nonfree \
+          --enable-static --disable-shared --prefix=/usr/local/ff2024 \
+          --extra-ldflags="-static"
           make -j$(nproc)
           sudo make install
           sudo ldconfig
+          ldd /usr/local/ff2024/bin/ffmpeg
       - name: Verify FFmpeg installation
         run: |
           /usr/local/ff2024/bin/ffmpeg -version
