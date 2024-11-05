@@ -58,27 +58,32 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          ./configure --enable-gpl \
-                      --enable-libx264 \
-                      --enable-libx265 \
-                      --enable-libfdk-aac \
-                      --enable-libmp3lame \
-                      --enable-libopus \
-                      --enable-libtheora \
-                      --enable-libvorbis \
-                      --enable-libvpx \
-                      --enable-openssl \
-                      --enable-nonfree \
-                      --enable-static \
-                      --disable-shared \
-                      --prefix=/usr/local/ff2024 \
-                      --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \  
-                      --pkg-config-flags="--static" \ 
-                      --extra-cflags="-I/usr/include"       
+          
+          ./configure 
+            --enable-gpl \
+            --enable-libx264 \
+            --enable-libx265 \
+            --enable-libfdk-aac \
+            --enable-libmp3lame \
+            --enable-libopus \
+            --enable-libtheora \
+            --enable-libvorbis \
+            --enable-libvpx \
+            --enable-openssl \
+            --enable-nonfree \
+            --enable-static \
+            --disable-shared \
+            --prefix=/usr/local/ff2024 \
+            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \  
+            --pkg-config-flags="--static" \ 
+            --extra-cflags="-I/usr/include" 
+            
           make -j$(nproc)
           sudo make install
           sudo ldconfig
+          
           ldd /usr/local/ff2024/bin/ffmpeg
+          
           sudo cp /lib/x86_64-linux-gnu/libvpx.so.7 /usr/local/ff2024/bin/
           sudo cp /lib/x86_64-linux-gnu/libssl.so.3 /usr/local/ff2024/bin/
           sudo cp /lib/x86_64-linux-gnu/libcrypto.so.3 /usr/local/ff2024/bin/
