@@ -1,0 +1,55 @@
+name: Build FFmpeg with x264 and OpenSSL
+
+on: [push]
+
+jobs:
+  build_ffmpeg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            build-essential \
+            cmake \
+            git \
+            libass-dev \
+            libfdk-aac-dev \
+            libmp3lame-dev \
+            libopus-dev \
+            libtheora-dev \
+            libtool \
+            libvorbis-dev \
+            pkg-config \
+            texinfo \
+            wget \
+            yasm \
+            zlib1g-dev \
+            nasm \
+            libvpx-dev \
+            libx265-dev \
+            libssl-dev \
+            libx264-dev
+      - name: Clone FFmpeg
+        run: |
+          git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
+          cd ffmpeg
+          ./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-openssl --enable-nonfree --enable-static --disable-shared --prefix=/usr/local/ff2024
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+      - name: Verify FFmpeg installation
+        run: |
+          /usr/local/ff2024/bin/ffmpeg -version
+          echo "Listing files in /usr/local/ff2024:"
+          ls -R /usr/local/ff2024  
+      - name: Upload FFmpeg as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg
+          path: /usr/local/ff2024/bin/ffmpeg
