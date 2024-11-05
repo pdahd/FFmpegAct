@@ -58,7 +58,23 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          ./configure --extra-cflags="-I/usr/include" --extra-ldflags="-L/usr/lib/x86_64-linux-gnu" --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-openssl --enable-nonfree --enable-static --disable-shared --prefix=/usr/local/ff2024
+          ./configure --enable-gpl \
+                      --enable-libx264 \
+                      --enable-libx265 \
+                      --enable-libfdk-aac \
+                      --enable-libmp3lame \
+                      --enable-libopus \
+                      --enable-libtheora \
+                      --enable-libvorbis \
+                      --enable-libvpx \
+                      --enable-openssl \
+                      --enable-nonfree \
+                      --enable-static \
+                      --disable-shared \
+                      --prefix=/usr/local/ff2024 \
+                      --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \  # 指定静态库路径，并强制静态链接
+                      --pkg-config-flags="--static" \ # 强制 pkg-config 查找静态库
+                      --extra-cflags="-I/usr/include"       # 指定静态库头文件路径
           make -j$(nproc)
           sudo make install
           sudo ldconfig
