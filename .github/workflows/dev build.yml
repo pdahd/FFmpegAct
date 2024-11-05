@@ -72,9 +72,9 @@ jobs:
                       --enable-static \
                       --disable-shared \
                       --prefix=/usr/local/ff2024 \
-                      --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \  # 指定静态库路径，并强制静态链接
-                      --pkg-config-flags="--static" \ # 强制 pkg-config 查找静态库
-                      --extra-cflags="-I/usr/include"       # 指定静态库头文件路径
+                      --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \  
+                      --pkg-config-flags="--static" \ 
+                      --extra-cflags="-I/usr/include"       
           make -j$(nproc)
           sudo make install
           sudo ldconfig
