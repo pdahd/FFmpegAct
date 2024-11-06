@@ -85,6 +85,7 @@ jobs:
           cmake -DENABLE_SHARED=OFF -DENABLE_CLI=OFF ../../source
           make -j$(nproc)
           sudo make install
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
       
       - name: Clone and build FFmpeg
         run: |
