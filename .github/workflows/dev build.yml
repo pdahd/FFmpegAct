@@ -52,10 +52,25 @@ jobs:
           apt-file search libz.a
           apt-file search libass.a # You might need libass-dev for static linking
 
-      # ... rest of your workflow
+      - name: Clone and build x265
+        run: |
+          # 克隆 x265 仓库
+          git clone https://bitbucket.org/multicoreware/x265_git.git
+          cd x265_git/build/linux
+    
+          # 配置和编译为静态库，不包含 CLI 工具
+          cmake -DENABLE_SHARED=OFF \
+                -DENABLE_CLI=OFF \ 
+                -DCMAKE_INSTALL_PREFIX=/usr \
+                -DCMAKE_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu \
+                -DCMAKE_INCLUDE_PATH=/usr/include \
+                -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig \
+                ../../source
+          
+          make -j$(nproc)
+          sudo make install
       
       - name: Check installed libraries
-        if: false
         run: |
           echo "Checking installed libraries..."
           for lib in \
@@ -67,7 +82,7 @@ jobs:
             libtool \
             libvorbis-dev \
             libvpx-dev \
-            libx265-dev \
+            libx265 \
             libssl-dev \
             libx264-dev; do
               echo "Files included in $lib:"
@@ -75,22 +90,10 @@ jobs:
               echo ""
           done
       
-      - name: Clone and build x265
-        run: |
-          # 克隆 x265 仓库
-          git clone https://bitbucket.org/multicoreware/x265_git.git
-          cd x265_git/build/linux
-    
-          # 配置和编译为静态库，不包含 CLI 工具
-          cmake -DENABLE_SHARED=OFF -DENABLE_CLI=OFF ../../source
-          make -j$(nproc)
-          sudo make install
-      
       - name: Clone and build FFmpeg
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          
           
           ./configure --enable-gpl \
             --enable-libx264 \
@@ -106,8 +109,7 @@ jobs:
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
-            --extra-cflags="-I/usr/local/include"
-            --extra-ldflags="-L/usr/local/lib -L/usr/lib/x86_64-linux-gnu -static" \
+            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
             --pkg-config-flags="--static"
 
           make -j$(nproc)
