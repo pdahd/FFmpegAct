@@ -85,23 +85,26 @@ jobs:
           done
 
           # 手动检查 x265 是否安装在正确的路径中
-          echo "Checking x265 installation..."
+          echo "Checking x265 installation in /usr/lib/x86_64-linux-gnu and /usr/include..."
           if [[ -f /usr/lib/x86_64-linux-gnu/libx265.a ]]; then
             echo "x265 static library found: /usr/lib/x86_64-linux-gnu/libx265.a"
           else
             echo "x265 static library not found in /usr/lib/x86_64-linux-gnu"
+            ls -la /usr/lib/x86_64-linux-gnu/ | grep x265  # 列出该目录下的 x265 文件进行调试
           fi
 
           if [[ -f /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc ]]; then
             echo "x265 pkgconfig file found: /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc"
           else
             echo "x265 pkgconfig file not found in /usr/lib/x86_64-linux-gnu/pkgconfig"
+            ls -la /usr/lib/x86_64-linux-gnu/pkgconfig | grep x265  # 列出该目录下的 x265 文件进行调试
           fi
 
           if [[ -f /usr/include/x265.h ]]; then
             echo "x265 header file found: /usr/include/x265.h"
           else
             echo "x265 header file not found in /usr/include"
+            ls -la /usr/include | grep x265  # 列出该目录下的 x265 文件进行调试
           fi
       
       - name: Clone and build FFmpeg
