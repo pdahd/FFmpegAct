@@ -67,7 +67,6 @@ jobs:
           ./configure --enable-gpl \
             --enable-libx264 \
             --enable-libx265 \
-            --pkg-config=$PKG_CONFIG \
             --enable-libfdk-aac \
             --enable-libmp3lame \
             --enable-libopus \
