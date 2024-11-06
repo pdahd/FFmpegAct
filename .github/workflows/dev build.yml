@@ -35,8 +35,7 @@ jobs:
             libssl-dev \
             libx264-dev
 
-          # 查询系统中所有的 pkg-config 路径
-          find / -type f -name "pkg-config" 2>/dev/null
+          pkg-config --version
       
       - name: Clone and build x265
         if: false
