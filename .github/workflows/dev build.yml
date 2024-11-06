@@ -61,7 +61,8 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-
+          export PKG_CONFIG=/usr/bin/pkg-config
+          
           ./configure --enable-gpl \
             --enable-libx265 \
             --enable-openssl \
@@ -69,6 +70,7 @@ jobs:
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
+            --pkg-config=$PKG_CONFIG
 
           make -j$(nproc)
           sudo make install
