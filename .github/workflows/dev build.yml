@@ -91,7 +91,7 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           ./configure --enable-gpl \
             --enable-libx264 \
             --enable-libx265 \
