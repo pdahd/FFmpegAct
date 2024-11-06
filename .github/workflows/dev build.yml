@@ -63,6 +63,7 @@ jobs:
 
           ./configure --enable-gpl \
             --enable-libx264 \
+            --enable-libx265 \
             --enable-libfdk-aac \
             --enable-libmp3lame \
             --enable-libopus \
@@ -75,7 +76,6 @@ jobs:
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
-            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -l:libx265.a" \
             --pkg-config-flags="--static" \
             --extra-cflags="-I/usr/include" \
             --extra-libs="-lx265"
