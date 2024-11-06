@@ -82,7 +82,7 @@ jobs:
             libtool \
             libvorbis-dev \
             libvpx-dev \
-            libx265 \
+            libx265-dev \
             libssl-dev \
             libx264-dev; do
               echo "Files included in $lib:"
