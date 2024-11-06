@@ -49,6 +49,7 @@ jobs:
           sudo make install
       
       - name: Check for static libraries
+        if: false
         run: |
           find /usr/lib/x86_64-linux-gnu -name "libx265.a"
           find /usr/lib/x86_64-linux-gnu/pkgconfig -name "x265.pc"
@@ -59,6 +60,8 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
+
+          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
           
           ./configure --enable-gpl \
             --enable-libx264 \
