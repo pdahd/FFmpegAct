@@ -36,6 +36,7 @@ jobs:
             libx264-dev
 
           which pkg-config
+          dpkg -S /usr/bin/pkg-config
       
       - name: Clone and build x265
         if: false
