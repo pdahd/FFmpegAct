@@ -54,21 +54,19 @@ jobs:
 
       - name: Clone and build x265
         run: |
-          # 克隆 x265 仓库
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git
 
           mkdir -p build/linux
           cd build/linux
     
-          # 配置和编译为静态库，不包含 CLI 工具
           cmake -DENABLE_SHARED=OFF \
-                -DENABLE_CLI=OFF \ 
+                -DENABLE_CLI=OFF \
                 -DCMAKE_INSTALL_PREFIX=/usr \
                 -DCMAKE_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu \
                 -DCMAKE_INCLUDE_PATH=/usr/include \
                 -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig \
-                -S ../.. \   
+                -S ../.. \
                 -B .
           
           make -j$(nproc)
