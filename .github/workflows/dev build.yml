@@ -34,8 +34,12 @@ jobs:
             libvpx-dev \
             libssl-dev \
             libx264-dev
+
+          # 查询系统中所有的 pkg-config 路径
+          find / -type f -name "pkg-config" 2>/dev/null
       
       - name: Clone and build x265
+        if: false
         run: |
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
@@ -62,6 +66,20 @@ jobs:
           cd ffmpeg
 
           ./configure --enable-gpl \
+            --enable-libx265 \
+            --enable-openssl \
+            --enable-nonfree \
+            --enable-static \
+            --disable-shared \
+            --prefix=/usr/local/ff2024 \
+      
+      - name: Clone and build FFmpeg
+        if: false
+        run: |
+          git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
+          cd ffmpeg
+
+          ./configure --enable-gpl \
             --enable-libx264 \
             --enable-libfdk-aac \
             --enable-libmp3lame \
@@ -75,9 +93,7 @@ jobs:
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
-            --extra-cflags="-I/usr/include" \
-            --extra-libs="-lx265" \
-            PKG_CONFIG="false"
+            --pkg-config-flags="--static"
 
           make -j$(nproc)
           sudo make install
