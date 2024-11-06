@@ -37,7 +37,6 @@ jobs:
           which pkg-config
       
       - name: Clone and build x265
-        if: false
         run: |
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
@@ -70,6 +69,11 @@ jobs:
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
+
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          ldd /usr/local/ff2024/bin/ffmpeg || true
       
       - name: Clone and build FFmpeg
         if: false
