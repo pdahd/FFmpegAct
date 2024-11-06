@@ -25,6 +25,7 @@ jobs:
             libtheora-dev \
             libtool \
             libvorbis-dev \
+            pkg-config
             texinfo \
             wget \
             yasm \
@@ -89,8 +90,7 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          export PKG_CONFIG=/usr/local/bin/pkg-config
-          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
+          
           
           ./configure --enable-gpl \
             --enable-libx264 \
@@ -107,7 +107,8 @@ jobs:
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
-            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
+            --extra-cflags="-I/usr/local/include"
+            --extra-ldflags="-L/usr/local/lib -L/usr/lib/x86_64-linux-gnu -static" \
             --pkg-config-flags="--static"
 
           make -j$(nproc)
