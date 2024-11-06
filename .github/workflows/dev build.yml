@@ -25,7 +25,6 @@ jobs:
             libtheora-dev \
             libtool \
             libvorbis-dev \
-            pkg-config \
             texinfo \
             wget \
             yasm \
@@ -35,7 +34,7 @@ jobs:
             libssl-dev \
             libx264-dev
 
-          find /usr /lib /snap /home -name "pkg-config" 2>/dev/null
+          which pkg-config
       
       - name: Clone and build x265
         if: false
