@@ -51,6 +51,9 @@ jobs:
       - name: Check for static libraries
         run: |
           find /usr/lib/x86_64-linux-gnu -name "libx265.a"
+          find /usr/lib/x86_64-linux-gnu/pkgconfig -name "x265.pc"
+          find /usr/include -name "x265*.h"
+          find /usr/include -name "x265_config.h"
 
       - name: Clone and build FFmpeg
         run: |
