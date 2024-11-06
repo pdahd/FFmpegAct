@@ -3,7 +3,7 @@ name: Build FFmpeg with x264 and OpenSSL
 on: [push]
 
 env:
-  PKG_CONFIG: /usr/bin/pkg-config
+  PKG_CONFIG: /usr/local/bin/pkg-config
 
 jobs:
   build_ffmpeg:
@@ -92,7 +92,6 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          
           
           ./configure --enable-gpl \
             --enable-libx264 \
