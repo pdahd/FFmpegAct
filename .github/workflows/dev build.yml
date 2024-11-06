@@ -85,7 +85,6 @@ jobs:
           cmake -DENABLE_SHARED=OFF -DENABLE_CLI=OFF ../../source
           make -j$(nproc)
           sudo make install
-          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
       
       - name: Clone and build FFmpeg
         run: |
@@ -106,7 +105,7 @@ jobs:
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
-            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
+            --extra-ldflags="-L/usr/local/lib -L/usr/lib/x86_64-linux-gnu -static" \
             --pkg-config-flags="--static"
 
           make -j$(nproc)
