@@ -55,17 +55,12 @@ jobs:
       - name: Clone and build x265
         run: |
           git clone https://bitbucket.org/multicoreware/x265_git.git
-          cd x265_git
-
-          mkdir -p build/linux
-          cd build/linux
+          cd x265_git/build/linux
     
           cmake -DENABLE_SHARED=OFF \
                 -DENABLE_CLI=OFF \
                 -DCMAKE_INSTALL_PREFIX=/usr \
-                -DLIB_INSTALL_DIR=/usr/lib/x86_64-linux-gnu \
-                -S ../../source \
-                -B .
+                -DLIB_INSTALL_DIR=/usr/lib/x86_64-linux-gnu ../../source 
           
           make -j$(nproc)
           sudo make install
@@ -82,13 +77,32 @@ jobs:
             libtool \
             libvorbis-dev \
             libvpx-dev \
-            libx265-dev \
             libssl-dev \
             libx264-dev; do
               echo "Files included in $lib:"
               dpkg-query -L $lib  # 查询该库包含的文件
-              echo ""
+            echo ""
           done
+
+          # 手动检查 x265 是否安装在正确的路径中
+          echo "Checking x265 installation..."
+          if [[ -f /usr/lib/x86_64-linux-gnu/libx265.a ]]; then
+            echo "x265 static library found: /usr/lib/x86_64-linux-gnu/libx265.a"
+          else
+            echo "x265 static library not found in /usr/lib/x86_64-linux-gnu"
+          fi
+
+          if [[ -f /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc ]]; then
+            echo "x265 pkgconfig file found: /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc"
+          else
+            echo "x265 pkgconfig file not found in /usr/lib/x86_64-linux-gnu/pkgconfig"
+          fi
+
+          if [[ -f /usr/include/x265.h ]]; then
+            echo "x265 header file found: /usr/include/x265.h"
+          else
+            echo "x265 header file not found in /usr/include"
+          fi
       
       - name: Clone and build FFmpeg
         run: |
