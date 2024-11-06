@@ -37,6 +37,7 @@ jobs:
             libx264-dev
       
       - name: Check for static libraries
+        if: false
         run: |
           sudo apt-get install -y apt-file # Install apt-file if not already installed
           sudo apt-file update
@@ -55,6 +56,7 @@ jobs:
       # ... rest of your workflow
       
       - name: Check installed libraries
+        if: false
         run: |
           echo "Checking installed libraries..."
           for lib in \
@@ -80,7 +82,7 @@ jobs:
           cd ffmpeg
           export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig" 
           ./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-openssl --enable-nonfree --enable-static --disable-shared --prefix=/usr/local/ff2024  
-          make -j$(nproc) LDFLAGS="-static"
+          make -j$(nproc) 
           sudo make install
           sudo ldconfig
           ldd /usr/local/ff2024/bin/ffmpeg
@@ -127,4 +129,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg
-          path: /usr/local/ff2024/bin/
+          path: /usr/local/ff2024/bin/ffmpeg
