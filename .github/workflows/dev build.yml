@@ -65,9 +65,10 @@ jobs:
           export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
           
           ./configure --enable-gpl \
+            --pkg-config=$PKG_CONFIG \
+            --pkg-config-flags="--static" \
             --enable-libx264 \
             --enable-libx265 \
-            --enable-libfdk-aac \
             --enable-libmp3lame \
             --enable-libopus \
             --enable-libtheora \
@@ -79,7 +80,6 @@ jobs:
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
-            --pkg-config-flags="--static"
 
           make -j$(nproc)
           sudo make install
