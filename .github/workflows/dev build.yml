@@ -56,7 +56,10 @@ jobs:
         run: |
           # 克隆 x265 仓库
           git clone https://bitbucket.org/multicoreware/x265_git.git
-          cd x265_git/build/linux
+          cd x265_git
+
+          mkdir -p build/linux
+          cd build/linux
     
           # 配置和编译为静态库，不包含 CLI 工具
           cmake -DENABLE_SHARED=OFF \
