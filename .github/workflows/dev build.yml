@@ -73,6 +73,18 @@ jobs:
               dpkg-query -L $lib  # 查询该库包含的文件
               echo ""
           done
+      
+      - name: Clone and build FFmpeg
+        run: |
+          git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
+          cd ffmpeg
+          export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig" 
+          ./configure --enable-gpl --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-openssl --enable-nonfree --enable-static --disable-shared --prefix=/usr/local/ff2024  LDFLAGS="-static"
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          ldd /usr/local/ff2024/bin/ffmpeg
+      
       - name: Clone FFmpeg
         if: false
         run: |
@@ -104,11 +116,13 @@ jobs:
           sudo cp /lib/x86_64-linux-gnu/libbz2.so.1.0 /usr/local/ff2024/bin/
           sudo cp /lib/x86_64-linux-gnu/libz.so.1 /usr/local/ff2024/bin/
           sudo cp /lib/x86_64-linux-gnu/liblzma.so.5 /usr/local/ff2024/bin/
+     
       - name: Verify FFmpeg installation
         run: |
           /usr/local/ff2024/bin/ffmpeg -version
           echo "Listing files in /usr/local/ff2024:"
           ls -R /usr/local/ff2024  
+     
       - name: Upload FFmpeg as artifact
         uses: actions/upload-artifact@v4
         with:
