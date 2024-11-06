@@ -85,7 +85,7 @@ jobs:
           make -j$(nproc) 
           sudo make install
           sudo ldconfig
-          ldd /usr/local/ff2024/bin/ffmpeg
+          ldd /usr/local/ff2024/bin/ffmpeg || true
       
       - name: Clone FFmpeg
         if: false
@@ -101,7 +101,7 @@ jobs:
           sudo make install
           sudo ldconfig
           
-          ldd /usr/local/ff2024/bin/ffmpeg || true
+          ldd /usr/local/ff2024/bin/ffmpeg 
           
           sudo cp /lib/x86_64-linux-gnu/libvpx.so.7 /usr/local/ff2024/bin/
           sudo cp /lib/x86_64-linux-gnu/libssl.so.3 /usr/local/ff2024/bin/
