@@ -35,6 +35,25 @@ jobs:
             libx265-dev \
             libssl-dev \
             libx264-dev
+      
+      - name: Check for static libraries
+        run: |
+          sudo apt-get install -y apt-file # Install apt-file if not already installed
+          sudo apt-file update
+          apt-file search libx264.a
+          apt-file search libx265.a
+          apt-file search libfdk-aac.a
+          apt-file search libmp3lame.a
+          apt-file search libopus.a
+          apt-file search libtheora.a
+          apt-file search libvorbis.a
+          apt-file search libvpx.a
+          apt-file search libssl.a
+          apt-file search libz.a
+          apt-file search libass.a # You might need libass-dev for static linking
+
+      # ... rest of your workflow
+      
       - name: Check installed libraries
         run: |
           echo "Checking installed libraries..."
@@ -55,6 +74,7 @@ jobs:
               echo ""
           done
       - name: Clone FFmpeg
+        if: false
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
