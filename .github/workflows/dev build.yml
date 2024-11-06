@@ -35,8 +35,7 @@ jobs:
             libssl-dev \
             libx264-dev
 
-          which pkg-config
-          dpkg -S /usr/bin/pkg-config
+          find /usr /lib /snap /home -name "pkg-config" 2>/dev/null
       
       - name: Clone and build x265
         if: false
