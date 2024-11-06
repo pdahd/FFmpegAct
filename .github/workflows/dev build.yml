@@ -68,7 +68,7 @@ jobs:
                 -DCMAKE_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu \
                 -DCMAKE_INCLUDE_PATH=/usr/include \
                 -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig \
-                ../..
+                
           
           make -j$(nproc)
           sudo make install
