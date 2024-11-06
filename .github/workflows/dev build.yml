@@ -61,6 +61,7 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
+          export PATH=/usr/bin:$PATH
           export PKG_CONFIG=/usr/bin/pkg-config
           
           ./configure --enable-gpl \
