@@ -47,12 +47,14 @@ jobs:
           sudo make install
       
       - name: Check for static libraries
+        if: false
         run: |
           cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
           sudo sed -i 's/^Libs.private:.*$/Libs.private: -lpthread -lm -ldl/' /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
           
 
       - name: Check 
+        if: false
         run: |
           cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
       
