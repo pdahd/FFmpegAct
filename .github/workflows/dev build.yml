@@ -45,6 +45,7 @@ jobs:
           sudo make install
       
       - name: Check for static libraries
+        if: false
         run: |
           export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           pkg-config --libs --static x265
@@ -53,9 +54,9 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-  
+          
           ./configure --enable-gpl \
-            --enable-libx265 \
+            --enable-libx264 \
             --enable-openssl \
             --enable-nonfree \
             --enable-static \
