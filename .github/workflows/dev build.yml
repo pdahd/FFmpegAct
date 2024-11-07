@@ -59,14 +59,15 @@ jobs:
   
           ./configure --enable-gpl \
             --enable-libx265 \
-            --enable-libx264 \
             --enable-openssl \
             --enable-nonfree \
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --pkg-config-flags="--static" \
-            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" 
+            --extra-libs="-lx264" \
+            --extra-cflags="-I/usr/include" \
+            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -l:libx264.a" 
             
           make -j$(nproc)
           sudo make install
