@@ -59,6 +59,7 @@ jobs:
   
           ./configure --enable-gpl \
             --enable-libx265 \
+            --enable-libx264 \
             --enable-openssl \
             --enable-nonfree \
             --enable-static \
