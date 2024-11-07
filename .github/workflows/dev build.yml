@@ -25,6 +25,7 @@ jobs:
             libtheora-dev \
             libtool \
             libvorbis-dev \
+            pkg-config \
             texinfo \
             wget \
             yasm \
