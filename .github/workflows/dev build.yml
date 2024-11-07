@@ -39,7 +39,7 @@ jobs:
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
     
-          cmake -DENABLE_SHARED=ON -DENABLE_CLI=OFF ../../source
+          cmake -DENABLE_SHARED=OFF -DENABLE_CLI=OFF ../../source
           
           make -j$(nproc)
           sudo make install
