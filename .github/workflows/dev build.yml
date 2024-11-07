@@ -61,7 +61,6 @@ jobs:
           export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
   
           ./configure --enable-gpl \
-            --enable-libx264 \
             --enable-libx265 \
             --pkg-config=$PKG_CONFIG \
             --enable-libtheora \
