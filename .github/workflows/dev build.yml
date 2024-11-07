@@ -65,7 +65,6 @@ jobs:
             --enable-libx265 \
             --pkg-config=$PKG_CONFIG \
             --enable-libtheora \
-            --enable-libvorbis \
             --enable-openssl \
             --enable-nonfree \
             --enable-static \
