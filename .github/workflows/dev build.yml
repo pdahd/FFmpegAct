@@ -70,7 +70,7 @@ jobs:
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -static" \
-            --pkg-config-flags="--static"
+            
 
           make -j$(nproc)
           sudo make install
