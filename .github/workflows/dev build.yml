@@ -45,21 +45,18 @@ jobs:
           sudo make install
       
       - name: Check for static libraries
-        if: false
         run: |
-          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-          pkg-config --libs --static x265
+          cat /usr/local/lib/pkgconfig/x265.pc
+          cat /usr/lib/x86_64-linux-gnu/pkgconfig/x264.pc
 
       - name: Clone and build FFmpeg
+        if: false
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
-          pkg-config --modversion x265
-          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           
           ./configure --enable-gpl \
             --enable-libx265 \
-            --extra-ldflags="-L/usr/local/lib" \
             --enable-libx264 \
             --enable-openssl \
             --enable-nonfree \
