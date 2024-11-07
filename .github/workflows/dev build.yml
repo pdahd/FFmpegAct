@@ -31,10 +31,12 @@ jobs:
             zlib1g-dev \
             nasm \
             libvpx-dev \
+            libx265-dev \
             libssl-dev \
             libx264-dev
       
       - name: Clone and build x265
+        if: false
         run: |
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
@@ -46,13 +48,13 @@ jobs:
       
       - name: Check for static libraries
         run: |
-          cat /usr/local/lib/pkgconfig/x265.pc
-          sudo sed -i 's/^Libs.private:.*$/Libs.private: -lpthread -lm -ldl/' /usr/local/lib/pkgconfig/x265.pc
+          cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
+          sudo sed -i 's/^Libs.private:.*$/Libs.private: -lpthread -lm -ldl/' /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
           
 
       - name: Check 
         run: |
-          cat /usr/local/lib/pkgconfig/x265.pc
+          cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
       
       - name: Clone and build FFmpeg
         run: |
