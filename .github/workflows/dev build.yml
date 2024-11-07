@@ -41,10 +41,7 @@ jobs:
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
     
-          cmake -DENABLE_SHARED=OFF \
-                -DENABLE_CLI=OFF \
-                -DCMAKE_INSTALL_PREFIX=/usr \
-                -DLIB_INSTALL_DIR=/usr/lib/x86_64-linux-gnu ../../source 
+          cmake -DENABLE_SHARED=OFF -DENABLE_CLI=OFF ../../source
           
           make -j$(nproc)
           sudo make install
