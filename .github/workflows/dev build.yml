@@ -56,7 +56,7 @@ jobs:
       - name: Check 
         run: |
           ls /usr/lib/x86_64-linux-gnu/libgcc_s.a
-ls /usr/  lib/x86_64-linux-gnu/libnuma.a
+          ls /usr/  lib/x86_64-linux-gnu/libnuma.a
       
       - name: Clone and build FFmpeg
         run: |
