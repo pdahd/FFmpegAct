@@ -45,12 +45,9 @@ jobs:
           sudo make install
       
       - name: Check for static libraries
-        if: false
         run: |
-          find /usr/lib/x86_64-linux-gnu -name "libx265.a"
-          find /usr/lib/x86_64-linux-gnu/pkgconfig -name "x265.pc"
-          find /usr/include -name "x265*.h"
-          find /usr/include -name "x265_config.h"
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+          pkg-config --libs --static x265
 
       - name: Clone and build FFmpeg
         run: |
