@@ -29,9 +29,7 @@ jobs:
             wget \
             yasm \
             zlib1g-dev \
-            nasm \
-            libvpx-dev \
-            libssl-dev 
+            nasm
       
       - name: Clone and build x265
         run: |
@@ -58,6 +56,15 @@ jobs:
           make -j$(nproc)
           sudo make install
       
+      - name: Download and Build Static OpenSSL
+        run: |
+          wget https://www.openssl.org/source/openssl-1.1.1t.tar.gz
+          tar -xvzf openssl-1.1.1t.tar.gz
+          cd openssl-1.1.1t
+          ./config no-shared --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
+      
       - name: Clone and build FFmpeg
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
@@ -66,6 +73,7 @@ jobs:
           ./configure --enable-gpl \
             --enable-libx265 \
             --enable-libx264 \
+            --enable-openssl \
             --enable-nonfree \
             --enable-static \
             --disable-shared \
