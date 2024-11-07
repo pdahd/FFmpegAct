@@ -65,9 +65,7 @@ jobs:
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --pkg-config-flags="--static" \
-            --extra-libs="-lx264" \
-            --extra-cflags="-I/usr/include" \
-            --extra-ldflags="-L/usr/lib/x86_64-linux-gnu -l:libx264.a" 
+            --extra-ldflags="-static"
             
           make -j$(nproc)
           sudo make install
