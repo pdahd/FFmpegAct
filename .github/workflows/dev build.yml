@@ -85,7 +85,6 @@ jobs:
           sudo make install
           sudo ldconfig
           ldd /usr/local/ff2024/bin/ffmpeg || true
-          ffmpeg -protocols
       
       - name: Upload FFmpeg config.log
         if: failure()  # 如果前一个步骤失败，则上传日志文件
