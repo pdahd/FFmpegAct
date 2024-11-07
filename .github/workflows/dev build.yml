@@ -65,6 +65,7 @@ jobs:
             --disable-shared \
             --prefix=/usr/local/ff2024 \
             --extra-ldflags="-L/usr/local/lib -static" \
+            --extra-cflags="-I/usr/local/include" \
             --pkg-config-flags="--static"
 
           make -j$(nproc)
