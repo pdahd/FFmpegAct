@@ -55,7 +55,6 @@ jobs:
           cat /usr/local/lib/pkgconfig/x265.pc
       
       - name: Clone and build FFmpeg
-        if: false
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
