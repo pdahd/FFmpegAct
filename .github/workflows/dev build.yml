@@ -25,7 +25,6 @@ jobs:
             libtheora-dev \
             libtool \
             libvorbis-dev \
-            pkg-config \
             texinfo \
             wget \
             yasm \
@@ -34,8 +33,6 @@ jobs:
             libvpx-dev \
             libssl-dev \
             libx264-dev
-
-          which pkg-config
       
       - name: Clone and build x265
         run: |
@@ -70,7 +67,8 @@ jobs:
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
-            --pkg-config=$PKG_CONFIG
+            --pkg-config=$PKG_CONFIG \
+            --pkg-config-flags="--static"
 
           make -j$(nproc)
           sudo make install
