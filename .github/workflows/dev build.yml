@@ -60,6 +60,7 @@ jobs:
           cd ffmpeg
           
           export PKG_CONFIG=/usr/local/bin/pkg-config
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           
           ./configure --enable-gpl \
             --enable-libx265 \
