@@ -18,7 +18,6 @@ jobs:
             build-essential \
             cmake \
             git \
-            gcc-multilib \
             libass-dev \
             libfdk-aac-dev \
             libmp3lame-dev \
@@ -32,13 +31,9 @@ jobs:
             zlib1g-dev \
             nasm \
             libvpx-dev \
-            libnuma-dev \
-            libx265-dev \
-            libssl-dev \
-            libx264-dev
+            libssl-dev 
       
       - name: Clone and build x265
-        if: false
         run: |
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
@@ -55,11 +50,13 @@ jobs:
           sudo sed -i 's/^Libs.private:.*$/Libs.private: -lpthread -lm -ldl/' /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
           
 
-      - name: Check 
-        if: false
+      - name: Clone x264
         run: |
-          ls /usr/lib/x86_64-linux-gnu/libgcc_s.a
-          ls /usr/  lib/x86_64-linux-gnu/libnuma.a
+          git clone --depth 1 https://code.videolan.org/videolan/x264.git
+          cd x264
+          ./configure --enable-static --disable-shared
+          make -j$(nproc)
+          sudo make install
       
       - name: Clone and build FFmpeg
         run: |
@@ -69,15 +66,11 @@ jobs:
           ./configure --enable-gpl \
             --enable-libx265 \
             --enable-libx264 \
-            --enable-openssl \
             --enable-nonfree \
             --enable-static \
             --disable-shared \
             --prefix=/usr/local/ff2024 \
-            --pkg-config-flags="--static" \
-            --extra-ldflags="-static" \
-            --extra-libs="-lstdc++"
-            
+           
           make -j$(nproc)
           sudo make install
           sudo ldconfig
@@ -157,7 +150,6 @@ jobs:
           ls -R /usr/local/ff2024  
      
       - name: Upload FFmpeg as artifact
-        if: false
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg
