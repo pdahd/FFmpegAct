@@ -48,9 +48,12 @@ jobs:
         run: |
           cat /usr/local/lib/pkgconfig/x265.pc
           sudo sed -i 's/^Libs.private:.*$/Libs.private: -lpthread -lm -ldl/' /usr/local/lib/pkgconfig/x265.pc
-          cat /usr/local/lib/pkgconfig/x265.pc
           
 
+      - name: Check 
+        run: |
+          cat /usr/local/lib/pkgconfig/x265.pc
+      
       - name: Clone and build FFmpeg
         if: false
         run: |
