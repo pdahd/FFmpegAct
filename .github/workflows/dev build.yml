@@ -48,6 +48,8 @@ jobs:
         run: |
           cat /usr/local/lib/pkgconfig/x265.pc
           cat /usr/lib/x86_64-linux-gnu/pkgconfig/x264.pc
+          cat /usr/lib/x86_64-linux-gnu/pkgconfig/vpx.pc
+          cat /usr/lib/x86_64-linux-gnu/pkgconfig/fdk-aac.pc
 
       - name: Clone and build FFmpeg
         if: false
