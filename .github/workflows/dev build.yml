@@ -54,9 +54,9 @@ jobs:
           
 
       - name: Check 
-        if: false
         run: |
-          cat /usr/lib/x86_64-linux-gnu/pkgconfig/x265.pc
+          ls /usr/lib/x86_64-linux-gnu/libgcc_s.a
+ls /usr/  lib/x86_64-linux-gnu/libnuma.a
       
       - name: Clone and build FFmpeg
         run: |
