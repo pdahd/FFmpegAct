@@ -63,13 +63,9 @@ jobs:
           ./configure --enable-gpl \
             --enable-libx264 \
             --enable-libx265 \
-            --enable-libfdk-aac \
-            --enable-libmp3lame \
             --pkg-config=$PKG_CONFIG \
-            --enable-libopus \
             --enable-libtheora \
             --enable-libvorbis \
-            --enable-libvpx \
             --enable-openssl \
             --enable-nonfree \
             --enable-static \
