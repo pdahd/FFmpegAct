@@ -239,14 +239,9 @@
     </div>
 
     <script>
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
+        const workerURL = "https://divine-tree-e69a.yswwsy.workers.dev/";
 
-        function generateUUIDs() {
+        async function generateUUIDs() {
             const count = document.getElementById('uuidCount').value;
             const tableBody = document.getElementById('uuidTable').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = ''; 
@@ -258,39 +253,50 @@
                 alert("一次最多生成100个UUID，请重新输入。");
                 return;
             }
-            
-            for (let i = 1; i <= count; i++) {
-                const uuid = generateUUID();
-                const row = tableBody.insertRow();
-                const cell1 = row.insertCell(0);
-                const cell2 = row.insertCell(1);
-                const cell3 = row.insertCell(2);
 
-                cell1.textContent = i;
-                cell1.className = 'index-cell'; 
-                cell2.textContent = uuid;
-                cell2.className = 'uuid-cell'; 
+            try {
+                // 调用 Cloudflare Worker，传递 UUID 数量
+                const response = await fetch(`${workerURL}?count=${count}`);
+                if (!response.ok) {
+                    throw new Error('生成 UUID 请求失败');
+                }
+                const data = await response.json();
+                const uuids = data.uuids;
 
-                const copyIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg"); 
-		copyIcon.setAttribute("fill", "#ffffff"); 
-		copyIcon.setAttribute("height", "24px"); // 设置与之前图片相同的尺寸 
-		copyIcon.setAttribute("width", "24px"); // 设置与之前图片相同的尺寸 
-		copyIcon.setAttribute("viewBox", "0 0 52 52");
-                copyIcon.className = 'copy-icon';
-                copyIcon.onclick = function() {
-                    copyUUID(uuid);
-                };
+                // 在表格中显示生成的 UUID
+                uuids.forEach((uuid, index) => {
+                    const row = tableBody.insertRow();
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
 
-		// 添加 SVG 的路径 
-		const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); 
-		path.setAttribute("d", "M45,0H11c-0.552,0-1,0.448-1,1v3H7C6.448,4,6,4.448,6,5v46c0,0.552,0.448,1,1,1h34c0.552,0,1-0.448,1-1v-3h3c0.552,0,1-0.448,1-1V1C46,0.448,45.552,0,45,0z M40,50H8V6h23v8c0,0.552,0.448,1,1,1h8V50z M33,7.414L38.586,13H33V7.414z M44,46h-2V14c0-0.022-0.011-0.041-0.013-0.063c-0.006-0.088-0.023-0.173-0.051-0.257c-0.011-0.032-0.019-0.063-0.034-0.094c-0.049-0.106-0.11-0.207-0.196-0.293l-9-9c-0.086-0.086-0.187-0.147-0.293-0.196c-0.031-0.014-0.062-0.022-0.094-0.033c-0.084-0.029-0.169-0.046-0.258-0.051C32.041,4.011,32.021,4,32,4H12V2h32V46z"); 
-		// 将路径添加到 SVG 
-		copyIcon.appendChild(path);
-                cell3.appendChild(copyIcon);
+                    cell1.textContent = index + 1;
+                    cell1.className = 'index-cell'; 
+                    cell2.textContent = uuid;
+                    cell2.className = 'uuid-cell'; 
+
+                    const copyIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg"); 
+                    copyIcon.setAttribute("fill", "#ffffff"); 
+                    copyIcon.setAttribute("height", "24px");
+                    copyIcon.setAttribute("width", "24px");
+                    copyIcon.setAttribute("viewBox", "0 0 52 52");
+                    copyIcon.className = 'copy-icon';
+                    copyIcon.onclick = function() {
+                        copyUUID(uuid);
+                    };
+
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); 
+                    path.setAttribute("d", "M45,0H11c-0.552,0-1,0.448-1,1v3H7C6.448,4,6,4.448,6,5v46c0,0.552,0.448,1,1,1h34c0.552,0,1-0.448,1-1v-3h3c0.552,0,1-0.448,1-1V1C46,0.448,45.552,0,45,0z M40,50H8V6h23v8c0,0.552,0.448,1,1,1h8V50z M33,7.414L38.586,13H33V7.414z M44,46h-2V14c0-0.022-0.011-0.041-0.013-0.063c-0.006-0.088-0.023-0.173-0.051-0.257c-0.011-0.032-0.019-0.063-0.034-0.094c-0.049-0.106-0.11-0.207-0.196-0.293l-9-9c-0.086-0.086-0.187-0.147-0.293-0.196c-0.031-0.014-0.062-0.022-0.094-0.033c-0.084-0.029-0.169-0.046-0.258-0.051C32.041,4.011,32.021,4,32,4H12V2h32V46z"); 
+                    copyIcon.appendChild(path);
+                    cell3.appendChild(copyIcon);
+                });
+
+                createBubbles();
+            } catch (error) {
+                alert("无法生成UUID，请稍后再试。");
+                console.error(error);
             }
-
-            createBubbles();
-        }
+	}
 
         function createBubbles() {
           const button = document.getElementById('generateButton');
